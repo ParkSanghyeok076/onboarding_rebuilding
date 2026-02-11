@@ -1,0 +1,76 @@
+.main-menu {
+  max-width: 1200px;
+  margin: 60px auto;
+  padding: 20px;
+}
+
+.menu-title {
+  font-size: 36px;
+  color: #333;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.menu-subtitle {
+  font-size: 18px;
+  color: #666;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+@media (max-width: 768px) {
+  .menu-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.menu-card {
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  border: 3px solid #e0e0e0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.menu-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.menu-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+}
+
+.menu-card-title {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.menu-card-description {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.menu-card-arrow {
+  font-size: 32px;
+  font-weight: bold;
+  margin-top: 20px;
+  transition: transform 0.3s;
+}
+
+.menu-card:hover .menu-card-arrow {
+  transform: translateX(10px);
+}
