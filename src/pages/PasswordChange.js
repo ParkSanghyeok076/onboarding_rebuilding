@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './PasswordChange.css';
+import { supabase } from '../lib/supabase';
 
 function PasswordChange({ user, onBack, onPasswordChanged }) {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -7,24 +8,12 @@ function PasswordChange({ user, onBack, onPasswordChanged }) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // 현재 저장된 비밀번호 가져오기 (localStorage 또는 초기 비밀번호)
-  const getCurrentPassword = () => {
-    const savedPasswords = JSON.parse(localStorage.getItem('passwords') || '{}');
-    return savedPasswords[user.id]?.password || `y${user.id}`;
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess(false);
-
-    // 현재 비밀번호 확인
-    const actualCurrentPassword = getCurrentPassword();
-    if (currentPassword !== actualCurrentPassword) {
-      setError('현재 비밀번호가 올바르지 않습니다.');
-      return;
-    }
 
     // 새 비밀번호 유효성 검사
     if (newPassword.length < 6) {
@@ -42,25 +31,16 @@ function PasswordChange({ user, onBack, onPasswordChanged }) {
       return;
     }
 
-    // 비밀번호 변경 저장 (나중에 API로 교체)
-    const savedPasswords = JSON.parse(localStorage.getItem('passwords') || '{}');
-    const changeHistory = savedPasswords[user.id]?.changeHistory || [];
+    setLoading(true);
 
-    savedPasswords[user.id] = {
-      userId: user.id,
-      password: newPassword,
-      changedAt: new Date().toISOString(),
-      changeHistory: [
-        ...changeHistory,
-        {
-          from: currentPassword,
-          to: newPassword,
-          timestamp: new Date().toISOString()
-        }
-      ]
-    };
+    const { error: updateError } = await supabase.auth.updateUser({ password: newPassword });
 
-    localStorage.setItem('passwords', JSON.stringify(savedPasswords));
+    setLoading(false);
+
+    if (updateError) {
+      setError('비밀번호 변경에 실패했습니다: ' + updateError.message);
+      return;
+    }
 
     // 성공 처리
     setSuccess(true);
@@ -70,13 +50,8 @@ function PasswordChange({ user, onBack, onPasswordChanged }) {
 
     // 부모 컴포넌트에 알림
     if (onPasswordChanged) {
-      onPasswordChanged(newPassword);
+      onPasswordChanged();
     }
-
-    // 3초 후 자동으로 돌아가기
-    setTimeout(() => {
-      onBack();
-    }, 3000);
   };
 
   return (
@@ -135,8 +110,8 @@ function PasswordChange({ user, onBack, onPasswordChanged }) {
 
               {error && <div className="error-message">{error}</div>}
 
-              <button type="submit" className="submit-button">
-                비밀번호 변경
+              <button type="submit" className="submit-button" disabled={loading}>
+                {loading ? '변경 중...' : '비밀번호 변경'}
               </button>
             </form>
           )}

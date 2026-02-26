@@ -1,34 +1,30 @@
 import React, { useState } from 'react';
+import { supabase } from '../lib/supabase';
 import './Login.css';
 
-function Login({ onLogin, users }) {
-  const [id, setId] = useState('');
+function Login() {
+  const [employeeId, setEmployeeId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
-    // 사용자 찾기
-    const user = users.find(u => u.id === id);
+    const email = `${employeeId}@company.internal`;
 
-    if (!user) {
-      setError('존재하지 않는 사번입니다.');
-      return;
+    const { error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (authError) {
+      setError('사번 또는 비밀번호가 올바르지 않습니다.');
     }
 
-    // 비밀번호 확인: 변경된 비밀번호 또는 초기 비밀번호
-    const savedPasswords = JSON.parse(localStorage.getItem('passwords') || '{}');
-    const currentPassword = savedPasswords[id]?.password || `y${id}`;
-
-    if (password !== currentPassword) {
-      setError('비밀번호가 올바르지 않습니다.');
-      return;
-    }
-
-    // 로그인 성공
-    onLogin(user);
+    setLoading(false);
   };
 
   return (
@@ -42,10 +38,11 @@ function Login({ onLogin, users }) {
             <label>사번 (아이디)</label>
             <input
               type="text"
-              value={id}
-              onChange={(e) => setId(e.target.value)}
+              value={employeeId}
+              onChange={(e) => setEmployeeId(e.target.value)}
               placeholder="예: 1001001"
               required
+              disabled={loading}
             />
           </div>
 
@@ -57,13 +54,14 @@ function Login({ onLogin, users }) {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="예: y1001001"
               required
+              disabled={loading}
             />
           </div>
 
           {error && <div className="error-message">{error}</div>}
 
-          <button type="submit" className="login-button">
-            로그인
+          <button type="submit" className="login-button" disabled={loading}>
+            {loading ? '로그인 중...' : '로그인'}
           </button>
         </form>
 
