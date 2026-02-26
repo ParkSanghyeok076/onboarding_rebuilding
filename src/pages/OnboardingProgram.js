@@ -9,11 +9,13 @@ function OnboardingProgram({ user, onBack }) {
   const [submissions, setSubmissions] = useState({}); // { programId: signedUrl }
   const [loading, setLoading] = useState(true);
 
-  // 기간 계산 (버그 수정: user.type → user.employee_type)
+  // 기간 계산
   const getPeriod = () => {
     if (user.employee_type === '신입') {
+      if (!user.period_1_start || !user.period_3_end) return '기간 미설정';
       return `${user.period_1_start} ~ ${user.period_3_end}`;
     } else {
+      if (!user.period_1_start || !user.period_1_end) return '기간 미설정';
       return `${user.period_1_start} ~ ${user.period_1_end}`;
     }
   };
