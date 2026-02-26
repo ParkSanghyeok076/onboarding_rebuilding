@@ -106,62 +106,60 @@ ALTER TABLE survey_responses ENABLE ROW LEVEL SECURITY;
 ALTER TABLE analysis_results ENABLE ROW LEVEL SECURITY;
 ALTER TABLE email_drafts ENABLE ROW LEVEL SECURITY;
 
+-- admin 여부 확인 함수 (SECURITY DEFINER로 RLS 재귀 방지)
+CREATE OR REPLACE FUNCTION is_hr_admin()
+RETURNS boolean
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM users WHERE id = auth.uid() AND role = 'hr_admin'
+  )
+$$;
+
 -- users: 본인 읽기, hr_admin 전체 접근
 CREATE POLICY "users_self_read" ON users
   FOR SELECT USING (auth.uid() = id);
 
 CREATE POLICY "users_admin_all" ON users
-  FOR ALL USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'hr_admin')
-  );
+  FOR ALL USING (is_hr_admin());
 
 -- announcements: 로그인한 사용자 읽기, admin 쓰기
 CREATE POLICY "announcements_read" ON announcements
   FOR SELECT USING (auth.role() = 'authenticated');
 
 CREATE POLICY "announcements_admin_write" ON announcements
-  FOR ALL USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'hr_admin')
-  );
+  FOR ALL USING (is_hr_admin());
 
 -- onboarding_submissions: 본인 읽기/쓰기, admin 전체
 CREATE POLICY "submissions_self" ON onboarding_submissions
   FOR ALL USING (auth.uid() = user_id);
 
 CREATE POLICY "submissions_admin" ON onboarding_submissions
-  FOR ALL USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'hr_admin')
-  );
+  FOR ALL USING (is_hr_admin());
 
 -- survey_rounds: 로그인한 사용자 읽기, admin 쓰기
 CREATE POLICY "rounds_read" ON survey_rounds
   FOR SELECT USING (auth.role() = 'authenticated');
 
 CREATE POLICY "rounds_admin_write" ON survey_rounds
-  FOR ALL USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'hr_admin')
-  );
+  FOR ALL USING (is_hr_admin());
 
 -- survey_responses: 본인 읽기/쓰기, admin 읽기
 CREATE POLICY "responses_self" ON survey_responses
   FOR ALL USING (auth.uid() = user_id);
 
 CREATE POLICY "responses_admin_read" ON survey_responses
-  FOR SELECT USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'hr_admin')
-  );
+  FOR SELECT USING (is_hr_admin());
 
 -- analysis_results: admin만
 CREATE POLICY "analysis_admin" ON analysis_results
-  FOR ALL USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'hr_admin')
-  );
+  FOR ALL USING (is_hr_admin());
 
 -- email_drafts: admin만
 CREATE POLICY "drafts_admin" ON email_drafts
-  FOR ALL USING (
-    EXISTS (SELECT 1 FROM users WHERE id = auth.uid() AND role = 'hr_admin')
-  );
+  FOR ALL USING (is_hr_admin());
 
 -- =====================================================
 -- Storage 버킷 생성 (Supabase 대시보드에서 직접 생성 필요)

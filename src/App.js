@@ -13,47 +13,51 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [currentPage, setCurrentPage] = useState('menu');
   const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState(undefined); // undefined=초기화 전, null=비로그인, string=로그인
 
+  // 1단계: 인증 상태만 감지 (REST 호출 금지)
   useEffect(() => {
-    // 현재 세션 확인 (새로고침 시 로그인 유지)
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        fetchUserProfile(session.user.id);
-      } else {
-        setLoading(false);
-      }
-    });
-
-    // 로그인/로그아웃 상태 변화 감지
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (event === 'SIGNED_IN' && session) {
-          await fetchUserProfile(session.user.id);
-        } else if (event === 'SIGNED_OUT') {
-          setCurrentUser(null);
-          setCurrentPage('menu');
-          setLoading(false);
-        }
+      (event, session) => {
+        setUserId(session?.user?.id ?? null);
       }
     );
-
     return () => subscription.unsubscribe();
   }, []);
 
-  const fetchUserProfile = async (userId) => {
-    const { data, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', userId)
-      .single();
+  // 2단계: userId 변화에 따라 프로필 로드 (onAuthStateChange 밖에서 REST 호출)
+  useEffect(() => {
+    if (userId === undefined) return; // 아직 초기화 전
 
-    if (error) {
-      console.error('프로필 로드 실패:', error);
-    } else {
-      setCurrentUser(data);
+    if (userId === null) {
+      setCurrentUser(null);
+      setCurrentPage('menu');
+      setLoading(false);
+      return;
     }
-    setLoading(false);
-  };
+
+    const fetchUserProfile = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', userId)
+          .single();
+
+        if (error) {
+          console.error('프로필 로드 실패:', error);
+        } else {
+          setCurrentUser(data);
+        }
+      } catch (e) {
+        console.error('fetchUserProfile 예외:', e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, [userId]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
