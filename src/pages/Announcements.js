@@ -1,21 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Pages.css';
 import AnnouncementCard from '../components/AnnouncementCard';
-import { announcements as announcementsData } from '../data/announcements';
+import { supabase } from '../lib/supabase';
 
 function Announcements({ onBack }) {
+  const [announcements, setAnnouncements] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
 
-  // 상단 고정 공지사항과 일반 공지사항 분리 및 정렬
-  const pinnedAnnouncements = announcementsData
-    .filter(a => a.isPinned)
-    .sort((a, b) => new Date(b.date) - new Date(a.date));
+  useEffect(() => {
+    const fetchAnnouncements = async () => {
+      const { data, error } = await supabase
+        .from('announcements')
+        .select('*')
+        .order('is_pinned', { ascending: false })
+        .order('published_at', { ascending: false });
 
-  const regularAnnouncements = announcementsData
-    .filter(a => !a.isPinned)
-    .sort((a, b) => new Date(b.date) - new Date(a.date));
+      if (error) {
+        console.error('공지사항 로드 실패:', error);
+      } else {
+        const mapped = data.map(a => ({
+          ...a,
+          isPinned: a.is_pinned,
+          date: a.published_at ? a.published_at.slice(0, 10) : '',
+          pdfUrl: a.pdf_url,
+        }));
+        setAnnouncements(mapped);
+      }
+      setLoading(false);
+    };
 
-  const allAnnouncements = [...pinnedAnnouncements, ...regularAnnouncements];
+    fetchAnnouncements();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="page-container">
+        <button onClick={onBack} className="back-button">← 메뉴로 돌아가기</button>
+        <div className="announcements-container">
+          <p>로딩 중...</p>
+        </div>
+      </div>
+    );
+  }
 
   // 목록 뷰
   if (!selectedAnnouncement) {
@@ -29,7 +56,7 @@ function Announcements({ onBack }) {
           <h1 className="page-title">📢 공지사항</h1>
 
           <div className="announcements-grid">
-            {allAnnouncements.map(announcement => (
+            {announcements.map(announcement => (
               <AnnouncementCard
                 key={announcement.id}
                 announcement={announcement}
