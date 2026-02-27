@@ -169,3 +169,405 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
+
+/* ===== Survey Styles ===== */
+
+.survey-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* 회차 목록 */
+.survey-rounds-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.survey-round-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.round-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.round-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0;
+}
+
+.round-period {
+  font-size: 14px;
+  color: #718096;
+  margin: 0;
+}
+
+.round-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.round-status {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.round-status-open      { background: #c6f6d5; color: #276749; }
+.round-status-submitted { background: #bee3f8; color: #2b6cb0; }
+.round-status-upcoming  { background: #fefcbf; color: #744210; }
+.round-status-closed    { background: #fed7d7; color: #822727; }
+
+.round-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.round-btn-primary {
+  background: #667eea;
+  color: white;
+}
+
+.round-btn-primary:hover {
+  background: #5568d3;
+  transform: translateY(-2px);
+}
+
+.round-btn-secondary {
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+.round-btn-secondary:hover {
+  background: #667eea;
+  color: white;
+}
+
+/* 설문 폼 */
+.survey-progress-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.progress-step {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: #e2e8f0;
+  transition: background 0.3s;
+}
+
+.progress-step-active {
+  background: #667eea;
+}
+
+.progress-label {
+  font-size: 14px;
+  color: #718096;
+  font-weight: 600;
+  white-space: nowrap;
+  margin-left: 8px;
+}
+
+.survey-part-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.survey-questions {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.survey-question {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.question-text {
+  font-size: 15px;
+  color: #2d3748;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.question-number {
+  font-weight: 700;
+  color: #667eea;
+  margin-right: 4px;
+}
+
+.required-mark {
+  color: #e53e3e;
+}
+
+/* 5점 척도 */
+.scale-options {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.scale-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 80px;
+  flex: 1;
+}
+
+.scale-option input[type="radio"] {
+  display: none;
+}
+
+.scale-option:hover {
+  border-color: #667eea;
+}
+
+.scale-option.scale-selected {
+  border-color: #667eea;
+  background: #ebf4ff;
+}
+
+.scale-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #4a5568;
+}
+
+.scale-option.scale-selected .scale-value {
+  color: #667eea;
+}
+
+.scale-label {
+  font-size: 11px;
+  color: #718096;
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* 주관식 텍스트 입력 */
+.survey-textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #2d3748;
+  resize: vertical;
+  font-family: inherit;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.survey-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+/* 이전/다음 네비게이션 */
+.survey-nav {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.survey-nav-btn {
+  padding: 12px 28px;
+  border-radius: 8px;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.survey-nav-prev {
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+.survey-nav-prev:hover {
+  background: #667eea;
+  color: white;
+}
+
+.survey-nav-next {
+  background: #667eea;
+  color: white;
+}
+
+.survey-nav-next:hover:not(:disabled) {
+  background: #5568d3;
+  transform: translateY(-2px);
+}
+
+.survey-nav-next:disabled {
+  background: #cbd5e0;
+  cursor: not-allowed;
+}
+
+.survey-nav-submit {
+  background: #48bb78;
+  color: white;
+}
+
+.survey-nav-submit:hover {
+  background: #38a169;
+  transform: translateY(-2px);
+}
+
+/* 제출 확인 다이얼로그 */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.confirm-dialog {
+  background: white;
+  border-radius: 16px;
+  padding: 36px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.confirm-dialog h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 10px;
+}
+
+.confirm-dialog p {
+  font-size: 15px;
+  color: #718096;
+  margin-bottom: 24px;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.confirm-btn {
+  padding: 12px 28px;
+  border-radius: 8px;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.confirm-cancel {
+  background: #e2e8f0;
+  color: #4a5568;
+}
+
+.confirm-cancel:hover {
+  background: #cbd5e0;
+}
+
+.confirm-ok {
+  background: #48bb78;
+  color: white;
+}
+
+.confirm-ok:hover:not(:disabled) {
+  background: #38a169;
+}
+
+.confirm-ok:disabled {
+  background: #cbd5e0;
+  cursor: not-allowed;
+}
+
+/* 결과 화면 */
+.result-submitted-at {
+  font-size: 14px;
+  color: #718096;
+  margin-bottom: 28px;
+}
+
+.result-part {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.result-part-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.result-question {
+  margin-bottom: 20px;
+}
+
+.result-question:last-child {
+  margin-bottom: 0;
+}
+
+.result-answer {
+  font-size: 15px;
+  color: #4a5568;
+  background: #f7fafc;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-top: 6px;
+  line-height: 1.6;
+}
