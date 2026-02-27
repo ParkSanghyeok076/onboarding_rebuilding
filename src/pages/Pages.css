@@ -719,3 +719,37 @@
   color: #555;
 }
 .image-popup-img { max-width: 80vw; max-height: 80vh; border-radius: 8px; display: block; }
+
+/* ===== Admin Survey ===== */
+.admin-action-btn {
+  background: #4ECDC4;
+  color: white;
+  border: none;
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.admin-action-btn:disabled { background: #aaa; cursor: not-allowed; }
+.admin-action-btn:hover:not(:disabled) { background: #3db8b0; }
+
+.survey-row { cursor: pointer; }
+.survey-row:hover td { background: #f5fffe; }
+
+.status-badge.clickable { cursor: pointer; text-decoration: underline; }
+
+.email-draft-subject { margin-bottom: 0.75rem; }
+.email-draft-body {
+  background: #f8f8f8;
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+
+.survey-detail-date { color: #888; margin-bottom: 1.5rem; }
