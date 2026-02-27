@@ -104,13 +104,13 @@ function App() {
           ? <AdminMenu onSelectMenu={handleSelectMenu} />
           : <MainMenu onSelectMenu={handleSelectMenu} />
       )}
-      {currentPage === 'admin-announcements' && (
+      {currentPage === 'admin-announcements' && currentUser.role === 'hr_admin' && (
         <AdminAnnouncements onBack={handleBack} />
       )}
-      {currentPage === 'admin-onboarding' && (
+      {currentPage === 'admin-onboarding' && currentUser.role === 'hr_admin' && (
         <AdminOnboarding onBack={handleBack} />
       )}
-      {currentPage === 'admin-survey' && (
+      {currentPage === 'admin-survey' && currentUser.role === 'hr_admin' && (
         <AdminSurvey onBack={handleBack} />
       )}
       {currentPage === 'announcements' && (
