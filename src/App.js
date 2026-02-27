@@ -8,6 +8,10 @@ import OnboardingProgram from './pages/OnboardingProgram';
 import Announcements from './pages/Announcements';
 import Survey from './pages/Survey';
 import PasswordChange from './pages/PasswordChange';
+import AdminMenu from './components/AdminMenu';
+import AdminAnnouncements from './pages/AdminAnnouncements';
+import AdminOnboarding from './pages/AdminOnboarding';
+import AdminSurvey from './pages/AdminSurvey';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -96,7 +100,18 @@ function App() {
       />
 
       {currentPage === 'menu' && (
-        <MainMenu onSelectMenu={handleSelectMenu} />
+        currentUser.role === 'hr_admin'
+          ? <AdminMenu onSelectMenu={handleSelectMenu} />
+          : <MainMenu onSelectMenu={handleSelectMenu} />
+      )}
+      {currentPage === 'admin-announcements' && (
+        <AdminAnnouncements onBack={handleBack} />
+      )}
+      {currentPage === 'admin-onboarding' && (
+        <AdminOnboarding onBack={handleBack} />
+      )}
+      {currentPage === 'admin-survey' && (
+        <AdminSurvey onBack={handleBack} />
       )}
       {currentPage === 'announcements' && (
         <Announcements onBack={handleBack} />
