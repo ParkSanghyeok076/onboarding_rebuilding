@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import './Pages.css';
 
+function SortIcon({ sortKey, col, sortAsc }) {
+  if (sortKey !== col) return <span> ↑↓</span>;
+  return <span>{sortAsc ? ' ↑' : ' ↓'}</span>;
+}
+
 function AdminOnboarding({ onBack }) {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -9,6 +14,7 @@ function AdminOnboarding({ onBack }) {
   const [sortKey, setSortKey] = useState(null); // 'name' | 'status'
   const [sortAsc, setSortAsc] = useState(true);
   const [imageUrl, setImageUrl] = useState(null); // 팝업용
+  const [imageLoading, setImageLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,14 +25,18 @@ function AdminOnboarding({ onBack }) {
 
       if (userError || !users) { setLoading(false); return; }
 
-      const { data: subs } = await supabase
+      const { data: subs, error: subsError } = await supabase
         .from('onboarding_submissions')
         .select('user_id, program_id, image_url');
+
+      if (subsError) {
+        console.error('온보딩 제출 현황 조회 실패:', subsError.message);
+      }
 
       const subMap = {};
       for (const s of subs || []) {
         if (!subMap[s.user_id]) subMap[s.user_id] = {};
-        subMap[s.user_id][s.program_id] = s.image_url;
+        subMap[s.user_id][Number(s.program_id)] = s.image_url;
       }
 
       setRows(users.map(u => ({
@@ -45,10 +55,14 @@ function AdminOnboarding({ onBack }) {
   };
 
   const handleImageClick = async (storagePath) => {
-    const { data } = await supabase.storage
+    if (imageLoading) return;
+    setImageLoading(true);
+    const { data, error } = await supabase.storage
       .from('onboarding-images')
       .createSignedUrl(storagePath, 3600);
     if (data) setImageUrl(data.signedUrl);
+    else alert('이미지를 불러올 수 없습니다: ' + (error?.message || '알 수 없는 오류'));
+    setImageLoading(false);
   };
 
   let displayed = [...rows];
@@ -56,8 +70,6 @@ function AdminOnboarding({ onBack }) {
   if (filter === '미완료') displayed = displayed.filter(r => !r.completed);
   if (sortKey === 'name') displayed.sort((a, b) => sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
   if (sortKey === 'status') displayed.sort((a, b) => sortAsc ? (a.completed ? 1 : -1) : (a.completed ? -1 : 1));
-
-  const SortIcon = ({ k }) => sortKey === k ? (sortAsc ? ' ↑' : ' ↓') : ' ↑↓';
 
   if (loading) {
     return (
@@ -92,13 +104,13 @@ function AdminOnboarding({ onBack }) {
             <thead>
               <tr>
                 <th className="sortable" onClick={() => handleSort('name')}>
-                  이름<SortIcon k="name" />
+                  이름<SortIcon sortKey={sortKey} col="name" sortAsc={sortAsc} />
                 </th>
                 <th>팀</th>
                 <th>유형</th>
                 {[1,2,3,4,5,6].map(n => <th key={n}>{n}</th>)}
                 <th className="sortable" onClick={() => handleSort('status')}>
-                  상태<SortIcon k="status" />
+                  상태<SortIcon sortKey={sortKey} col="status" sortAsc={sortAsc} />
                 </th>
               </tr>
             </thead>
@@ -124,7 +136,7 @@ function AdminOnboarding({ onBack }) {
                 </tr>
               ))}
               {displayed.length === 0 && (
-                <tr><td colSpan={11} className="admin-empty">해당하는 데이터가 없습니다.</td></tr>
+                <tr><td colSpan={10} className="admin-empty">해당하는 데이터가 없습니다.</td></tr>
               )}
             </tbody>
           </table>
