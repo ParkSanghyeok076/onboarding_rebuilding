@@ -11,11 +11,7 @@ function SurveyForm({ user, roundNumber, onSubmitted, onBack }) {
 
   const part = PARTS[currentPart];
 
-  const handleScaleChange = (key, value) => {
-    setAnswers(prev => ({ ...prev, [key]: value }));
-  };
-
-  const handleTextChange = (key, value) => {
+  const handleAnswerChange = (key, value) => {
     setAnswers(prev => ({ ...prev, [key]: value }));
   };
 
@@ -47,12 +43,13 @@ function SurveyForm({ user, roundNumber, onSubmitted, onBack }) {
         ...answers,
       });
     setSubmitting(false);
-    setConfirmOpen(false);
 
     if (error) {
+      setConfirmOpen(false);
       alert('제출 중 오류가 발생했습니다. 다시 시도해 주세요.');
       console.error(error);
     } else {
+      setConfirmOpen(false);
       onSubmitted();
     }
   };
@@ -94,7 +91,7 @@ function SurveyForm({ user, roundNumber, onSubmitted, onBack }) {
                         name={q.key}
                         value={val}
                         checked={answers[q.key] === val}
-                        onChange={() => handleScaleChange(q.key, val)}
+                        onChange={() => handleAnswerChange(q.key, val)}
                       />
                       <span className="scale-value">{val}</span>
                       <span className="scale-label">{SCALE_LABELS[val]}</span>
@@ -106,7 +103,7 @@ function SurveyForm({ user, roundNumber, onSubmitted, onBack }) {
                   className="survey-textarea"
                   placeholder="자유롭게 작성해 주세요. (선택)"
                   value={answers[q.key] || ''}
-                  onChange={e => handleTextChange(q.key, e.target.value)}
+                  onChange={e => handleAnswerChange(q.key, e.target.value)}
                   rows={4}
                 />
               )}
