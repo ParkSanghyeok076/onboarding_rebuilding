@@ -1,19 +1,58 @@
-import React from 'react';
-import './Pages.css';
+import React, { useState } from 'react';
+import SurveyList from './SurveyList';
+import SurveyForm from './SurveyForm';
+import SurveyResult from './SurveyResult';
 
-function Survey({ onBack }) {
+function Survey({ user, onBack }) {
+  const [view, setView] = useState('list'); // 'list' | 'form' | 'result'
+  const [selectedRound, setSelectedRound] = useState(null);
+
+  const handleStart = (roundNumber) => {
+    setSelectedRound(roundNumber);
+    setView('form');
+  };
+
+  const handleViewResult = (roundNumber) => {
+    setSelectedRound(roundNumber);
+    setView('result');
+  };
+
+  const handleSubmitted = () => {
+    setView('list');
+  };
+
+  const handleBackToList = () => {
+    setView('list');
+  };
+
+  if (view === 'form') {
+    return (
+      <SurveyForm
+        user={user}
+        roundNumber={selectedRound}
+        onSubmitted={handleSubmitted}
+        onBack={handleBackToList}
+      />
+    );
+  }
+
+  if (view === 'result') {
+    return (
+      <SurveyResult
+        user={user}
+        roundNumber={selectedRound}
+        onBack={handleBackToList}
+      />
+    );
+  }
+
   return (
-    <div className="page-container">
-      <button onClick={onBack} className="back-button">
-        ← 메뉴로 돌아가기
-      </button>
-
-      <div className="temp-page">
-        <div className="temp-icon">📝</div>
-        <h1>설문조사</h1>
-        <p>설문조사 페이지는 곧 개발될 예정입니다.</p>
-      </div>
-    </div>
+    <SurveyList
+      user={user}
+      onStart={handleStart}
+      onViewResult={handleViewResult}
+      onBack={onBack}
+    />
   );
 }
 
