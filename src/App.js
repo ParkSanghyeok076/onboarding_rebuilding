@@ -105,7 +105,7 @@ function App() {
         <OnboardingProgram user={currentUser} onBack={handleBack} />
       )}
       {currentPage === 'survey' && (
-        <Survey onBack={handleBack} />
+        <Survey user={currentUser} onBack={handleBack} />
       )}
       {currentPage === 'password-change' && (
         <PasswordChange
