@@ -54,7 +54,9 @@ CREATE TABLE onboarding_submissions (
   UNIQUE(user_id, program_id)
 );
 
--- ④ 설문 회차
+-- ④ 설문 회차 (2026-02-27 이후 미사용)
+-- survey_responses.round_number 컬럼으로 직접 회차를 저장하도록 변경됨.
+-- migration_survey_columns.sql 참고.
 CREATE TABLE survey_rounds (
   id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   round_number int CHECK (round_number BETWEEN 1 AND 3),

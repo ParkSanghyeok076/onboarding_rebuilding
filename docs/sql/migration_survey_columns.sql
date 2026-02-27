@@ -7,7 +7,7 @@ ALTER TABLE survey_responses DROP COLUMN IF EXISTS subjective_2;
 ALTER TABLE survey_responses DROP COLUMN IF EXISTS round_id;
 
 -- 회차 번호 직접 저장 (survey_rounds 테이블 미사용)
-ALTER TABLE survey_responses ADD COLUMN round_number integer CHECK (round_number BETWEEN 1 AND 3);
+ALTER TABLE survey_responses ADD COLUMN round_number integer NOT NULL CHECK (round_number BETWEEN 1 AND 3);
 
 -- Part 1: OJT 준비 및 멘토링 태도
 ALTER TABLE survey_responses ADD COLUMN q1_1 integer CHECK (q1_1 BETWEEN 1 AND 5);
