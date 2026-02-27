@@ -60,21 +60,29 @@ function AdminSurvey({ onBack }) {
       await runAnalyze(response.id);
       await fetchResponses();
     } catch (e) {
-      alert('분석 실패: ' + e.message);
+      const msg = e.message?.includes('session') ? '세션이 만료되었습니다. 다시 로그인해 주세요.' : e.message;
+      alert('분석 실패: ' + msg);
+    } finally {
+      setActionLoading(p => ({ ...p, [key]: false }));
     }
-    setActionLoading(p => ({ ...p, [key]: false }));
   };
 
   const handleGenerateEmail = async (response, recipientType) => {
+    if (!response.analysisId) {
+      alert('분석을 먼저 실행해주세요.');
+      return;
+    }
     const key = `email_${response.id}_${recipientType}`;
     setActionLoading(p => ({ ...p, [key]: true }));
     try {
       await runGenerateEmail(response.analysisId, recipientType);
       await fetchResponses();
     } catch (e) {
-      alert('이메일 생성 실패: ' + e.message);
+      const msg = e.message?.includes('session') ? '세션이 만료되었습니다. 다시 로그인해 주세요.' : e.message;
+      alert('이메일 생성 실패: ' + msg);
+    } finally {
+      setActionLoading(p => ({ ...p, [key]: false }));
     }
-    setActionLoading(p => ({ ...p, [key]: false }));
   };
 
   const displayed = roundFilter === '전체'
@@ -226,7 +234,12 @@ function SurveyDetail({ response, onBack }) {
     fetchDetail();
   }, [response.id]);
 
-  if (loading) return <div className="page-container"><p>로딩 중...</p></div>;
+  if (loading) return (
+    <div className="page-container">
+      <button onClick={onBack} className="back-button">← 목록으로</button>
+      <p>로딩 중...</p>
+    </div>
+  );
   if (!detail) return <div className="page-container"><button onClick={onBack} className="back-button">← 목록으로</button><p>데이터를 불러올 수 없습니다.</p></div>;
 
   return (
