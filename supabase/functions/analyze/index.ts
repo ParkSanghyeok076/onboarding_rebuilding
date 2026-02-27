@@ -36,11 +36,18 @@ serve(async (req) => {
       })
     }
 
-    const { data: userProfile } = await supabase
+    const { data: userProfile, error: profileError } = await supabase
       .from('users')
       .select('role')
       .eq('id', user.id)
       .single()
+
+    if (profileError) {
+      return new Response(JSON.stringify({ error: '사용자 프로필 조회 실패' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
 
     if (userProfile?.role !== 'hr_admin') {
       return new Response(JSON.stringify({ error: 'HR Admin 권한 필요' }), {
@@ -51,8 +58,8 @@ serve(async (req) => {
 
     // 2. 요청 파라미터
     const { response_id } = await req.json()
-    if (!response_id) {
-      return new Response(JSON.stringify({ error: 'response_id 필요' }), {
+    if (!response_id || typeof response_id !== 'string') {
+      return new Response(JSON.stringify({ error: 'response_id 필요 (문자열)' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
@@ -118,10 +125,13 @@ serve(async (req) => {
     })
 
     const claudeData = await claudeRes.json()
+    if (!claudeRes.ok) {
+      throw new Error(`Claude API 오류 (${claudeRes.status}): ${claudeData.error?.message ?? JSON.stringify(claudeData)}`)
+    }
     const rawResult = claudeData.content[0].text
 
     const jsonMatch = rawResult.match(/\[[\s\S]*\]/)
-    if (!jsonMatch) throw new Error('Claude 응답에서 JSON을 찾을 수 없습니다.')
+    if (!jsonMatch) throw new Error('Claude 응답에서 JSON을 찾을 수 없습니다. (응답이 잘렸거나 형식이 올바르지 않을 수 있습니다)')
     const aspects = JSON.parse(jsonMatch[0])
 
     // 6. analysis_results 저장
@@ -131,15 +141,24 @@ serve(async (req) => {
       .select('id')
       .single()
 
-    if (insertError) throw insertError
+    if (insertError) {
+      if (insertError.code === '23505') {
+        return new Response(JSON.stringify({ error: '이미 분석된 응답입니다.' }), {
+          status: 409,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        })
+      }
+      throw insertError
+    }
 
     return new Response(
       JSON.stringify({ analysis_result_id: saved.id, aspects }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
-  } catch (error) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error)
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: message }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
