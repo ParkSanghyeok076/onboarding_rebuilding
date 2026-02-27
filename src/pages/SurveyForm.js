@@ -17,8 +17,9 @@ function SurveyForm({ user, roundNumber, onSubmitted, onBack }) {
 
   const isPartValid = () => {
     return part.questions
-      .filter(q => q.type === 'scale')
-      .every(q => answers[q.key] !== undefined);
+      .every(q => q.type === 'scale'
+        ? answers[q.key] !== undefined
+        : (answers[q.key] || '').trim() !== '');
   };
 
   const handleNext = () => {
@@ -77,7 +78,7 @@ function SurveyForm({ user, roundNumber, onSubmitted, onBack }) {
             <div key={q.key} className="survey-question">
               <p className="question-text">
                 <span className="question-number">{idx + 1}.</span> {q.text}
-                {q.type === 'scale' && <span className="required-mark"> *</span>}
+                <span className="required-mark"> *</span>
               </p>
               {q.type === 'scale' ? (
                 <div className="scale-options">

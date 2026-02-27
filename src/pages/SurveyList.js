@@ -89,7 +89,7 @@ function SurveyList({ user, onStart, onViewResult, onBack }) {
                     className="round-btn round-btn-primary"
                     onClick={() => onStart(roundNumber)}
                   >
-                    응시하기
+                    응답하기
                   </button>
                 )}
                 {status === 'submitted' && (
