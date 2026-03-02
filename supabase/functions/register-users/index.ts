@@ -38,16 +38,14 @@ serve(async (req) => {
       })
     }
 
-    // 사용자 JWT 검증: anon key + user JWT (Supabase 권장 패턴)
+    // 사용자 JWT 검증: anon key client + 명시적 token
+    const token = authHeader.replace('Bearer ', '')
     const userClient = createClient(
       SUPABASE_URL,
       SUPABASE_ANON_KEY,
-      {
-        global: { headers: { Authorization: authHeader } },
-        auth: { autoRefreshToken: false, persistSession: false },
-      }
+      { auth: { autoRefreshToken: false, persistSession: false } }
     )
-    const { data: { user }, error: authError } = await userClient.auth.getUser()
+    const { data: { user }, error: authError } = await userClient.auth.getUser(token)
     if (authError || !user) {
       return new Response(JSON.stringify({ error: '인증 실패' }), {
         status: 401,
