@@ -42,11 +42,18 @@ serve(async (req) => {
       })
     }
 
-    const { data: userProfile } = await supabase
+    const { data: userProfile, error: profileError } = await supabase
       .from('users')
       .select('role')
       .eq('id', user.id)
       .single()
+
+    if (profileError) {
+      return new Response(JSON.stringify({ error: '사용자 프로필 조회 실패' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
 
     if (userProfile?.role !== 'hr_admin') {
       return new Response(JSON.stringify({ error: 'HR Admin 권한 필요' }), {
@@ -69,6 +76,11 @@ serve(async (req) => {
 
     for (const u of users) {
       const { employee_id, name, department, hire_date, employee_type } = u
+
+      if (!employee_id || !name || !hire_date || !['신입', '경력'].includes(employee_type)) {
+        failed.push({ employee_id: employee_id ?? '(unknown)', reason: '필수 필드 누락 또는 구분 오류' })
+        continue
+      }
 
       // 기간 자동 계산
       const period_1_start = hire_date

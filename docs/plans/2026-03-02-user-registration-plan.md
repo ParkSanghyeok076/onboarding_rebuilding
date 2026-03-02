@@ -115,7 +115,7 @@ serve(async (req) => {
         // Auth 계정 생성
         const { data: authData, error: createError } = await supabase.auth.admin.createUser({
           email: `${employee_id}@company.internal`,
-          password: employee_id,
+          password: 'y' + employee_id,
           email_confirm: true,
         })
 
@@ -525,5 +525,5 @@ git push origin main
 
 **Step 4: 등록된 테스트 계정으로 로그인 확인**
 
-- 사번: `9001001`, 비밀번호: `9001001`
+- 사번: `9001001`, 비밀번호: `y9001001`
 - 로그인 후 온보딩 화면 정상 표시 확인
