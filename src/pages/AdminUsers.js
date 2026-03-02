@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Papa from 'papaparse';
 import { registerUsers } from '../lib/edgeFunctions';
 import './Pages.css';
@@ -8,6 +8,7 @@ function AdminUsers({ onBack }) {
   const [result, setResult] = useState(null);     // { success, failed }
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const fileInputRef = useRef(null);
 
   const handleFile = (e) => {
     const file = e.target.files[0];
@@ -28,13 +29,24 @@ function AdminUsers({ onBack }) {
           employee_type: row['구분']?.trim(),
         }));
 
+        const datePattern = /^\d{4}-\d{2}-\d{2}$/;
         const invalid = rows.filter(
           r => !r.employee_id || !r.name || !r.hire_date ||
+               !datePattern.test(r.hire_date) ||
                !['신입', '경력'].includes(r.employee_type)
         );
 
         if (invalid.length > 0) {
-          setError(`형식 오류 ${invalid.length}건: 사번·이름·입사일·구분(신입/경력) 확인 필요`);
+          const badIds = invalid.map(r => r.employee_id || '(사번없음)').join(', ');
+          setError(`형식 오류 ${invalid.length}건 (${badIds}): 사번·이름·입사일(YYYY-MM-DD)·구분(신입/경력) 확인 필요`);
+          setPreview(null);
+          return;
+        }
+
+        const ids = rows.map(r => r.employee_id);
+        const duplicates = ids.filter((id, i) => ids.indexOf(id) !== i);
+        if (duplicates.length > 0) {
+          setError(`중복 사번 ${duplicates.length}건: ${[...new Set(duplicates)].join(', ')}`);
           setPreview(null);
           return;
         }
@@ -52,6 +64,7 @@ function AdminUsers({ onBack }) {
       const res = await registerUsers(preview);
       setResult(res);
       setPreview(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (e) {
       setError(e.message);
     } finally {
@@ -71,7 +84,7 @@ function AdminUsers({ onBack }) {
           CSV 형식: <code>사번,이름,부서,입사일,구분</code>
           &nbsp;(입사일: YYYY-MM-DD, 구분: 신입 또는 경력)
         </p>
-        <input type="file" accept=".csv" onChange={handleFile} />
+        <input type="file" accept=".csv" onChange={handleFile} ref={fileInputRef} />
       </div>
 
       {error && <p className="error-message">{error}</p>}
