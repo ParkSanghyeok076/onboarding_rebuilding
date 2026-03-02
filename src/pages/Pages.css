@@ -772,6 +772,40 @@
 
 .survey-detail-date { color: #888; margin-bottom: 1.5rem; }
 
+/* ===== ABSA 분석 결과 모달 ===== */
+.analysis-modal { max-width: 860px; }
+
+.analysis-quote {
+  font-style: italic;
+  color: #555;
+  max-width: 280px;
+  font-size: 13px;
+}
+
+.sentiment-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.sentiment-badge.sentiment-긍정 { background: #c6f6d5; color: #276749; }
+.sentiment-badge.sentiment-약간긍정 { background: #e6fffa; color: #285e61; }
+.sentiment-badge.sentiment-중립 { background: #e2e8f0; color: #4a5568; }
+.sentiment-badge.sentiment-약간부정 { background: #fefcbf; color: #744210; }
+.sentiment-badge.sentiment-부정 { background: #fed7d7; color: #9b2c2c; }
+
+/* ===== AdminAnnouncements 클릭 가능 목록 ===== */
+.admin-list-item-clickable { cursor: pointer; }
+.admin-list-item-clickable:hover { background: #f7fafc; }
+
+.admin-pdf-link {
+  color: #4ECDC4;
+  text-decoration: none;
+  font-weight: 500;
+}
+.admin-pdf-link:hover { text-decoration: underline; }
+
 /* ===== AdminUsers 전용 ===== */
 
 /* page-header: 뒤로 버튼 + 제목 한 행 */

@@ -127,16 +127,9 @@ serve(async (req) => {
       })
     }
 
-    const recipientName = recipient_type === 'mentor'
+    const recipientName = (recipient_type === 'mentor'
       ? employee.mentor_name
-      : employee.team_leader_name
-
-    if (!recipientName) {
-      return new Response(JSON.stringify({ error: `${recipient_type === 'mentor' ? '멘토' : '팀장'} 정보가 없습니다.` }), {
-        status: 422,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      })
-    }
+      : employee.team_leader_name) || (recipient_type === 'mentor' ? '멘토' : '팀장')
 
     const toneGuide = recipient_type === 'mentor'
       ? `[멘토용]\n- 톤: 동료 간 따뜻한 제안\n- 포함: 긍정 항목 강점 언급 + 보완 제안 1가지 완곡 표현\n- 분량: 3~4문단`

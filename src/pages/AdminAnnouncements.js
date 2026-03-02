@@ -9,6 +9,9 @@ function AdminAnnouncements({ onBack }) {
   const [form, setForm] = useState({ title: '', content: '', is_pinned: false });
   const [pdfFile, setPdfFile] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [editItem, setEditItem] = useState(null);
+  const [editForm, setEditForm] = useState({ title: '', content: '', is_pinned: false });
+  const [editSubmitting, setEditSubmitting] = useState(false);
 
   const fetchAnnouncements = async () => {
     const { data, error } = await supabase
@@ -65,6 +68,29 @@ function AdminAnnouncements({ onBack }) {
     setSubmitting(false);
   };
 
+  const handleUpdate = async () => {
+    if (!editForm.title.trim() || !editForm.content.trim()) {
+      alert('제목과 본문을 입력해 주세요.');
+      return;
+    }
+    setEditSubmitting(true);
+    const { error } = await supabase
+      .from('announcements')
+      .update({
+        title: editForm.title,
+        content: editForm.content,
+        is_pinned: editForm.is_pinned,
+      })
+      .eq('id', editItem.id);
+    if (error) {
+      alert('수정 실패: ' + error.message);
+    } else {
+      setEditItem(null);
+      fetchAnnouncements();
+    }
+    setEditSubmitting(false);
+  };
+
   const handleDelete = async (announcement) => {
     if (!window.confirm(`"${announcement.title}" 공지를 삭제하시겠습니까?`)) return;
 
@@ -104,18 +130,73 @@ function AdminAnnouncements({ onBack }) {
         <div className="admin-list">
           {announcements.length === 0 && <p className="admin-empty">등록된 공지사항이 없습니다.</p>}
           {announcements.map(a => (
-            <div key={a.id} className="admin-list-item">
+            <div
+              key={a.id}
+              className="admin-list-item admin-list-item-clickable"
+              onClick={() => {
+                setEditItem(a);
+                setEditForm({ title: a.title, content: a.content, is_pinned: a.is_pinned });
+              }}
+            >
               <div className="admin-item-info">
                 {a.is_pinned && <span className="pin-badge">📌</span>}
                 <span className="admin-item-title">{a.title}</span>
                 <span className="admin-item-date">{a.published_at?.slice(0, 10)}</span>
                 {a.pdf_url && <span className="admin-item-pdf">PDF 첨부</span>}
               </div>
-              <button className="admin-delete-btn" onClick={() => handleDelete(a)}>삭제</button>
+              <button className="admin-delete-btn" onClick={(e) => { e.stopPropagation(); handleDelete(a); }}>삭제</button>
             </div>
           ))}
         </div>
       </div>
+
+      {editItem && (
+        <div className="confirm-overlay" onClick={() => setEditItem(null)}>
+          <div className="admin-modal" onClick={e => e.stopPropagation()}>
+            <h2>공지사항 상세 / 편집</h2>
+            <div className="admin-form-group">
+              <label>제목</label>
+              <input
+                type="text"
+                value={editForm.title}
+                onChange={e => setEditForm(p => ({ ...p, title: e.target.value }))}
+              />
+            </div>
+            <div className="admin-form-group">
+              <label>본문</label>
+              <textarea
+                rows={8}
+                value={editForm.content}
+                onChange={e => setEditForm(p => ({ ...p, content: e.target.value }))}
+              />
+            </div>
+            {editItem.pdf_url && (
+              <div className="admin-form-group">
+                <label>첨부 파일</label>
+                <a href={editItem.pdf_url} target="_blank" rel="noreferrer" className="admin-pdf-link">
+                  📄 PDF 보기
+                </a>
+              </div>
+            )}
+            <div className="admin-form-check">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={editForm.is_pinned}
+                  onChange={e => setEditForm(p => ({ ...p, is_pinned: e.target.checked }))}
+                />
+                {' '}상단 고정
+              </label>
+            </div>
+            <div className="confirm-actions">
+              <button className="confirm-btn confirm-cancel" onClick={() => setEditItem(null)}>취소</button>
+              <button className="confirm-btn confirm-ok" onClick={handleUpdate} disabled={editSubmitting}>
+                {editSubmitting ? '저장 중...' : '저장'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {modalOpen && (
         <div className="confirm-overlay">

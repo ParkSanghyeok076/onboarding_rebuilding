@@ -11,6 +11,7 @@ function AdminSurvey({ onBack }) {
   const [selectedResponse, setSelectedResponse] = useState(null); // 상세 보기
   const [emailDraft, setEmailDraft] = useState(null); // 이메일 초안 팝업
   const [actionLoading, setActionLoading] = useState({}); // { [key]: true }
+  const [selectedAnalysis, setSelectedAnalysis] = useState(null); // ABSA 결과 팝업
 
   const fetchResponses = useCallback(async () => {
     const { data: surveyData, error } = await supabase
@@ -25,7 +26,7 @@ function AdminSurvey({ onBack }) {
 
     const { data: analyses } = await supabase
       .from('analysis_results')
-      .select('id, response_id')
+      .select('id, response_id, aspects')
       .in('response_id', ids);
 
     const { data: drafts } = await supabase
@@ -34,7 +35,7 @@ function AdminSurvey({ onBack }) {
       .in('response_id', ids);
 
     const analysisMap = {};
-    for (const a of analyses || []) analysisMap[a.response_id] = a.id;
+    for (const a of analyses || []) analysisMap[a.response_id] = { id: a.id, aspects: a.aspects };
 
     const draftMap = {};
     for (const d of drafts || []) {
@@ -45,7 +46,8 @@ function AdminSurvey({ onBack }) {
     setResponses(surveyData.map(r => ({
       ...r,
       userName: r.users?.name || '—',
-      analysisId: analysisMap[r.id] || null,
+      analysisId: analysisMap[r.id]?.id || null,
+      analysisAspects: analysisMap[r.id]?.aspects || null,
       drafts: draftMap[r.id] || {},
     })));
     setLoading(false);
@@ -145,7 +147,10 @@ function AdminSurvey({ onBack }) {
                     <td>{r.submitted_at?.slice(0, 10)}</td>
                     <td onClick={e => e.stopPropagation()}>
                       {r.analysisId ? (
-                        <span className="status-badge done">완료</span>
+                        <span
+                          className="status-badge done clickable"
+                          onClick={() => setSelectedAnalysis({ aspects: r.analysisAspects, userName: r.userName, roundNumber: r.round_number })}
+                        >완료 (확인)</span>
                       ) : (
                         <button
                           className="admin-action-btn"
@@ -209,6 +214,49 @@ function AdminSurvey({ onBack }) {
             <pre className="email-draft-body">{emailDraft.body}</pre>
             <div className="confirm-actions">
               <button className="confirm-btn confirm-ok" onClick={() => setEmailDraft(null)}>닫기</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {selectedAnalysis && (
+        <div className="confirm-overlay" onClick={() => setSelectedAnalysis(null)}>
+          <div className="admin-modal analysis-modal" onClick={e => e.stopPropagation()}>
+            <h2>{selectedAnalysis.userName} — {selectedAnalysis.roundNumber}차 ABSA 분석 결과</h2>
+            {(!selectedAnalysis.aspects || selectedAnalysis.aspects.length === 0) ? (
+              <p className="admin-empty">분석 데이터가 없습니다.</p>
+            ) : (
+              <div className="admin-table-wrap">
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>항목</th>
+                      <th>감성</th>
+                      <th>점수</th>
+                      <th>신뢰도</th>
+                      <th>원문 발췌</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedAnalysis.aspects.map((a, i) => (
+                      <tr key={i}>
+                        <td>{a.aspect}</td>
+                        <td>
+                          <span className={`sentiment-badge sentiment-${a.sentiment}`}>
+                            {a.sentiment}
+                          </span>
+                        </td>
+                        <td>{typeof a.sentiment_score === 'number' ? a.sentiment_score.toFixed(2) : '—'}</td>
+                        <td>{a.confidence}</td>
+                        <td className="analysis-quote">"{a.quote}"</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            <div className="confirm-actions">
+              <button className="confirm-btn confirm-ok" onClick={() => setSelectedAnalysis(null)}>닫기</button>
             </div>
           </div>
         </div>
