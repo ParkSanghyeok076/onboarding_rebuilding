@@ -26,3 +26,15 @@ export async function runGenerateEmail(analysisResultId, recipientType) {
   if (res.error) throw new Error(res.error.message);
   return res.data;
 }
+
+export async function registerUsers(users) {
+  const { data: { session } } = await supabase.auth.getSession();
+
+  const res = await supabase.functions.invoke('register-users', {
+    body: { users },
+    headers: { Authorization: `Bearer ${session.access_token}` },
+  });
+
+  if (res.error) throw new Error(res.error.message);
+  return res.data;
+}
