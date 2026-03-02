@@ -12,6 +12,7 @@ import AdminMenu from './components/AdminMenu';
 import AdminAnnouncements from './pages/AdminAnnouncements';
 import AdminOnboarding from './pages/AdminOnboarding';
 import AdminSurvey from './pages/AdminSurvey';
+import AdminUsers from './pages/AdminUsers';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -112,6 +113,9 @@ function App() {
       )}
       {currentPage === 'admin-survey' && currentUser.role === 'hr_admin' && (
         <AdminSurvey onBack={handleBack} />
+      )}
+      {currentPage === 'admin-users' && currentUser.role === 'hr_admin' && (
+        <AdminUsers onBack={handleBack} />
       )}
       {currentPage === 'announcements' && (
         <Announcements onBack={handleBack} />

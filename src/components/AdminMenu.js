@@ -23,7 +23,14 @@ function AdminMenu({ onSelectMenu }) {
       title: '설문조사 관리',
       description: '응답 확인 · ABSA 분석 · 이메일 초안',
       color: '#95E1D3'
-    }
+    },
+    {
+      id: 'admin-users',
+      icon: '👥',
+      title: '직원 관리',
+      description: 'CSV 일괄 등록 · 직원 목록',
+      color: '#A29BFE'
+    },
   ];
 
   return (
