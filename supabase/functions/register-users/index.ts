@@ -38,16 +38,17 @@ serve(async (req) => {
       })
     }
 
-    // 사용자 JWT 검증: anon key client + 명시적 token
-    const token = authHeader.replace('Bearer ', '')
-    const userClient = createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY,
-      { auth: { autoRefreshToken: false, persistSession: false } }
-    )
-    const { data: { user }, error: authError } = await userClient.auth.getUser(token)
-    if (authError || !user) {
-      return new Response(JSON.stringify({ error: '인증 실패' }), {
+    // JWT 페이로드 디코딩으로 user ID 추출
+    // (게이트웨이가 이미 verify_jwt=true로 서명 검증 완료)
+    let userId: string
+    try {
+      const token = authHeader.replace('Bearer ', '')
+      const payloadB64 = token.split('.')[1]
+      const payload = JSON.parse(atob(payloadB64.replace(/-/g, '+').replace(/_/g, '/')))
+      if (!payload?.sub) throw new Error('sub 없음')
+      userId = payload.sub
+    } catch {
+      return new Response(JSON.stringify({ error: '토큰 파싱 실패' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
@@ -56,7 +57,7 @@ serve(async (req) => {
     const { data: userProfile, error: profileError } = await supabase
       .from('users')
       .select('role')
-      .eq('id', user.id)
+      .eq('id', userId)
       .single()
 
     if (profileError) {
