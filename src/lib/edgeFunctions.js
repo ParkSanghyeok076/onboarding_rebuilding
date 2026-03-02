@@ -6,6 +6,7 @@ export async function runAnalyze(responseId) {
 
   const res = await supabase.functions.invoke('analyze', {
     body: { response_id: responseId },
+    headers: { Authorization: `Bearer ${session.access_token}` },
   });
 
   if (res.error) throw new Error(res.error.message);
@@ -21,6 +22,7 @@ export async function runGenerateEmail(analysisResultId, recipientType) {
       analysis_result_id: analysisResultId,
       recipient_type: recipientType,
     },
+    headers: { Authorization: `Bearer ${session.access_token}` },
   });
 
   if (res.error) throw new Error(res.error.message);
@@ -33,6 +35,7 @@ export async function registerUsers(users) {
 
   const res = await supabase.functions.invoke('register-users', {
     body: { users },
+    headers: { Authorization: `Bearer ${session.access_token}` },
   });
 
   if (res.error) throw new Error(res.error.message);
