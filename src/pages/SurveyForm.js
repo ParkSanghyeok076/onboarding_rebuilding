@@ -105,7 +105,7 @@ function SurveyForm({ user, roundNumber, onSubmitted, onBack }) {
               ) : (
                 <textarea
                   className="survey-textarea"
-                  placeholder="자유롭게 작성해 주세요. (선택)"
+                  placeholder="최대한 구체적으로 작성해주세요."
                   value={answers[q.key] || ''}
                   onChange={e => handleAnswerChange(q.key, e.target.value)}
                   rows={4}
