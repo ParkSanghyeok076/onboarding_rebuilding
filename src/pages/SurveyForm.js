@@ -72,6 +72,9 @@ function SurveyForm({ user, roundNumber, onSubmitted, onBack }) {
         </div>
 
         <h2 className="survey-part-title">{part.title}</h2>
+        {part.description && (
+          <p className="survey-part-description">{part.description}</p>
+        )}
 
         <div className="survey-questions">
           {part.questions.map((q, idx) => (

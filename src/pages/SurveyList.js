@@ -49,7 +49,7 @@ function SurveyList({ user, onStart, onViewResult, onBack }) {
     submitted: '제출 완료',
     upcoming: '기간 전',
     closed: '기간 종료',
-    open: '응시 가능',
+    open: '참여 가능',
   };
 
   const STATUS_CLASS = {
@@ -73,6 +73,7 @@ function SurveyList({ user, onStart, onViewResult, onBack }) {
       <button onClick={onBack} className="back-button">← 메뉴로 돌아가기</button>
       <div className="survey-container">
         <h1 className="page-title">📝 설문조사</h1>
+        <p className="survey-notice">본 설문의 응답은 멘토(버디)와 팀장님께 그대로 공개되지 않으나, 커피챗 및 면담 가이드에 일부 가공되어 포함될 수 있습니다.</p>
         <div className="survey-rounds-list">
           {rounds.map(({ roundNumber, start, end, status }) => (
             <div key={roundNumber} className="survey-round-card">
