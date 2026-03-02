@@ -1,7 +1,7 @@
 import React from 'react';
 import './MainMenu.css';
 
-function MainMenu({ onSelectMenu }) {
+function MainMenu({ user, onSelectMenu }) {
   const menuItems = [
     {
       id: 'announcements',
@@ -28,7 +28,7 @@ function MainMenu({ onSelectMenu }) {
 
   return (
     <div className="main-menu">
-      <h1 className="menu-title">환영합니다! 👋</h1>
+      <h1 className="menu-title">{user?.name}님 환영합니다! 👋</h1>
       <p className="menu-subtitle">온보딩 과정을 시작하세요</p>
 
       <div className="menu-grid">

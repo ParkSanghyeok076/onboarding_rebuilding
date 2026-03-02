@@ -103,7 +103,7 @@ function App() {
       {currentPage === 'menu' && (
         currentUser.role === 'hr_admin'
           ? <AdminMenu onSelectMenu={handleSelectMenu} />
-          : <MainMenu onSelectMenu={handleSelectMenu} />
+          : <MainMenu user={currentUser} onSelectMenu={handleSelectMenu} />
       )}
       {currentPage === 'admin-announcements' && currentUser.role === 'hr_admin' && (
         <AdminAnnouncements onBack={handleBack} />
@@ -133,6 +133,10 @@ function App() {
           onPasswordChanged={handlePasswordChanged}
         />
       )}
+
+      <footer style={{ textAlign: 'center', padding: '16px', color: '#888', fontSize: '13px', borderTop: '1px solid #eee', marginTop: '32px' }}>
+        📞 문의 : 인사기획팀 박상혁 선임(1456)
+      </footer>
     </div>
   );
 }

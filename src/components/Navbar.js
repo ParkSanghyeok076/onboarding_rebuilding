@@ -16,12 +16,11 @@ function Navbar({ user, onLogout, onPasswordChange }) {
   return (
     <div className="navbar">
       <div className="navbar-left">
-        <h2>신규입사자 온보딩 시스템</h2>
+        <h2>YURA 신규입사자 온보딩 시스템</h2>
       </div>
       <div className="navbar-right">
         <div className="user-info">
-          <span className="user-team">{user.team}</span>
-          <span className="user-name">{user.name}</span>
+          <span className="user-name">{user.department} {user.name}</span>
           <span className="user-period">📅 {getMentoringPeriod()}</span>
         </div>
 
