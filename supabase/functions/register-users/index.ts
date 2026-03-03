@@ -101,9 +101,9 @@ serve(async (req) => {
       let period_3_start = null, period_3_end = null
 
       if (employee_type === '신입') {
-        period_2_start = addDays(hire_date, 28)             // 4주
+        period_2_start = addDays(hire_date, 29)             // 1차 종료 다음날
         period_2_end   = addDays(hire_date, 56)             // 8주
-        period_3_start = addDays(hire_date, 56)             // 8주
+        period_3_start = addDays(hire_date, 57)             // 2차 종료 다음날
         period_3_end   = addDays(hire_date, 84)             // 12주
       }
 
