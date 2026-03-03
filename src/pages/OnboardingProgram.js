@@ -9,17 +9,6 @@ function OnboardingProgram({ user, onBack }) {
   const [submissions, setSubmissions] = useState({}); // { programId: signedUrl }
   const [loading, setLoading] = useState(true);
 
-  // 기간 계산
-  const getPeriod = () => {
-    if (user.employee_type === '신입') {
-      if (!user.period_1_start || !user.period_3_end) return '기간 미설정';
-      return `${user.period_1_start} ~ ${user.period_3_end}`;
-    } else {
-      if (!user.period_1_start || !user.period_1_end) return '기간 미설정';
-      return `${user.period_1_start} ~ ${user.period_1_end}`;
-    }
-  };
-
   // 마운트 시 기존 제출 내역 로드
   useEffect(() => {
     const loadSubmissions = async () => {
@@ -76,7 +65,7 @@ function OnboardingProgram({ user, onBack }) {
 
       <div className="App">
         <Header
-          period={getPeriod()}
+          user={user}
           progress={progress}
           total={programs.length}
         />
