@@ -226,16 +226,91 @@ onboarding_rebuilding/
 | Vercel 배포 | ✅ 완료 | 자동 배포 |
 | CSV 직원 일괄 등록 | ✅ 완료 | register-users Edge Function |
 | UI 개선 | ✅ 완료 | 문구/레이아웃 |
+| 온보딩 기간 주 단위 전환 | ✅ 완료 | 신입 12주(84일), 경력 4주(28일) |
+| 타임라인 시각화 | ✅ 완료 | OnboardingTimeline 컴포넌트, 🚗 마커 |
 
 ---
 
-## ✅ 배포 완료 확인 (2026-03-03)
+## ✅ 배포 완료 확인 (2026-03-02)
 
 | 항목 | 상태 |
 |-----|------|
 | Secrets 5개 등록 | ✅ 완료 (ANTHROPIC_API_KEY, SUPABASE_SERVICE_ROLE_KEY 등) |
 | register-users Edge Function 배포 | ✅ 완료 (E2E 직원 등록 성공으로 확인) |
 | 전체 E2E 흐름 테스트 | ✅ 완료 (직원 등록 → 로그인 → 설문 → ABSA → 이메일) |
+
+---
+
+## 📅 2026-03-03 — 온보딩 기간 수정 + 타임라인 시각화
+
+### 배경
+- 다른 PC에서 작업한 내용 git sync (hard reset to origin/main)
+- 월(月) 단위 기간 계산의 부정확성 → 주(週) 단위로 전환
+
+### 완성된 기능
+
+#### 1. 온보딩 기간 계산 변경 (주 단위)
+
+| 구분 | 기존 | 변경 |
+|------|------|------|
+| 신입 전체 | 3개월 | 12주 (84일) |
+| 신입 1차 | +1개월 | +28일 |
+| 신입 2차 | +2개월 | +56일 |
+| 신입 3차 | +3개월 | +84일 |
+| 경력 | 1개월 | 4주 (28일) |
+
+- **`supabase/functions/register-users/index.ts`**: `addMonths()` → `addDays()` 교체
+  - period_2_start: hire_date+29일 (1차 종료 다음날)
+  - period_3_start: hire_date+57일 (2차 종료 다음날)
+- **`src/pages/AdminUsers.js`**: CSV 미리보기 텍스트 `+3개월` → `+12주 (84일)`
+
+#### 2. DB 마이그레이션 (기존 직원 period 재계산)
+
+```sql
+UPDATE users
+SET
+  period_1_end   = hire_date::date + 28,
+  period_2_start = CASE WHEN employee_type = '신입' THEN hire_date::date + 29 ELSE NULL END,
+  period_2_end   = CASE WHEN employee_type = '신입' THEN hire_date::date + 56 ELSE NULL END,
+  period_3_start = CASE WHEN employee_type = '신입' THEN hire_date::date + 57 ELSE NULL END,
+  period_3_end   = CASE WHEN employee_type = '신입' THEN hire_date::date + 84 ELSE NULL END
+WHERE role = 'employee';
+```
+> PostgreSQL에서 `date + integer = date` (type-safe, cast 불필요)
+
+#### 3. OnboardingTimeline 컴포넌트 신규 구현
+
+- **`src/components/OnboardingTimeline.js`** 신규 생성
+  - 신입: 4 노드 (입사일 / 1차종료 / 2차종료 / 3차종료)
+  - 경력: 2 노드 (입사일 / 종료일)
+  - 오늘 마커: 🚗 이모지 (40px, scaleX(-1) 반전, bottom이 선 중심에 정렬)
+  - 구간 색상: 완료(흰색 85%) / 진행중(금색 #ffd700) / 미진행(흰색 18%)
+  - 세그먼트가 원을 침범하지 않도록 `calc(${left}% + 8px)` / `calc(${width}% - 16px)` 적용
+- **`src/components/Header.js`**: `period` 문자열 → `user` 객체 prop, OnboardingTimeline 렌더링
+- **`src/pages/OnboardingProgram.js`**: `getPeriod()` 제거, `user` 객체 전달
+
+#### 4. CSS 정렬 설계 (`src/App.css`)
+
+- 선(`tl-base-line`, `tl-segment`): `top: 31px` + `transform: translateY(-50%)`
+- 노드 원 중심: date(18px) + margin(5px) + radius(8px) = **31px** ← 선 중심과 일치
+- 🚗 배치: `margin-top: -9px` → 이모지 bottom이 선 중심(31px)에 정렬
+
+### 주요 디버깅 이력
+
+- **DB SQL 타입 오류 3회**: `::text` 캐스트, `TO_CHAR()` 시도 후 최종 `date + integer` 방식으로 해결
+- **Edge Function 401**: 구 access token 폐기 후 신규 토큰으로 재배포
+- **타임라인 선/원 미정렬**: `transform: translateY(-50%)` + 픽셀 수학으로 정확한 정렬 달성
+- **세그먼트가 원을 침범**: `calc()` 8px 오프셋으로 원 경계에서 시작/종료
+
+### 커밋 이력
+
+| 커밋 | 내용 |
+|------|------|
+| `232e643` | AdminUsers CSV 미리보기 텍스트 수정 (+12주/+4주) |
+| `126f948` | register-users Edge Function: addDays() 교체 |
+| `72a1fec` | OnboardingTimeline 컴포넌트 신규 구현 |
+| `0fc486d` | Header/OnboardingProgram 타임라인 연결 |
+| `8ba4a0f` | 타임라인 정렬 개선 + 설문 기간 시작일 수정 |
 
 ---
 
@@ -257,4 +332,4 @@ onboarding_rebuilding/
 ---
 
 **작성자**: 인사기획팀 박상혁 선임
-**최종 업데이트**: 2026-03-03
+**최종 업데이트**: 2026-03-03 (온보딩 기간 주 단위 전환 + 타임라인 시각화)
