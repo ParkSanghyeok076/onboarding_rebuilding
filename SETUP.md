@@ -72,6 +72,15 @@ npm start
 |---|---|---|
 | 세션 1 | Supabase Auth 연동 (로그인/로그아웃/비밀번호 변경) | ✅ 완료 |
 | 세션 2 | 공지사항 DB 연동 + 온보딩 이미지 Storage 연동 | ✅ 완료 |
-| 세션 3 | 설문조사 직원 화면 | 예정 |
-| 세션 4 | Edge Functions (ABSA + 이메일 초안) | 예정 |
-| 세션 5 | HR Admin 화면 + Vercel 배포 | 예정 |
+| 세션 3 | 설문조사 직원 화면 (23문항, 3파트) | ✅ 완료 |
+| 세션 4 | Edge Functions (ABSA + 이메일 초안) | ✅ 완료 |
+| 세션 5 | HR Admin 화면 + Vercel 배포 | ✅ 완료 |
+| 추가 | CSV 직원 일괄 등록 (register-users) | ✅ 완료 |
+| 추가 | E2E 전체 흐름 테스트 | ✅ 완료 |
+
+---
+
+## 배포 URL
+
+- **운영**: https://yuraonboardingprogram.vercel.app
+- GitHub main 푸시 시 자동 배포
