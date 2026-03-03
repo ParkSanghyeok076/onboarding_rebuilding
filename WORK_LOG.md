@@ -229,14 +229,13 @@ onboarding_rebuilding/
 
 ---
 
-## ⚠️ 미완료 사항 (배포 전 필수)
+## ✅ 배포 완료 확인 (2026-03-03)
 
-| 항목 | 내용 |
+| 항목 | 상태 |
 |-----|------|
-| register-users 배포 | Supabase 대시보드 → Edge Functions → register-users |
-| SUPABASE_SERVICE_ROLE_KEY | register-users Secrets에 등록 필요 |
-| ANTHROPIC_API_KEY | analyze, generate-email Secrets에 등록 필요 |
-| 전체 흐름 테스트 | 직원 등록 → 로그인 → 설문 → ABSA → 이메일 E2E |
+| Secrets 5개 등록 | ✅ 완료 (ANTHROPIC_API_KEY, SUPABASE_SERVICE_ROLE_KEY 등) |
+| register-users Edge Function 배포 | ✅ 완료 (E2E 직원 등록 성공으로 확인) |
+| 전체 E2E 흐름 테스트 | ✅ 완료 (직원 등록 → 로그인 → 설문 → ABSA → 이메일) |
 
 ---
 
