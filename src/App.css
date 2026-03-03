@@ -131,14 +131,14 @@
 
 .tl-track {
   position: relative;
-  height: 72px;
+  height: 76px;
   margin: 0 32px;
 }
 
-/* 기본 배경 선 — transform으로 원의 중심(27px)에 정확히 정렬 */
+/* 기본 배경 선 — 원 중심(31px)에 정확히 정렬 */
 .tl-base-line {
   position: absolute;
-  top: 27px;
+  top: 31px;
   left: 0;
   right: 0;
   height: 3px;
@@ -150,7 +150,7 @@
 /* 구간 색상 */
 .tl-segment {
   position: absolute;
-  top: 27px;
+  top: 31px;
   height: 3px;
   transform: translateY(-50%);
   border-radius: 2px;
@@ -159,33 +159,21 @@
 .tl-seg--active  { background: #ffd700; box-shadow: 0 0 6px rgba(255, 215, 0, 0.5); }
 .tl-seg--pending { background: rgba(255, 255, 255, 0.18); }
 
-/* 오늘 마커 — 삼각형(▼)으로 교체해 깔끔하게 */
+/* 오늘 마커 — 🚗 이모지가 선 위에 올라탄 형태 */
 .tl-today {
   position: absolute;
   top: 0;
   transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   z-index: 3;
   pointer-events: none;
 }
-.tl-today-text {
-  font-size: 10px;
-  color: #ffd700;
-  line-height: 14px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-}
-/* 삼각형 팁이 선 중심(27px)에 정확히 닿도록: 14px(텍스트) + 5px(마진) + 8px(삼각형) = 27px */
-.tl-today-triangle {
-  width: 0;
-  height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 8px solid #ffd700;
-  margin-top: 5px;
-  filter: drop-shadow(0 1px 3px rgba(255, 215, 0, 0.6));
+/* 🚗 bottom이 선 중심(31px)에 닿도록: margin-top 13px + 이모지 18px = 31px */
+.tl-today-car {
+  font-size: 18px;
+  line-height: 18px;
+  display: block;
+  margin-top: 13px;
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.4));
 }
 
 /* 노드 */
@@ -197,17 +185,17 @@
   flex-direction: column;
   align-items: center;
   z-index: 2;
-  width: 54px;
+  width: 60px;
 }
+/* 날짜: 14px, 높이 18px → 원 중심 = 18 + 5(마진) + 8(반지름) = 31px */
 .tl-date {
-  font-size: 11px;
+  font-size: 14px;
   color: rgba(255, 255, 255, 0.95);
-  height: 14px;
-  line-height: 14px;
+  height: 18px;
+  line-height: 18px;
   white-space: nowrap;
   font-weight: 500;
 }
-/* 원 중심 = 14px(날짜) + 5px(마진) + 8px(반지름) = 27px → 선과 일치 */
 .tl-dot {
   width: 16px;
   height: 16px;
@@ -220,7 +208,7 @@
 .tl-dot--pending { background: rgba(255, 255, 255, 0.08); }
 
 .tl-label {
-  font-size: 11px;
+  font-size: 14px;
   color: rgba(255, 255, 255, 0.78);
   white-space: nowrap;
 }

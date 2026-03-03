@@ -73,8 +73,7 @@ export default function OnboardingTimeline({ user }) {
         {/* Today marker */}
         {showToday && (
           <div className="tl-today" style={{ left: `${todayPct}%` }}>
-            <span className="tl-today-text">오늘</span>
-            <div className="tl-today-triangle" />
+            <span className="tl-today-car">🚗</span>
           </div>
         )}
 
