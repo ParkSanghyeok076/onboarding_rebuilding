@@ -57,7 +57,7 @@ export default function OnboardingTimeline({ user }) {
         {/* Base line */}
         <div className="tl-base-line" />
 
-        {/* Colored segments */}
+        {/* Colored segments — 원 경계(±8px)에서 시작/종료 */}
         {nodes.slice(0, -1).map((n, i) => {
           const left  = toPct(n.date);
           const width = toPct(nodes[i + 1].date) - left;
@@ -65,7 +65,7 @@ export default function OnboardingTimeline({ user }) {
             <div
               key={i}
               className={`tl-segment ${segClass(n.date, nodes[i + 1].date)}`}
-              style={{ left: `${left}%`, width: `${width}%` }}
+              style={{ left: `calc(${left}% + 8px)`, width: `calc(${width}% - 16px)` }}
             />
           );
         })}
