@@ -109,8 +109,8 @@ function AdminUsers({ onBack }) {
                   <td>{r.employee_type}</td>
                   <td>
                     {r.employee_type === '신입'
-                      ? `${r.hire_date} ~ +3개월`
-                      : `${r.hire_date} ~ +1개월`}
+                      ? `${r.hire_date} ~ +12주 (84일)`
+                      : `${r.hire_date} ~ +4주 (28일)`}
                   </td>
                 </tr>
               ))}
