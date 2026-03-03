@@ -167,12 +167,12 @@
   z-index: 3;
   pointer-events: none;
 }
-/* 🚗 bottom이 선 중심(31px)에 닿도록: margin-top -9px + 이모지 40px = 31px */
+/* 🚗 중심이 선 중심(31px)에 오도록: margin-top 11px + 이모지 절반 20px = 31px */
 .tl-today-car {
   font-size: 40px;
   line-height: 40px;
   display: block;
-  margin-top: -9px;
+  margin-top: 11px;
   transform: scaleX(-1);
   filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.4));
 }
