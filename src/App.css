@@ -122,3 +122,96 @@
   border-radius: 8px;
   object-fit: cover;
 }
+
+/* ── OnboardingTimeline ────────────────── */
+.tl-container {
+  padding: 6px 0 10px;
+  margin-bottom: 12px;
+}
+
+.tl-track {
+  position: relative;
+  height: 66px;
+  margin: 0 28px;
+}
+
+/* 기본 배경 선 */
+.tl-base-line {
+  position: absolute;
+  top: 26px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 2px;
+}
+
+/* 구간 색상 */
+.tl-segment {
+  position: absolute;
+  top: 26px;
+  height: 3px;
+  border-radius: 2px;
+}
+.tl-seg--done    { background: rgba(255, 255, 255, 0.85); }
+.tl-seg--active  { background: #ffd700; }
+.tl-seg--pending { background: rgba(255, 255, 255, 0.15); }
+
+/* 오늘 마커 */
+.tl-today {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 3;
+  pointer-events: none;
+}
+.tl-today-text {
+  font-size: 10px;
+  color: #ffd700;
+  line-height: 14px;
+  font-weight: 600;
+}
+.tl-today-tick {
+  width: 2px;
+  height: 34px;
+  background: #ffd700;
+  opacity: 0.75;
+}
+
+/* 노드 */
+.tl-node {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+  width: 54px;
+}
+.tl-date {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.92);
+  height: 14px;
+  line-height: 14px;
+  white-space: nowrap;
+}
+.tl-dot {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 2.5px solid white;
+  margin: 4px 0;
+  flex-shrink: 0;
+}
+.tl-dot--done    { background: white; }
+.tl-dot--pending { background: rgba(255, 255, 255, 0.15); }
+
+.tl-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.82);
+  white-space: nowrap;
+}
