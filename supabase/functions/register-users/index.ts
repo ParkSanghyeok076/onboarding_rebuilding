@@ -6,9 +6,9 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-function addMonths(dateStr: string, months: number): string {
+function addDays(dateStr: string, days: number): string {
   const d = new Date(dateStr)
-  d.setMonth(d.getMonth() + months)
+  d.setDate(d.getDate() + days)
   return d.toISOString().split('T')[0]
 }
 
@@ -96,15 +96,15 @@ serve(async (req) => {
 
       // 기간 자동 계산
       const period_1_start = hire_date
-      const period_1_end = addMonths(hire_date, 1)
+      const period_1_end = addDays(hire_date, 28)          // 4주
       let period_2_start = null, period_2_end = null
       let period_3_start = null, period_3_end = null
 
       if (employee_type === '신입') {
-        period_2_start = addMonths(hire_date, 1)
-        period_2_end = addMonths(hire_date, 2)
-        period_3_start = addMonths(hire_date, 2)
-        period_3_end = addMonths(hire_date, 3)
+        period_2_start = addDays(hire_date, 28)             // 4주
+        period_2_end   = addDays(hire_date, 56)             // 8주
+        period_3_start = addDays(hire_date, 56)             // 8주
+        period_3_end   = addDays(hire_date, 84)             // 12주
       }
 
       try {
