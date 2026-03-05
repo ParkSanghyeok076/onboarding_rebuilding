@@ -189,7 +189,11 @@ function AdminOnboarding({ onBack }) {
   if (filter === '완료') displayed = displayed.filter(r => r.completed);
   if (filter === '미완료') displayed = displayed.filter(r => !r.completed);
   if (sortKey === 'name') displayed.sort((a, b) => sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
-  if (sortKey === 'status') displayed.sort((a, b) => sortAsc ? (a.completed ? 1 : -1) : (a.completed ? -1 : 1));
+  if (sortKey === 'period') displayed.sort((a, b) => {
+    const dateA = toDate(a.period_1_start);
+    const dateB = toDate(b.period_1_start);
+    return sortAsc ? dateA - dateB : dateB - dateA;
+  });
 
   if (loading) {
     return (
@@ -228,13 +232,13 @@ function AdminOnboarding({ onBack }) {
                 </th>
                 <th>팀</th>
                 <th>유형</th>
-                <th>기간</th>
+                <th className="sortable" onClick={() => handleSort('period')}>
+                  기간<SortIcon sortKey={sortKey} col="period" sortAsc={sortAsc} />
+                </th>
                 <th>계획서</th>
                 <th>프로그램</th>
                 <th>설문조사</th>
-                <th className="sortable" onClick={() => handleSort('status')}>
-                  상태<SortIcon sortKey={sortKey} col="status" sortAsc={sortAsc} />
-                </th>
+                <th>상태</th>
               </tr>
             </thead>
             <tbody>
