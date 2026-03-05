@@ -40,7 +40,7 @@ function ProgramGridPopup({ user, onClose }) {
       for (let i = 1; i <= 6; i++) {
         const imagePath = user.programs[i];
         if (imagePath) {
-          const { data, error } = await supabase.storage
+          const { data } = await supabase.storage
             .from('onboarding-images')
             .createSignedUrl(imagePath, 3600);
           if (data) urls[i] = data.signedUrl;
@@ -183,21 +183,6 @@ function AdminOnboarding({ onBack }) {
       // 롤백
       setRows(rows.map(r => r.id === userId ? { ...r, ojt_plan_received: !checked } : r));
     }
-  };
-
-  // 설문 아이콘 상태 판별
-  const getSurveyIconClass = (roundNumber, period_start, period_end) => {
-    const periodStart = toDate(period_start);
-    const periodEnd = toDate(period_end);
-
-    if (!periodStart || !periodEnd) return 'survey-icon-tri'; // 데이터 없으면 회색
-
-    const submitted = true; // placeholder, will be checked by map
-
-    if (today < periodStart) return 'survey-icon-tri'; // 아직 안 시작
-    if (today > periodEnd) return 'survey-icon-x'; // 기간 지남
-    // 기간 내 여부는 caller에서 체크
-    return 'survey-icon-x';
   };
 
   let displayed = [...rows];
