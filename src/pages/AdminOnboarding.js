@@ -240,8 +240,6 @@ function AdminOnboarding({ onBack }) {
             <tbody>
               {displayed.map(row => {
                 const isNewHire = row.employee_type === '신입';
-                const periodStart = toDate(isNewHire ? row.period_1_start : row.period_1_start);
-                const periodEnd = toDate(isNewHire ? row.period_3_end : row.period_1_end);
                 const periodStr = isNewHire
                   ? formatPeriod(row.period_1_start, row.period_3_end)
                   : formatPeriod(row.period_1_start, row.period_1_end);
@@ -284,7 +282,6 @@ function AdminOnboarding({ onBack }) {
                     <td className="survey-cell">
                       {requiredRounds.map(round => {
                         const p_start = toDate(row[`period_${round}_start`]);
-                        const p_end = toDate(row[`period_${round}_end`]);
                         const isSubmitted = row.submittedRounds.includes(round);
                         const isUpcoming = p_start && today < p_start;
                         let icon, className;
