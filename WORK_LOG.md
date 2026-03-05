@@ -331,5 +331,95 @@ WHERE role = 'employee';
 
 ---
 
+---
+
+## 📅 2026-03-05 — 세션 4: 온보딩 현황 페이지 개편 + 직원 등록 오류 대응
+
+### 완성된 기능
+- **AdminOnboarding.js 전면 수정**
+  - 기존 6열 프로그램 표 → 통합 대시보드로 변경
+  - 새로운 컬럼: 기간(M/D~M/D), 계획서(체크박스), 프로그램(N/6), 설문조사(아이콘), 상태
+  - ProgramGridPopup 컴포넌트: 2×3 그리드로 6개 프로그램 이미지 표시
+  - 기간 컬럼 정렬 추가 (시작일 기준)
+  - 상태 컬럼 정렬 제거 (필터링으로 충분)
+
+- **설문조사 아이콘 구현**
+  - ✅ 초록색: 제출됨
+  - △ 회색: 예정중 (아직 기간 도래 안 함)
+  - ❌ 빨강색: 미제출/기간만료
+  - 신입(3차), 경력(1차) 자동 구분
+
+- **계획서 체크박스**
+  - 낙관적 업데이트 지원
+  - DB에 `ojt_plan_received` 컬럼 추가 (ALTER TABLE)
+
+- **CSS 스타일 추가** (Pages.css)
+  - 프로그램 카운터 색상 (.prog-count.done/undone)
+  - 설문 아이콘 스타일 (.survey-icon-check/tri/x)
+  - 그리드 팝업 레이아웃 (.prog-grid-popup)
+  - 반응형 디자인 (@media queries)
+
+### 🔴 발생한 오류 (해결 필요)
+
+**오류: Direct Employee Registration Failed (401 Unauthorized)**
+
+**증상:**
+- 직원 일괄 등록 페이지에서 CSV 업로드 시 401 에러 발생
+- Vercel 배포 후에도 동일한 오류 지속
+- Edge Function `register-users`가 인증 실패
+
+**원인 분석:**
+- Edge Function이 필요한 환경 변수를 읽지 못함
+- Vercel Environment Variables 미설정:
+  - ❌ `SUPABASE_URL` (없음)
+  - ❌ `SUPABASE_ANON_KEY` (없음 - Edge Function용)
+  - ❌ `SUPABASE_SERVICE_ROLE_KEY` (없음 - 서버 인증용)
+- 현재 설정된 변수:
+  - ✅ `supabase` (불명확)
+  - ✅ `REACT_APP_SUPABASE_ANON_KEY` (React용)
+  - ✅ `REACT_APP_SUPABASE_URL` (React용)
+
+**Edge Function 필요 변수 (register-users/index.ts Line 21-23):**
+```ts
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? ''
+const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+```
+
+**해결 방법 (집에서 진행):**
+
+1. **Vercel Environment Variables 추가**
+   ```
+   SUPABASE_URL = https://zpilphcmmylekzbuam.supabase.co
+   SUPABASE_ANON_KEY = sb_publishable_... (Supabase API Keys → Publishable key)
+   SUPABASE_SERVICE_ROLE_KEY = sb_secret_... (Supabase API Keys → Secret keys)
+   ```
+
+2. **Vercel 강제 재배포**
+   - Deployments → 최신 배포 → Redeploy
+   - "Use existing Build Cache" **체크 해제** (중요!)
+
+3. **직원 등록 재테스트**
+   - CSV 파일 업로드
+   - 정상 작동 여부 확인
+
+### 🎯 참고: API Key 보안 전략
+
+- **로컬**: `.env.local` 파일에 저장 (Git 무시)
+- **Vercel**: Environment Variables에만 저장 (암호화)
+- **GitHub**: API key 절대 커밋 안 함
+
+### 커밋 이력
+
+| 커밋 | 내용 |
+|------|------|
+| `17c89c5` | feat: 기간 컬럼 정렬 추가, 상태 정렬 제거 |
+| `bec67a4` | style: 설문 아이콘 텍스트를 굵게 처리 |
+| `10d36a7` | fix: ESLint 오류 수정 (unused variables) |
+| `942e9f5` | fix: 미사용 변수 제거 (periodStart, periodEnd, p_end) |
+| `65e78c1` | feat: 온보딩 현황 페이지 전면 개편 |
+
+---
+
 **작성자**: 인사기획팀 박상혁 선임
-**최종 업데이트**: 2026-03-03 (온보딩 기간 주 단위 전환 + 타임라인 시각화)
+**최종 업데이트**: 2026-03-05 (온보딩 현황 페이지 개편, 직원 등록 오류 분석)
