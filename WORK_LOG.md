@@ -421,5 +421,78 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '
 
 ---
 
+---
+
+## 📅 2026-03-06 — 관리자 UI 전면 개편
+
+### ✅ 온보딩 현황 대시보드 KPI 카드 + 진행률
+
+- KPI 카드 4개 추가: 전체 입사자 / 온보딩 완료 / 이번주 설문마감 / 마감 임박자 (3일 이내)
+- 테이블에 진행률 열 추가 (컬러 프로그레스 바 + %)
+  - 신입 최대 10항목 (프로그램6 + OJT1 + 설문3), 경력 최대 8항목 (프로그램6 + OJT1 + 설문1)
+- `today` useMemo 안정화 + colSpan 버그(8→9) 수정
+
+### ✅ 마감 임박자 팝업
+
+- KPI ④ 카드 숫자 클릭 → 대상자 목록 팝업 (이름 / 팀 / 종료일 / D-N)
+- urgentUsers 배열 useMemo에서 추출, urgentCount > 0일 때만 클릭 가능
+- D-1 이하 빨간색(#dc3545), 2~3일 주황색(#f59e0b) 강조
+
+### ✅ AdminLayout 풀 사이드바 레이아웃 도입
+
+- `AdminLayout.js` / `AdminLayout.css` 신규 생성
+  - 240px 사이드바: 로고(YURA 온보딩 시스템) + 메뉴 4개 + 하단 사용자정보/로그아웃
+  - `zoom: 1.1` + `height: calc(100vh / 1.1)` 으로 110% 크기 렌더링 (하단 잘림 방지)
+- `hr_admin` 로그인 시 Navbar 없이 AdminLayout만 렌더링
+- 일반 직원은 기존 Navbar 구조 유지
+- App.js에서 AdminMenu 등 직접 import 5개 제거, AdminLayout으로 통합
+
+### ✅ 로그인 화면 로고 추가
+
+- `YURA_SYMBOL.png`를 로그인 카드 상단 중앙에 배치 (height: 64px)
+
+### ✅ 관리자 UI 세부 개선
+
+- 상단 topbar (페이지 제목 + 날짜) 제거
+- 로그아웃 버튼: 전원 아이콘(⏻) → "로그아웃" 텍스트 버튼
+- 온보딩 현황: '메뉴로 돌아가기' 버튼 제거 (기본 화면)
+- 공지사항/설문조사 관리: '← 메뉴로 돌아가기' → '← 돌아가기'
+
+### ✅ 직원 관리 파일 업로드 UI 개선
+
+- CSV 형식 안내 카드 (컬럼명 칩 스타일, 좌측 보라 테두리)
+- 드래그&드롭 업로드 존 (+원형 버튼, hover/drag 상태 시각화)
+- 파일 선택 후 파일명 + ✅ 표시로 상태 전환
+- 미리보기 → 등록 → 결과 단계별 UI 분리
+- 타이틀 '직원 일괄 등록' → '👥 직원 관리'
+
+### ✅ 관리자 페이지 헤더 레이아웃 통일
+
+- 돌아가기 버튼을 페이지 타이틀과 같은 줄에 배치 (`admin-header-left` 패턴)
+- 상단 공백 `padding-top: 50px` 으로 조정
+- AdminAnnouncements / AdminSurvey / AdminUsers 동일 패턴 적용
+
+### 커밋 이력
+
+| 커밋 | 내용 |
+|------|------|
+| `2038447` | feat: 온보딩 현황 KPI 카드 4개 + 테이블 진행률 열 추가 |
+| `48e7add` | fix: today useMemo 안정화 + colSpan 9으로 수정 |
+| `c3d40fd` | feat: 마감 임박자 팝업 추가 (클릭 시 대상자 목록) |
+| `c124807` | fix: urgentPopup 렌더링 조건에 urgentCount > 0 가드 추가 |
+| `1b22ca3` | feat: AdminLayout 풀 사이드바 컴포넌트 생성 |
+| `4a781e5` | feat: 관리자 hr_admin은 Navbar 없이 AdminLayout만 렌더링 |
+| `8cb02a5` | style: 관리자 UI 개선 (110% 배율, 로그아웃 버튼, 타이틀, 돌아가기) |
+| `4eb1ee8` | style: 로그인 화면에 로고 추가 |
+| `5fe317f` | style: 로그인 로고를 YURA_SYMBOL.png로 변경 |
+| `c89e847` | fix: 관리자 레이아웃 zoom 방식 변경 (element zoom + 높이 보정) |
+| `4c798d3` | style: 관리자 레이아웃 상단 바 제거 |
+| `d2ef415` | style: 직원 관리 파일 업로드 UI 개선 |
+| `09d32a4` | style: 관리자 페이지 헤더 레이아웃 개선 |
+| `baa421c` | style: admin-container 상단 패딩 50px |
+| `87b176a` | style: 직원 관리 페이지 헤더 통일 |
+
+---
+
 **작성자**: 인사기획팀 박상혁 선임
-**최종 업데이트**: 2026-03-05 (온보딩 현황 페이지 개편, 직원 등록 오류 분석)
+**최종 업데이트**: 2026-03-06 (관리자 UI 전면 개편 — AdminLayout 사이드바, KPI 대시보드, 업로드 UI)
