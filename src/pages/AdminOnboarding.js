@@ -43,6 +43,50 @@ function calcProgress(row) {
   return Math.round((programsDone + ojtDone + surveysDone) / maxItems * 100);
 }
 
+function UrgentPopup({ users, onClose }) {
+  return (
+    <div className="confirm-overlay" onClick={onClose}>
+      <div className="program-popup" onClick={e => e.stopPropagation()} style={{maxWidth: 480}}>
+        <div className="program-popup-header">
+          <h3>마감 임박자 목록 (3일 이내)</h3>
+          <button className="program-popup-close" onClick={onClose}>✕</button>
+        </div>
+        {users.length === 0 ? (
+          <p style={{color:'#888', textAlign:'center', padding:'20px 0'}}>대상자가 없습니다.</p>
+        ) : (
+          <table className="admin-table" style={{width:'100%'}}>
+            <thead>
+              <tr>
+                <th>이름</th>
+                <th>팀</th>
+                <th>종료일</th>
+                <th>남은 기간</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((u, i) => (
+                <tr key={i}>
+                  <td>{u.name}</td>
+                  <td>{u.department}</td>
+                  <td>{formatShortDate(u.endDate)}</td>
+                  <td>
+                    <span style={{
+                      color: u.daysLeft <= 1 ? '#dc3545' : '#f59e0b',
+                      fontWeight: 700
+                    }}>
+                      D-{u.daysLeft}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function ProgramGridPopup({ user, onClose }) {
   const [imageUrls, setImageUrls] = useState({});
   const [loading, setLoading] = useState(true);
@@ -99,6 +143,7 @@ function AdminOnboarding({ onBack }) {
   const [sortKey, setSortKey] = useState(null); // 'name' | 'status'
   const [sortAsc, setSortAsc] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null); // ProgramGridPopup용
+  const [showUrgentPopup, setShowUrgentPopup] = useState(false);
 
   const today = useMemo(() => {
     const d = new Date();
@@ -152,20 +197,34 @@ function AdminOnboarding({ onBack }) {
     // 4) 마감 임박자 (3일 이내 & 미완료)
     const deadline3 = new Date(today);
     deadline3.setDate(today.getDate() + 3);
-    const urgentCount = rows.filter(row => {
-      if (row.completed) return false;
-      const isNewHire = row.employee_type === '신입';
-      const endStr = isNewHire ? row.period_3_end : row.period_1_end;
-      if (!endStr) return false;
-      const endDate = toDate(endStr);
-      return endDate >= today && endDate <= deadline3;
-    }).length;
+    const urgentUsers = rows
+      .filter(row => {
+        if (row.completed) return false;
+        const isNewHire = row.employee_type === '신입';
+        const endStr = isNewHire ? row.period_3_end : row.period_1_end;
+        if (!endStr) return false;
+        const endDate = toDate(endStr);
+        return endDate >= today && endDate <= deadline3;
+      })
+      .map(row => {
+        const isNewHire = row.employee_type === '신입';
+        const endStr = isNewHire ? row.period_3_end : row.period_1_end;
+        const endDate = toDate(endStr);
+        const daysLeft = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
+        return {
+          name: row.name,
+          department: row.department || row.team || '—',
+          endDate: endStr,
+          daysLeft,
+        };
+      });
 
     return {
       total, newHireCount, careerCount,
       completedCount, completionRate,
       surveyTotal, surveyDone, surveyRate, earliestDeadline,
-      urgentCount,
+      urgentCount: urgentUsers.length,
+      urgentUsers,
     };
   }, [rows, today]);
 
@@ -346,9 +405,17 @@ function AdminOnboarding({ onBack }) {
             {/* ④ 마감 임박자 */}
             <div className="kpi-card red">
               <div className="kpi-label">마감 임박자 (3일 이내)</div>
-              <div className="kpi-urgent-num">{kpi.urgentCount}<span style={{fontSize:14, fontWeight:500, color:'#888', marginLeft:4}}>명</span></div>
+              <div
+                className="kpi-urgent-num"
+                onClick={() => kpi.urgentCount > 0 && setShowUrgentPopup(true)}
+                style={{ cursor: kpi.urgentCount > 0 ? 'pointer' : 'default' }}
+                title={kpi.urgentCount > 0 ? '클릭하여 목록 보기' : undefined}
+              >
+                {kpi.urgentCount}
+                <span style={{fontSize:14, fontWeight:500, color:'#888', marginLeft:4}}>명</span>
+              </div>
               <div className="kpi-sub">
-                {kpi.urgentCount > 0 ? '온보딩 종료 3일 이내 미완료' : '임박한 미완료 없음'}
+                {kpi.urgentCount > 0 ? '클릭하여 대상자 확인' : '임박한 미완료 없음'}
               </div>
             </div>
           </div>
@@ -475,6 +542,9 @@ function AdminOnboarding({ onBack }) {
       </div>
 
       {selectedUser && <ProgramGridPopup user={selectedUser} onClose={() => setSelectedUser(null)} />}
+      {showUrgentPopup && kpi && (
+        <UrgentPopup users={kpi.urgentUsers} onClose={() => setShowUrgentPopup(false)} />
+      )}
     </div>
   );
 }
