@@ -594,7 +594,23 @@
 .admin-container {
   max-width: 900px;
   margin: 0 auto;
-  padding: 0 1rem 2rem;
+  padding: 20px 1rem 2rem;
+}
+
+.admin-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.admin-header-left .back-button {
+  margin: 0;
+  padding: 8px 18px;
+  font-size: 14px;
+}
+
+.admin-header-left .page-title {
+  margin-bottom: 0;
 }
 
 .admin-header {

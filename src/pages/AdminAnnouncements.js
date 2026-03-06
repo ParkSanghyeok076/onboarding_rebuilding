@@ -118,10 +118,12 @@ function AdminAnnouncements({ onBack }) {
 
   return (
     <div className="page-container">
-      <button onClick={onBack} className="back-button">← 돌아가기</button>
       <div className="admin-container">
         <div className="admin-header">
-          <h1 className="page-title">📢 공지사항 관리</h1>
+          <div className="admin-header-left">
+            <button onClick={onBack} className="back-button">← 돌아가기</button>
+            <h1 className="page-title">📢 공지사항 관리</h1>
+          </div>
           <button className="admin-create-btn" onClick={() => setModalOpen(true)}>
             + 새 공지 작성
           </button>

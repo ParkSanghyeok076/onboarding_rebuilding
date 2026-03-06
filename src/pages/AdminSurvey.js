@@ -106,10 +106,12 @@ function AdminSurvey({ onBack }) {
 
   return (
     <div className="page-container">
-      <button onClick={onBack} className="back-button">← 돌아가기</button>
       <div className="admin-container">
         <div className="admin-header">
-          <h1 className="page-title">📝 설문조사 관리</h1>
+          <div className="admin-header-left">
+            <button onClick={onBack} className="back-button">← 돌아가기</button>
+            <h1 className="page-title">📝 설문조사 관리</h1>
+          </div>
           <div className="admin-filter-group">
             {['전체', '1차', '2차', '3차'].map(f => (
               <button
