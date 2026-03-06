@@ -542,7 +542,7 @@ function AdminOnboarding({ onBack }) {
       </div>
 
       {selectedUser && <ProgramGridPopup user={selectedUser} onClose={() => setSelectedUser(null)} />}
-      {showUrgentPopup && kpi && (
+      {showUrgentPopup && kpi && kpi.urgentCount > 0 && (
         <UrgentPopup users={kpi.urgentUsers} onClose={() => setShowUrgentPopup(false)} />
       )}
     </div>
