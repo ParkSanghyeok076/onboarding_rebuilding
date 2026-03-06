@@ -8,11 +8,7 @@ import OnboardingProgram from './pages/OnboardingProgram';
 import Announcements from './pages/Announcements';
 import Survey from './pages/Survey';
 import PasswordChange from './pages/PasswordChange';
-import AdminMenu from './components/AdminMenu';
-import AdminAnnouncements from './pages/AdminAnnouncements';
-import AdminOnboarding from './pages/AdminOnboarding';
-import AdminSurvey from './pages/AdminSurvey';
-import AdminUsers from './pages/AdminUsers';
+import AdminLayout from './components/AdminLayout';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -92,6 +88,12 @@ function App() {
     return <Login />;
   }
 
+  // hr_admin은 전용 레이아웃 (Navbar 없음)
+  if (currentUser.role === 'hr_admin') {
+    return <AdminLayout user={currentUser} onLogout={handleLogout} />;
+  }
+
+  // 일반 사용자
   return (
     <div>
       <Navbar
@@ -101,21 +103,7 @@ function App() {
       />
 
       {currentPage === 'menu' && (
-        currentUser.role === 'hr_admin'
-          ? <AdminMenu onSelectMenu={handleSelectMenu} />
-          : <MainMenu user={currentUser} onSelectMenu={handleSelectMenu} />
-      )}
-      {currentPage === 'admin-announcements' && currentUser.role === 'hr_admin' && (
-        <AdminAnnouncements onBack={handleBack} />
-      )}
-      {currentPage === 'admin-onboarding' && currentUser.role === 'hr_admin' && (
-        <AdminOnboarding onBack={handleBack} />
-      )}
-      {currentPage === 'admin-survey' && currentUser.role === 'hr_admin' && (
-        <AdminSurvey onBack={handleBack} />
-      )}
-      {currentPage === 'admin-users' && currentUser.role === 'hr_admin' && (
-        <AdminUsers onBack={handleBack} />
+        <MainMenu user={currentUser} onSelectMenu={handleSelectMenu} />
       )}
       {currentPage === 'announcements' && (
         <Announcements onBack={handleBack} />
