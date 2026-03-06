@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { supabase } from '../lib/supabase';
 import './Pages.css';
 
@@ -28,6 +28,19 @@ function formatPeriod(startStr, endStr) {
   const start = formatShortDate(startStr);
   const end = formatShortDate(endStr);
   return `${start} ~ ${end}`;
+}
+
+// 진행률 계산 (0~100 정수)
+function calcProgress(row) {
+  const isNewHire = row.employee_type === '신입';
+  const maxItems = isNewHire ? 10 : 8;
+  const requiredRounds = isNewHire ? [1, 2, 3] : [1];
+
+  const programsDone = Object.keys(row.programs || {}).length;
+  const ojtDone = row.ojt_plan_received ? 1 : 0;
+  const surveysDone = (row.submittedRounds || []).filter(r => requiredRounds.includes(r)).length;
+
+  return Math.round((programsDone + ojtDone + surveysDone) / maxItems * 100);
 }
 
 function ProgramGridPopup({ user, onClose }) {
@@ -89,6 +102,69 @@ function AdminOnboarding({ onBack }) {
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
+
+  // ── KPI 계산 ──────────────────────────────────────
+  const kpi = useMemo(() => {
+    if (rows.length === 0) return null;
+
+    // 1) 전체 입사자
+    const total = rows.length;
+    const newHireCount = rows.filter(r => r.employee_type === '신입').length;
+    const careerCount = rows.filter(r => r.employee_type === '경력').length;
+
+    // 2) 온보딩 완료
+    const completedCount = rows.filter(r => r.completed).length;
+    const completionRate = Math.round(completedCount / total * 100);
+
+    // 3) 이번주 설문 마감
+    const weekEnd = new Date(today);
+    weekEnd.setDate(today.getDate() + (7 - today.getDay()));
+    weekEnd.setHours(23, 59, 59, 999);
+
+    const surveyDeadlineUsers = [];
+    rows.forEach(row => {
+      const isNewHire = row.employee_type === '신입';
+      const rounds = isNewHire ? [1, 2, 3] : [1];
+      rounds.forEach(round => {
+        const endStr = row[`period_${round}_end`];
+        if (!endStr) return;
+        const endDate = toDate(endStr);
+        if (endDate >= today && endDate <= weekEnd) {
+          surveyDeadlineUsers.push({ row, round });
+        }
+      });
+    });
+    const surveyTotal = surveyDeadlineUsers.length;
+    const surveyDone = surveyDeadlineUsers.filter(({ row, round }) =>
+      (row.submittedRounds || []).includes(round)
+    ).length;
+    const surveyRate = surveyTotal > 0 ? Math.round(surveyDone / surveyTotal * 100) : null;
+    const earliestDeadline = surveyDeadlineUsers.length > 0
+      ? surveyDeadlineUsers.reduce((min, { row, round }) => {
+          const d = toDate(row[`period_${round}_end`]);
+          return d < min ? d : min;
+        }, toDate(surveyDeadlineUsers[0].row[`period_${surveyDeadlineUsers[0].round}_end`]))
+      : null;
+
+    // 4) 마감 임박자 (3일 이내 & 미완료)
+    const deadline3 = new Date(today);
+    deadline3.setDate(today.getDate() + 3);
+    const urgentCount = rows.filter(row => {
+      if (row.completed) return false;
+      const isNewHire = row.employee_type === '신입';
+      const endStr = isNewHire ? row.period_3_end : row.period_1_end;
+      if (!endStr) return false;
+      const endDate = toDate(endStr);
+      return endDate >= today && endDate <= deadline3;
+    }).length;
+
+    return {
+      total, newHireCount, careerCount,
+      completedCount, completionRate,
+      surveyTotal, surveyDone, surveyRate, earliestDeadline,
+      urgentCount,
+    };
+  }, [rows, today]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -223,6 +299,58 @@ function AdminOnboarding({ onBack }) {
           </div>
         </div>
 
+        {/* KPI 카드 */}
+        {kpi && (
+          <div className="kpi-grid">
+            {/* ① 전체 입사자 */}
+            <div className="kpi-card blue">
+              <div className="kpi-label">전체 입사자</div>
+              <div className="kpi-value">{kpi.total}<span style={{fontSize:14, fontWeight:500, color:'#888', marginLeft:4}}>명</span></div>
+              <div className="kpi-sub">신입 {kpi.newHireCount}명 &nbsp;·&nbsp; 경력 {kpi.careerCount}명</div>
+            </div>
+
+            {/* ② 온보딩 완료 */}
+            <div className="kpi-card green">
+              <div className="kpi-label">온보딩 완료</div>
+              <div className="kpi-value">{kpi.completedCount}<span style={{fontSize:14, fontWeight:500, color:'#888', marginLeft:4}}>명</span></div>
+              <div className="kpi-sub">전체 {kpi.total}명 중 완료율 {kpi.completionRate}%</div>
+              <div className="kpi-progress">
+                <div className="kpi-progress-fill" style={{width:`${kpi.completionRate}%`}} />
+              </div>
+            </div>
+
+            {/* ③ 이번주 설문 마감 */}
+            <div className="kpi-card amber">
+              <div className="kpi-label">이번주 설문 마감</div>
+              {kpi.surveyTotal > 0 ? (
+                <>
+                  <div className="kpi-value">{kpi.surveyDone}<span style={{fontSize:14, fontWeight:500, color:'#888', marginLeft:2}}>/{kpi.surveyTotal}</span></div>
+                  <div className="kpi-sub">
+                    완료율 {kpi.surveyRate}%
+                    {kpi.earliestDeadline && (
+                      <> &nbsp;·&nbsp; 마감 {formatShortDate(kpi.earliestDeadline.toISOString())}</>
+                    )}
+                  </div>
+                  <div className="kpi-progress">
+                    <div className="kpi-progress-fill" style={{width:`${kpi.surveyRate}%`, background:'#f59e0b'}} />
+                  </div>
+                </>
+              ) : (
+                <div className="kpi-sub" style={{marginTop:8}}>이번 주 마감 설문 없음</div>
+              )}
+            </div>
+
+            {/* ④ 마감 임박자 */}
+            <div className="kpi-card red">
+              <div className="kpi-label">마감 임박자 (3일 이내)</div>
+              <div className="kpi-urgent-num">{kpi.urgentCount}<span style={{fontSize:14, fontWeight:500, color:'#888', marginLeft:4}}>명</span></div>
+              <div className="kpi-sub">
+                {kpi.urgentCount > 0 ? '온보딩 종료 3일 이내 미완료' : '임박한 미완료 없음'}
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="admin-table-wrap">
           <table className="admin-table">
             <thead>
@@ -235,6 +363,7 @@ function AdminOnboarding({ onBack }) {
                 <th className="sortable" onClick={() => handleSort('period')}>
                   기간<SortIcon sortKey={sortKey} col="period" sortAsc={sortAsc} />
                 </th>
+                <th>진행률</th>
                 <th>계획서</th>
                 <th>프로그램</th>
                 <th>설문조사</th>
@@ -261,6 +390,22 @@ function AdminOnboarding({ onBack }) {
 
                     {/* 기간 */}
                     <td>{periodStr}</td>
+
+                    {/* 진행률 */}
+                    <td>
+                      {(() => {
+                        const pct = calcProgress(row);
+                        const colorClass = pct === 100 ? 'high' : pct >= 60 ? 'mid' : 'low';
+                        return (
+                          <div className="table-progress-wrap">
+                            <div className="table-progress-bar">
+                              <div className={`table-progress-fill ${colorClass}`} style={{width:`${pct}%`}} />
+                            </div>
+                            <span className="table-progress-pct">{pct}%</span>
+                          </div>
+                        );
+                      })()}
+                    </td>
 
                     {/* 계획서 */}
                     <td className="ojt-cell">

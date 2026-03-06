@@ -1103,3 +1103,101 @@
     max-width: 95vw;
   }
 }
+
+/* ===== AdminOnboarding KPI 카드 ===== */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.kpi-card {
+  background: white;
+  border-radius: 10px;
+  padding: 20px 22px;
+  border: 1px solid #e0e0e0;
+  border-top: 3px solid #e0e0e0;
+  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+}
+.kpi-card.blue   { border-top-color: #667eea; }
+.kpi-card.green  { border-top-color: #28a745; }
+.kpi-card.amber  { border-top-color: #f59e0b; }
+.kpi-card.red    { border-top-color: #dc3545; }
+
+.kpi-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  color: #888;
+  margin-bottom: 8px;
+}
+.kpi-value {
+  font-size: 30px;
+  font-weight: 800;
+  color: #1a2b3c;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.kpi-sub {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+.kpi-progress {
+  height: 5px;
+  background: #e8e8e8;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+.kpi-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: #28a745;
+  transition: width .4s;
+}
+.kpi-urgent-num {
+  font-size: 30px;
+  font-weight: 800;
+  color: #dc3545;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+/* ===== 테이블 진행률 바 ===== */
+.table-progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 110px;
+}
+.table-progress-bar {
+  flex: 1;
+  height: 6px;
+  background: #e8e8e8;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.table-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width .3s;
+}
+.table-progress-fill.high   { background: #28a745; }
+.table-progress-fill.mid    { background: #667eea; }
+.table-progress-fill.low    { background: #f59e0b; }
+.table-progress-pct {
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  white-space: nowrap;
+  min-width: 32px;
+  text-align: right;
+}
