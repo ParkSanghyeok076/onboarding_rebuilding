@@ -40,7 +40,7 @@ function Login() {
               type="text"
               value={employeeId}
               onChange={(e) => setEmployeeId(e.target.value)}
-              placeholder="예: 1001001"
+              placeholder="예: 223069"
               required
               disabled={loading}
             />
@@ -52,7 +52,7 @@ function Login() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="예: y1001001"
+              placeholder="예: y223069"
               required
               disabled={loading}
             />
@@ -66,7 +66,7 @@ function Login() {
         </form>
 
         <p className="login-hint">
-          💡 초기 비밀번호: y + 사번 (예: y1001001)
+          💡 초기 비밀번호: y + 사번 (예: y223069)
         </p>
       </div>
     </div>
