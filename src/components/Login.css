@@ -15,6 +15,14 @@
   max-width: 400px;
 }
 
+.login-logo {
+  display: block;
+  margin: 0 auto 20px;
+  height: 64px;
+  width: auto;
+  object-fit: contain;
+}
+
 .login-box h1 {
   font-size: 24px;
   color: #333;

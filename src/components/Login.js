@@ -30,6 +30,7 @@ function Login() {
   return (
     <div className="login-container">
       <div className="login-box">
+        <img src="/로고사진.png" alt="YURA 로고" className="login-logo" />
         <h1>신규입사자 온보딩 시스템</h1>
         <p className="login-subtitle">로그인하여 시작하세요</p>
 
