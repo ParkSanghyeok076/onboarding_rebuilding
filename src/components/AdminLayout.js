@@ -13,16 +13,6 @@ const MENU_ITEMS = [
   { id: 'admin-users',         icon: '👥', label: '직원 관리' },
 ];
 
-const PAGE_TITLES = {
-  'admin-onboarding':    '온보딩 현황',
-  'admin-announcements': '공지사항 관리',
-  'admin-survey':        '설문조사 관리',
-  'admin-users':         '직원 관리',
-};
-
-function formatDate(d) {
-  return d.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' });
-}
 
 function AdminLayout({ user, onLogout }) {
   const [activePage, setActivePage] = useState('admin-onboarding');
@@ -68,13 +58,6 @@ function AdminLayout({ user, onLogout }) {
 
       {/* 콘텐츠 영역 */}
       <div className="admin-content">
-        {/* 상단 바 */}
-        <div className="admin-topbar">
-          <span className="admin-topbar-title">{PAGE_TITLES[activePage]}</span>
-          <span className="admin-topbar-date">{formatDate(new Date())}</span>
-        </div>
-
-        {/* 페이지 */}
         <main className="admin-main">
           {activePage === 'admin-onboarding' && (
             <AdminOnboarding onBack={() => setActivePage('admin-onboarding')} />

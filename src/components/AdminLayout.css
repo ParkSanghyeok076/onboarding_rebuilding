@@ -165,28 +165,6 @@
   overflow: hidden;
 }
 
-/* 콘텐츠 내 상단 바 (얇은 헤더) */
-.admin-topbar {
-  height: 60px;
-  background: white;
-  border-bottom: 1px solid #e8e8e8;
-  display: flex;
-  align-items: center;
-  padding: 0 28px;
-  flex-shrink: 0;
-  justify-content: space-between;
-}
-
-.admin-topbar-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: #1a2332;
-}
-
-.admin-topbar-date {
-  font-size: 13px;
-  color: #888;
-}
 
 /* 콘텐츠 메인 */
 .admin-main {
