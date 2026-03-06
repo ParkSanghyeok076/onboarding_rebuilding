@@ -100,8 +100,11 @@ function AdminOnboarding({ onBack }) {
   const [sortAsc, setSortAsc] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null); // ProgramGridPopup용
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const today = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
 
   // ── KPI 계산 ──────────────────────────────────────
   const kpi = useMemo(() => {
@@ -464,7 +467,7 @@ function AdminOnboarding({ onBack }) {
                 );
               })}
               {displayed.length === 0 && (
-                <tr><td colSpan={8} className="admin-empty">해당하는 데이터가 없습니다.</td></tr>
+                <tr><td colSpan={9} className="admin-empty">해당하는 데이터가 없습니다.</td></tr>
               )}
             </tbody>
           </table>
