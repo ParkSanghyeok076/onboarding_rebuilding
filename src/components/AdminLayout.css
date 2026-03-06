@@ -1,10 +1,12 @@
 /* src/components/AdminLayout.css */
 
 /* 전체 레이아웃: 사이드바 + 콘텐츠 영역, 100vh 전체 */
+/* zoom: 1.1로 콘텐츠를 110% 크기로 렌더링. 높이는 100vh/1.1로 보정해 잘림 방지 */
 .admin-layout {
   display: flex;
-  height: 100vh;
+  height: calc(100vh / 1.1);
   overflow: hidden;
+  zoom: 1.1;
 }
 
 /* ── 사이드바 (240px, 전체 높이) ── */
@@ -14,7 +16,7 @@
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;  /* 부모 기준 100% → zoom 후 화면 꽉 참 */
 }
 
 /* 로고 영역 */

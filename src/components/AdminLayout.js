@@ -1,5 +1,5 @@
 // src/components/AdminLayout.js
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import AdminOnboarding from '../pages/AdminOnboarding';
 import AdminAnnouncements from '../pages/AdminAnnouncements';
 import AdminSurvey from '../pages/AdminSurvey';
@@ -26,11 +26,6 @@ function formatDate(d) {
 
 function AdminLayout({ user, onLogout }) {
   const [activePage, setActivePage] = useState('admin-onboarding');
-
-  useEffect(() => {
-    document.documentElement.style.zoom = '1.1';
-    return () => { document.documentElement.style.zoom = ''; };
-  }, []);
 
   const userName = user?.name || user?.employee_id || 'Admin';
   const avatarChar = userName.charAt(0);
