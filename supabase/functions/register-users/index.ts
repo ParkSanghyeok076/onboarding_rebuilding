@@ -38,21 +38,19 @@ serve(async (req) => {
       })
     }
 
-    // JWT 페이로드 디코딩으로 user ID 추출
-    // (게이트웨이가 이미 verify_jwt=true로 서명 검증 완료)
-    let userId: string
-    try {
-      const token = authHeader.replace('Bearer ', '')
-      const payloadB64 = token.split('.')[1]
-      const payload = JSON.parse(atob(payloadB64.replace(/-/g, '+').replace(/_/g, '/')))
-      if (!payload?.sub) throw new Error('sub 없음')
-      userId = payload.sub
-    } catch {
-      return new Response(JSON.stringify({ error: '토큰 파싱 실패' }), {
+    // Supabase Auth API로 JWT 검증 및 user ID 추출
+    const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      global: { headers: { Authorization: authHeader } },
+      auth: { autoRefreshToken: false, persistSession: false },
+    })
+    const { data: { user }, error: authError } = await userClient.auth.getUser()
+    if (authError || !user) {
+      return new Response(JSON.stringify({ error: '인증 실패' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
+    const userId = user.id
 
     const { data: userProfile, error: profileError } = await supabase
       .from('users')
