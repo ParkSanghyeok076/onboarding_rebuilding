@@ -95,9 +95,13 @@ function AdminUsers({ onBack }) {
 
   return (
     <div className="page-container">
-      <div className="page-header">
-        <button className="back-button" onClick={onBack}>← 뒤로</button>
-        <h1 className="page-title">직원 일괄 등록</h1>
+      <div className="admin-container">
+        <div className="admin-header">
+          <div className="admin-header-left">
+            <button className="back-button" onClick={onBack}>← 뒤로</button>
+            <h1 className="page-title">👥 직원 관리</h1>
+          </div>
+        </div>
       </div>
 
       <div className="au-wrapper">
