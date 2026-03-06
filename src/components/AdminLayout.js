@@ -1,5 +1,5 @@
 // src/components/AdminLayout.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminOnboarding from '../pages/AdminOnboarding';
 import AdminAnnouncements from '../pages/AdminAnnouncements';
 import AdminSurvey from '../pages/AdminSurvey';
@@ -27,6 +27,11 @@ function formatDate(d) {
 function AdminLayout({ user, onLogout }) {
   const [activePage, setActivePage] = useState('admin-onboarding');
 
+  useEffect(() => {
+    document.documentElement.style.zoom = '1.1';
+    return () => { document.documentElement.style.zoom = ''; };
+  }, []);
+
   const userName = user?.name || user?.employee_id || 'Admin';
   const avatarChar = userName.charAt(0);
 
@@ -37,7 +42,7 @@ function AdminLayout({ user, onLogout }) {
         {/* 로고 */}
         <div className="admin-sidebar-logo">
           <div className="admin-sidebar-logo-icon">🏢</div>
-          <div className="admin-sidebar-logo-title">온보딩 시스템</div>
+          <div className="admin-sidebar-logo-title">YURA 온보딩 시스템</div>
           <div className="admin-sidebar-logo-sub">HR Admin</div>
         </div>
 
@@ -62,7 +67,7 @@ function AdminLayout({ user, onLogout }) {
             <div className="admin-sidebar-user-name">{userName}</div>
             <div className="admin-sidebar-user-role">HR 관리자</div>
           </div>
-          <button className="admin-sidebar-logout" onClick={onLogout} title="로그아웃">⏻</button>
+          <button className="admin-sidebar-logout" onClick={onLogout}>로그아웃</button>
         </div>
       </aside>
 

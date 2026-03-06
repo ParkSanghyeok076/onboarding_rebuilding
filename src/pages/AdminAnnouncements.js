@@ -110,7 +110,7 @@ function AdminAnnouncements({ onBack }) {
   if (loading) {
     return (
       <div className="page-container">
-        <button onClick={onBack} className="back-button">← 메뉴로 돌아가기</button>
+        <button onClick={onBack} className="back-button">← 돌아가기</button>
         <p>로딩 중...</p>
       </div>
     );
@@ -118,7 +118,7 @@ function AdminAnnouncements({ onBack }) {
 
   return (
     <div className="page-container">
-      <button onClick={onBack} className="back-button">← 메뉴로 돌아가기</button>
+      <button onClick={onBack} className="back-button">← 돌아가기</button>
       <div className="admin-container">
         <div className="admin-header">
           <h1 className="page-title">📢 공지사항 관리</h1>

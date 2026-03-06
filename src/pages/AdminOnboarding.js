@@ -336,7 +336,6 @@ function AdminOnboarding({ onBack }) {
   if (loading) {
     return (
       <div className="page-container">
-        <button onClick={onBack} className="back-button">← 메뉴로 돌아가기</button>
         <p>로딩 중...</p>
       </div>
     );
@@ -344,7 +343,6 @@ function AdminOnboarding({ onBack }) {
 
   return (
     <div className="page-container">
-      <button onClick={onBack} className="back-button">← 메뉴로 돌아가기</button>
       <div className="admin-container">
         <div className="admin-header">
           <h1 className="page-title">📋 온보딩 현황</h1>
