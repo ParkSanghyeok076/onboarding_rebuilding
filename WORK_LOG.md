@@ -494,5 +494,50 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '
 
 ---
 
+---
+
+## 📅 2026-03-10 — 직원 수동 입력 + 공지사항 관리 UX 개선
+
+### ✅ 직원 수동 입력 테이블 추가 (AdminUsers)
+
+- CSV 없이도 직원 직접 등록 가능한 스프레드시트형 테이블 추가
+- 엑셀에서 복사 후 Ctrl+V 붙여넣기 → TSV 파싱으로 다수 행 자동 채움
+- 마지막 행 편집 시 빈 행 자동 추가
+- 기존 `registerUsers` Edge Function 재사용
+- `src/pages/AdminUsers.css` 테이블 스타일 전체 추가
+
+### ✅ 직원 관리 UI 개선
+
+- 수기입력 ↔ CSV 순서 변경: 수기입력을 위로
+- 초기화 버튼 가로 표시 (`white-space: nowrap`)
+- 상단 공백 50px으로 통일
+- 초기화/등록하기 버튼 높이 통일 (`margin-top: 0 !important`)
+
+### ✅ 공지사항 관리 UX 개선
+
+- 공지 클릭 시 바로 편집 모달 → **상세 보기 먼저 표시** (신입사원 화면과 동일)
+- 편집 모달 → **인라인 편집**으로 전환 (상세 화면에서 직접 입력)
+- **PDF 추가/삭제/교체 기능** 추가 (기존 공지 편집 시)
+- `src/pages/AdminAnnouncements.css` 신규 생성
+
+### ✅ DB/Storage 수정
+
+- `announcements-files` 버킷 Storage RLS 정책 3개 추가 (INSERT/DELETE/SELECT)
+- `public.users` 스키마 수정: `mentor_id`, `team_leader_id` FK에 `ON DELETE SET NULL` 추가
+  → Authentication 대시보드 사용자 삭제 FK 오류 해결
+
+### 커밋 이력
+
+| 커밋 | 내용 |
+|------|------|
+| `e20b331` | feat: 직원 수동 입력 테이블 추가 |
+| `4b707ce` | style: 직원 수동 입력 테이블 스타일 추가 |
+| `01af65d` | style: 직원 관리 UI 개선 |
+| `ade15a9` | style: 초기화 버튼 높이 조정 |
+| `6183c6d` | style: 초기화/등록하기 버튼 높이 통일 |
+| `c43e29a` | feat: 공지사항 관리 UX 개선 - 인라인 편집 + PDF 관리 |
+
+---
+
 **작성자**: 인사기획팀 박상혁 선임
-**최종 업데이트**: 2026-03-06 (관리자 UI 전면 개편 — AdminLayout 사이드바, KPI 대시보드, 업로드 UI)
+**최종 업데이트**: 2026-03-10 (직원 수동 입력, 공지사항 인라인 편집, PDF 관리)
