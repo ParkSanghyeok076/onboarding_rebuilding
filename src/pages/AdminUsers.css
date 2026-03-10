@@ -252,3 +252,183 @@
 }
 
 .au-again-btn:hover { background: #5568d4; }
+
+/* ── 구분선 ── */
+.au-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.au-divider-line {
+  flex: 1;
+  height: 1px;
+  background: #dee2e6;
+}
+
+.au-divider-text {
+  font-size: 12px;
+  color: #aaa;
+  background: #f5f5f5;
+  padding: 5px 14px;
+  border: 1px solid #dee2e6;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+/* ── 직접 입력 영역 ── */
+.au-manual {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.au-manual-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: #fafafa;
+  border-bottom: 1px solid #eee;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.au-manual-hint {
+  font-size: 12px;
+  color: #1565c0;
+  background: #e8f4fd;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.au-manual-submit {
+  padding: 8px 20px !important;
+  font-size: 13px !important;
+}
+
+/* ── 테이블 ── */
+.au-manual-table-wrap {
+  overflow-x: auto;
+}
+
+.au-manual-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.au-manual-table thead th {
+  background: #1a2332;
+  color: white;
+  padding: 9px 10px;
+  text-align: left;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.au-manual-table tbody tr {
+  border-top: 1px solid #eee;
+}
+
+.au-manual-table tbody tr:hover {
+  background: #f9f9f9;
+}
+
+.au-row-filled {
+  background: #f0f7ff;
+}
+
+.au-row-filled:hover {
+  background: #e8f2ff !important;
+}
+
+.au-row-num {
+  padding: 6px 10px;
+  color: #aaa;
+  font-size: 12px;
+  text-align: center;
+  width: 32px;
+}
+
+.au-cell-input {
+  width: 100%;
+  min-width: 72px;
+  padding: 5px 8px;
+  border: 1px solid #e9ecef;
+  border-radius: 5px;
+  font-size: 12px;
+  color: #1a2332;
+  background: white;
+  outline: none;
+  transition: border-color .15s;
+  box-sizing: border-box;
+}
+
+.au-cell-input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102,126,234,.12);
+}
+
+.au-cell-date {
+  min-width: 100px;
+}
+
+.au-manual-table td {
+  padding: 5px 6px;
+}
+
+.au-cell-select {
+  padding: 5px 6px;
+  border: 1px solid #e9ecef;
+  border-radius: 5px;
+  font-size: 12px;
+  color: #1a2332;
+  background: white;
+  outline: none;
+  cursor: pointer;
+  min-width: 60px;
+}
+
+.au-cell-select:focus {
+  border-color: #667eea;
+}
+
+.au-row-delete {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: color .15s;
+  display: block;
+  margin: 0 auto;
+}
+
+.au-row-delete:hover {
+  color: #dc3545;
+  background: #fff5f5;
+}
+
+.au-add-row-btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background: none;
+  border: none;
+  border-top: 1px solid #eee;
+  color: #667eea;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: background .15s;
+}
+
+.au-add-row-btn:hover {
+  background: #f5f6ff;
+}
