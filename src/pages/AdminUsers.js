@@ -12,6 +12,8 @@ function AdminUsers({ onBack }) {
   const [fileName, setFileName] = useState(null);
   const [dragging, setDragging] = useState(false);
   const fileInputRef = useRef(null);
+  const EMPTY_ROW = () => ({ employee_id: '', name: '', department: '', hire_date: '', employee_type: '신입' });
+  const [manualRows, setManualRows] = useState([EMPTY_ROW()]);
 
   const parseFile = (file) => {
     if (!file) return;
@@ -93,6 +95,81 @@ function AdminUsers({ onBack }) {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
+  const updateRow = (idx, field, value) => {
+    setManualRows(prev => {
+      const next = prev.map((r, i) => i === idx ? { ...r, [field]: value } : r);
+      // 마지막 행 편집 중 데이터 입력 시 빈 행 자동 추가
+      if (idx === prev.length - 1) {
+        const last = next[next.length - 1];
+        if (last.employee_id || last.name || last.hire_date) return [...next, EMPTY_ROW()];
+      }
+      return next;
+    });
+  };
+
+  const deleteRow = (idx) => {
+    setManualRows(prev => {
+      const next = prev.filter((_, i) => i !== idx);
+      return next.length === 0 ? [EMPTY_ROW()] : next;
+    });
+  };
+
+  const handleManualPaste = (e) => {
+    const text = e.clipboardData.getData('text');
+    // 탭이나 줄바꿈 없으면 일반 셀 붙여넣기로 처리
+    if (!text.includes('\t') && !text.includes('\n')) return;
+    e.preventDefault();
+    const lines = text.trim().split('\n').filter(l => l.trim());
+    const parsed = lines.map(line => {
+      const cols = line.split('\t');
+      const type = (cols[4] || '').trim();
+      return {
+        employee_id: (cols[0] || '').trim(),
+        name: (cols[1] || '').trim(),
+        department: (cols[2] || '').trim(),
+        hire_date: (cols[3] || '').trim(),
+        employee_type: ['신입', '경력'].includes(type) ? type : '신입',
+      };
+    });
+    setManualRows([...parsed, EMPTY_ROW()]);
+  };
+
+  const handleManualRegister = async () => {
+    const filled = manualRows.filter(r => r.employee_id || r.name || r.hire_date);
+    if (filled.length === 0) {
+      setError('입력된 데이터가 없습니다.');
+      return;
+    }
+    const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+    const invalid = filled.filter(r =>
+      !r.employee_id || !r.name || !r.hire_date ||
+      !datePattern.test(r.hire_date) ||
+      !['신입', '경력'].includes(r.employee_type)
+    );
+    if (invalid.length > 0) {
+      const badIds = invalid.map(r => r.employee_id || '(사번없음)').join(', ');
+      setError(`형식 오류 ${invalid.length}건 (${badIds}): 사번·이름·입사일(YYYY-MM-DD)·구분(신입/경력) 확인 필요`);
+      return;
+    }
+    const ids = filled.map(r => r.employee_id);
+    const duplicates = ids.filter((id, i) => ids.indexOf(id) !== i);
+    if (duplicates.length > 0) {
+      setError(`중복 사번 ${duplicates.length}건: ${[...new Set(duplicates)].join(', ')}`);
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await registerUsers(filled);
+      setResult(res);
+      setManualRows([EMPTY_ROW()]);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="page-container">
       <div className="au-wrapper">
@@ -146,6 +223,80 @@ function AdminUsers({ onBack }) {
               </>
             )}
           </div>
+        )}
+
+        {/* 구분선 + 직접 입력 — preview/result 없을 때만 표시 */}
+        {!preview && !result && (
+          <>
+            <div className="au-divider">
+              <div className="au-divider-line" />
+              <span className="au-divider-text">또는 직접 입력</span>
+              <div className="au-divider-line" />
+            </div>
+
+            <div className="au-manual" onPaste={handleManualPaste}>
+              <div className="au-manual-header">
+                <span className="au-manual-hint">💡 Ctrl+V 로 엑셀 데이터 붙여넣기 가능</span>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button
+                    className="au-cancel-btn"
+                    onClick={() => { setManualRows([EMPTY_ROW()]); setError(null); }}
+                  >
+                    초기화
+                  </button>
+                  <button
+                    className="submit-button au-manual-submit"
+                    onClick={handleManualRegister}
+                    disabled={loading || manualRows.every(r => !r.employee_id && !r.name && !r.hire_date)}
+                  >
+                    {loading ? '등록 중...' : `${manualRows.filter(r => r.employee_id || r.name || r.hire_date).length}명 등록하기`}
+                  </button>
+                </div>
+              </div>
+
+              <div className="au-manual-table-wrap">
+                <table className="au-manual-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>사번 *</th>
+                      <th>이름 *</th>
+                      <th>부서</th>
+                      <th>입사일 *</th>
+                      <th>구분 *</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {manualRows.map((row, idx) => (
+                      <tr key={idx} className={row.employee_id || row.name ? 'au-row-filled' : ''}>
+                        <td className="au-row-num">{idx + 1}</td>
+                        <td><input className="au-cell-input" value={row.employee_id} onChange={e => updateRow(idx, 'employee_id', e.target.value)} placeholder="사번" /></td>
+                        <td><input className="au-cell-input" value={row.name} onChange={e => updateRow(idx, 'name', e.target.value)} placeholder="이름" /></td>
+                        <td><input className="au-cell-input" value={row.department} onChange={e => updateRow(idx, 'department', e.target.value)} placeholder="부서" /></td>
+                        <td><input className="au-cell-input au-cell-date" value={row.hire_date} onChange={e => updateRow(idx, 'hire_date', e.target.value)} placeholder="YYYY-MM-DD" /></td>
+                        <td>
+                          <select className="au-cell-select" value={row.employee_type} onChange={e => updateRow(idx, 'employee_type', e.target.value)}>
+                            <option value="신입">신입</option>
+                            <option value="경력">경력</option>
+                          </select>
+                        </td>
+                        <td>
+                          <button
+                            className="au-row-delete"
+                            onClick={() => deleteRow(idx)}
+                          >✕</button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <button className="au-add-row-btn" onClick={() => setManualRows(prev => [...prev, EMPTY_ROW()])}>
+                + 행 추가
+              </button>
+            </div>
+          </>
         )}
 
         {error && (
