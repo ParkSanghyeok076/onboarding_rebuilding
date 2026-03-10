@@ -664,6 +664,11 @@
 
 .admin-delete-btn:hover { background: #e03333; }
 
+.admin-delete-btn--lg {
+  padding: 0.55rem 1.2rem;
+  font-size: 0.9rem;
+}
+
 .admin-modal {
   background: white;
   border-radius: 16px;

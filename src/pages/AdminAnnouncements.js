@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import './Pages.css';
+import './AdminAnnouncements.css';
 
 function AdminAnnouncements({ onBack }) {
   const [announcements, setAnnouncements] = useState([]);
@@ -9,9 +10,13 @@ function AdminAnnouncements({ onBack }) {
   const [form, setForm] = useState({ title: '', content: '', is_pinned: false });
   const [pdfFile, setPdfFile] = useState(null);
   const [submitting, setSubmitting] = useState(false);
-  const [editItem, setEditItem] = useState(null);
+  const [selected, setSelected] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({ title: '', content: '', is_pinned: false });
   const [editSubmitting, setEditSubmitting] = useState(false);
+  const [removePdf, setRemovePdf] = useState(false);
+  const [newPdfFile, setNewPdfFile] = useState(null);
+  const newPdfRef = useRef(null);
 
   const fetchAnnouncements = async () => {
     const { data, error } = await supabase
@@ -24,6 +29,20 @@ function AdminAnnouncements({ onBack }) {
   };
 
   useEffect(() => { fetchAnnouncements(); }, []);
+
+  const enterEditMode = () => {
+    setEditForm({ title: selected.title, content: selected.content, is_pinned: selected.is_pinned });
+    setRemovePdf(false);
+    setNewPdfFile(null);
+    setIsEditing(true);
+  };
+
+  const cancelEdit = () => {
+    setIsEditing(false);
+    setRemovePdf(false);
+    setNewPdfFile(null);
+    if (newPdfRef.current) newPdfRef.current.value = '';
+  };
 
   const handleCreate = async () => {
     if (!form.title.trim() || !form.content.trim()) {
@@ -74,18 +93,52 @@ function AdminAnnouncements({ onBack }) {
       return;
     }
     setEditSubmitting(true);
+
+    let pdf_url = selected.pdf_url;
+
+    // 기존 PDF 삭제
+    if (removePdf && selected.pdf_url) {
+      const filePath = selected.pdf_url.split('/').pop();
+      await supabase.storage.from('announcements-files').remove([filePath]);
+      pdf_url = null;
+    }
+
+    // 새 PDF 업로드
+    if (newPdfFile) {
+      // 기존 파일이 있으면 먼저 삭제
+      if (selected.pdf_url && !removePdf) {
+        const oldPath = selected.pdf_url.split('/').pop();
+        await supabase.storage.from('announcements-files').remove([oldPath]);
+      }
+      const filePath = `${Date.now()}_${newPdfFile.name}`;
+      const { error: uploadError } = await supabase.storage
+        .from('announcements-files')
+        .upload(filePath, newPdfFile);
+      if (uploadError) {
+        alert('PDF 업로드 실패: ' + uploadError.message);
+        setEditSubmitting(false);
+        return;
+      }
+      const { data: urlData } = supabase.storage
+        .from('announcements-files')
+        .getPublicUrl(filePath);
+      pdf_url = urlData.publicUrl;
+    }
+
     const { error } = await supabase
       .from('announcements')
-      .update({
-        title: editForm.title,
-        content: editForm.content,
-        is_pinned: editForm.is_pinned,
-      })
-      .eq('id', editItem.id);
+      .update({ title: editForm.title, content: editForm.content, is_pinned: editForm.is_pinned, pdf_url })
+      .eq('id', selected.id);
+
     if (error) {
       alert('수정 실패: ' + error.message);
     } else {
-      setEditItem(null);
+      const updated = { ...selected, title: editForm.title, content: editForm.content, is_pinned: editForm.is_pinned, pdf_url };
+      setSelected(updated);
+      setIsEditing(false);
+      setRemovePdf(false);
+      setNewPdfFile(null);
+      if (newPdfRef.current) newPdfRef.current.value = '';
       fetchAnnouncements();
     }
     setEditSubmitting(false);
@@ -103,6 +156,7 @@ function AdminAnnouncements({ onBack }) {
     if (error) {
       alert('삭제 실패: ' + error.message);
     } else {
+      if (selected?.id === announcement.id) setSelected(null);
       fetchAnnouncements();
     }
   };
@@ -116,6 +170,177 @@ function AdminAnnouncements({ onBack }) {
     );
   }
 
+  // ── 상세 / 편집 뷰 ──
+  if (selected) {
+    const currentPdfUrl = selected.pdf_url;
+    const showCurrentPdf = currentPdfUrl && !removePdf;
+
+    return (
+      <div className="page-container">
+        <div className="admin-container">
+          {/* 헤더 */}
+          <div className="admin-header">
+            <div className="admin-header-left">
+              <button onClick={onBack} className="back-button">← 돌아가기</button>
+              <h1 className="page-title">📢 공지사항 관리</h1>
+            </div>
+            <button className="admin-create-btn" onClick={() => setModalOpen(true)}>
+              + 새 공지 작성
+            </button>
+          </div>
+
+          <button onClick={() => { setSelected(null); setIsEditing(false); }} className="detail-back-button">
+            ← 목록으로
+          </button>
+
+          <div className="announcement-detail">
+            {/* ── 읽기 모드 ── */}
+            {!isEditing && (
+              <>
+                <div className="announcement-detail-header">
+                  {selected.is_pinned && (
+                    <span className="detail-pin-badge">📌 고정 공지</span>
+                  )}
+                  <h1 className="announcement-detail-title">{selected.title}</h1>
+                  <div className="announcement-detail-meta">
+                    <span className="detail-author">{selected.author}</span>
+                    <span className="detail-date">{selected.published_at?.slice(0, 10)}</span>
+                  </div>
+                </div>
+
+                <div
+                  className="announcement-detail-content"
+                  dangerouslySetInnerHTML={{ __html: selected.content }}
+                />
+
+                {selected.pdf_url && (
+                  <a href={selected.pdf_url} target="_blank" rel="noopener noreferrer" className="pdf-link">
+                    📎 첨부 파일 열기
+                  </a>
+                )}
+
+                <div className="ann-edit-toolbar">
+                  <button className="ann-edit-btn" onClick={enterEditMode}>✏️ 편집</button>
+                  <button className="admin-delete-btn admin-delete-btn--lg" onClick={() => handleDelete(selected)}>삭제</button>
+                </div>
+              </>
+            )}
+
+            {/* ── 편집 모드 ── */}
+            {isEditing && (
+              <>
+                <div className="announcement-detail-header">
+                  <label className="ann-pin-check">
+                    <input
+                      type="checkbox"
+                      checked={editForm.is_pinned}
+                      onChange={e => setEditForm(p => ({ ...p, is_pinned: e.target.checked }))}
+                    />
+                    <span className={editForm.is_pinned ? 'detail-pin-badge' : 'ann-pin-label'}>
+                      📌 고정 공지
+                    </span>
+                  </label>
+                  <input
+                    className="ann-edit-title-input"
+                    value={editForm.title}
+                    onChange={e => setEditForm(p => ({ ...p, title: e.target.value }))}
+                    placeholder="제목을 입력하세요"
+                  />
+                  <div className="announcement-detail-meta">
+                    <span className="detail-author">{selected.author}</span>
+                    <span className="detail-date">{selected.published_at?.slice(0, 10)}</span>
+                  </div>
+                </div>
+
+                <textarea
+                  className="ann-edit-content-input"
+                  value={editForm.content}
+                  onChange={e => setEditForm(p => ({ ...p, content: e.target.value }))}
+                  placeholder="본문을 입력하세요"
+                />
+
+                {/* PDF 관리 */}
+                <div className="ann-pdf-section">
+                  {showCurrentPdf && (
+                    <div className="ann-pdf-current">
+                      <a href={currentPdfUrl} target="_blank" rel="noopener noreferrer" className="pdf-link" style={{ marginTop: 0 }}>
+                        📎 현재 첨부 파일
+                      </a>
+                      <button className="ann-pdf-remove-btn" onClick={() => setRemovePdf(true)}>🗑️ 삭제</button>
+                    </div>
+                  )}
+                  {removePdf && (
+                    <div className="ann-pdf-removed">
+                      <span>⚠️ 기존 첨부파일이 저장 시 삭제됩니다.</span>
+                      <button className="ann-pdf-undo-btn" onClick={() => setRemovePdf(false)}>되돌리기</button>
+                    </div>
+                  )}
+                  <label className="ann-pdf-upload-label">
+                    {newPdfFile ? `📄 ${newPdfFile.name}` : (showCurrentPdf ? '↺ 다른 PDF로 교체' : '📎 PDF 첨부')}
+                    <input
+                      ref={newPdfRef}
+                      type="file"
+                      accept=".pdf"
+                      style={{ display: 'none' }}
+                      onChange={e => {
+                        setNewPdfFile(e.target.files[0] || null);
+                        setRemovePdf(false);
+                      }}
+                    />
+                  </label>
+                  {newPdfFile && (
+                    <button className="ann-pdf-remove-btn" onClick={() => { setNewPdfFile(null); if (newPdfRef.current) newPdfRef.current.value = ''; }}>
+                      ✕ 취소
+                    </button>
+                  )}
+                </div>
+
+                <div className="ann-edit-toolbar">
+                  <button className="ann-save-btn" onClick={handleUpdate} disabled={editSubmitting}>
+                    {editSubmitting ? '저장 중...' : '💾 저장'}
+                  </button>
+                  <button className="ann-cancel-btn" onClick={cancelEdit}>취소</button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* 새 공지 작성 모달 */}
+        {modalOpen && (
+          <div className="confirm-overlay">
+            <div className="admin-modal">
+              <h2>새 공지 작성</h2>
+              <div className="admin-form-group">
+                <label>제목 *</label>
+                <input type="text" value={form.title} onChange={e => setForm(p => ({ ...p, title: e.target.value }))} placeholder="공지 제목" />
+              </div>
+              <div className="admin-form-group">
+                <label>본문 *</label>
+                <textarea rows={6} value={form.content} onChange={e => setForm(p => ({ ...p, content: e.target.value }))} placeholder="공지 내용" />
+              </div>
+              <div className="admin-form-group">
+                <label>PDF 첨부 (선택)</label>
+                <input type="file" accept=".pdf" onChange={e => setPdfFile(e.target.files[0] || null)} />
+              </div>
+              <div className="admin-form-check">
+                <label>
+                  <input type="checkbox" checked={form.is_pinned} onChange={e => setForm(p => ({ ...p, is_pinned: e.target.checked }))} />
+                  {' '}상단 고정
+                </label>
+              </div>
+              <div className="confirm-actions">
+                <button className="confirm-btn confirm-cancel" onClick={() => { setModalOpen(false); setForm({ title: '', content: '', is_pinned: false }); setPdfFile(null); }}>취소</button>
+                <button className="confirm-btn confirm-ok" onClick={handleCreate} disabled={submitting}>{submitting ? '등록 중...' : '등록'}</button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ── 목록 뷰 ──
   return (
     <div className="page-container">
       <div className="admin-container">
@@ -135,10 +360,7 @@ function AdminAnnouncements({ onBack }) {
             <div
               key={a.id}
               className="admin-list-item admin-list-item-clickable"
-              onClick={() => {
-                setEditItem(a);
-                setEditForm({ title: a.title, content: a.content, is_pinned: a.is_pinned });
-              }}
+              onClick={() => setSelected(a)}
             >
               <div className="admin-item-info">
                 {a.is_pinned && <span className="pin-badge">📌</span>}
@@ -152,108 +374,31 @@ function AdminAnnouncements({ onBack }) {
         </div>
       </div>
 
-      {editItem && (
-        <div className="confirm-overlay" onClick={() => setEditItem(null)}>
-          <div className="admin-modal" onClick={e => e.stopPropagation()}>
-            <h2>공지사항 상세 / 편집</h2>
-            <div className="admin-form-group">
-              <label>제목</label>
-              <input
-                type="text"
-                value={editForm.title}
-                onChange={e => setEditForm(p => ({ ...p, title: e.target.value }))}
-              />
-            </div>
-            <div className="admin-form-group">
-              <label>본문</label>
-              <textarea
-                rows={8}
-                value={editForm.content}
-                onChange={e => setEditForm(p => ({ ...p, content: e.target.value }))}
-              />
-            </div>
-            {editItem.pdf_url && (
-              <div className="admin-form-group">
-                <label>첨부 파일</label>
-                <a href={editItem.pdf_url} target="_blank" rel="noreferrer" className="admin-pdf-link">
-                  📄 PDF 보기
-                </a>
-              </div>
-            )}
-            <div className="admin-form-check">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={editForm.is_pinned}
-                  onChange={e => setEditForm(p => ({ ...p, is_pinned: e.target.checked }))}
-                />
-                {' '}상단 고정
-              </label>
-            </div>
-            <div className="confirm-actions">
-              <button className="confirm-btn confirm-cancel" onClick={() => setEditItem(null)}>취소</button>
-              <button className="confirm-btn confirm-ok" onClick={handleUpdate} disabled={editSubmitting}>
-                {editSubmitting ? '저장 중...' : '저장'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {modalOpen && (
         <div className="confirm-overlay">
           <div className="admin-modal">
             <h2>새 공지 작성</h2>
             <div className="admin-form-group">
               <label>제목 *</label>
-              <input
-                type="text"
-                value={form.title}
-                onChange={e => setForm(p => ({ ...p, title: e.target.value }))}
-                placeholder="공지 제목"
-              />
+              <input type="text" value={form.title} onChange={e => setForm(p => ({ ...p, title: e.target.value }))} placeholder="공지 제목" />
             </div>
             <div className="admin-form-group">
               <label>본문 *</label>
-              <textarea
-                rows={6}
-                value={form.content}
-                onChange={e => setForm(p => ({ ...p, content: e.target.value }))}
-                placeholder="공지 내용"
-              />
+              <textarea rows={6} value={form.content} onChange={e => setForm(p => ({ ...p, content: e.target.value }))} placeholder="공지 내용" />
             </div>
             <div className="admin-form-group">
               <label>PDF 첨부 (선택)</label>
-              <input
-                type="file"
-                accept=".pdf"
-                onChange={e => setPdfFile(e.target.files[0] || null)}
-              />
+              <input type="file" accept=".pdf" onChange={e => setPdfFile(e.target.files[0] || null)} />
             </div>
             <div className="admin-form-check">
               <label>
-                <input
-                  type="checkbox"
-                  checked={form.is_pinned}
-                  onChange={e => setForm(p => ({ ...p, is_pinned: e.target.checked }))}
-                />
+                <input type="checkbox" checked={form.is_pinned} onChange={e => setForm(p => ({ ...p, is_pinned: e.target.checked }))} />
                 {' '}상단 고정
               </label>
             </div>
             <div className="confirm-actions">
-              <button
-                className="confirm-btn confirm-cancel"
-                onClick={() => {
-                  setModalOpen(false);
-                  setForm({ title: '', content: '', is_pinned: false });
-                  setPdfFile(null);
-                }}
-              >
-                취소
-              </button>
-              <button className="confirm-btn confirm-ok" onClick={handleCreate} disabled={submitting}>
-                {submitting ? '등록 중...' : '등록'}
-              </button>
+              <button className="confirm-btn confirm-cancel" onClick={() => { setModalOpen(false); setForm({ title: '', content: '', is_pinned: false }); setPdfFile(null); }}>취소</button>
+              <button className="confirm-btn confirm-ok" onClick={handleCreate} disabled={submitting}>{submitting ? '등록 중...' : '등록'}</button>
             </div>
           </div>
         </div>

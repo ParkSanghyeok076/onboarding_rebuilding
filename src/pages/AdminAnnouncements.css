@@ -1,0 +1,195 @@
+/* AdminAnnouncements.css */
+
+/* ── 인라인 편집: 제목 입력 ── */
+.ann-edit-title-input {
+  display: block;
+  width: 100%;
+  font-size: 26px;
+  font-weight: 700;
+  color: #2d3748;
+  line-height: 1.4;
+  border: none;
+  border-bottom: 2px solid #667eea;
+  outline: none;
+  padding: 4px 0 8px;
+  margin: 8px 0 16px;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.ann-edit-title-input::placeholder {
+  color: #c0c8d8;
+  font-weight: 400;
+}
+
+/* ── 인라인 편집: 본문 textarea ── */
+.ann-edit-content-input {
+  width: 100%;
+  min-height: 420px;
+  font-size: 16px;
+  color: #4a5568;
+  line-height: 1.8;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  outline: none;
+  padding: 16px;
+  resize: vertical;
+  font-family: inherit;
+  background: #fafbff;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+
+.ann-edit-content-input:focus {
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* ── 고정 공지 체크박스 ── */
+.ann-pin-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.ann-pin-check input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #FF6B6B;
+}
+
+.ann-pin-label {
+  font-size: 13px;
+  color: #aaa;
+  padding: 5px 10px;
+  border: 1px dashed #ddd;
+  border-radius: 6px;
+}
+
+/* ── 편집/저장 툴바 ── */
+.ann-edit-toolbar {
+  display: flex;
+  gap: 10px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.ann-edit-btn {
+  padding: 10px 22px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.ann-edit-btn:hover { background: #5568d4; }
+
+.ann-save-btn {
+  padding: 10px 26px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.ann-save-btn:hover { background: #218838; }
+.ann-save-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.ann-cancel-btn {
+  padding: 10px 20px;
+  background: white;
+  color: #888;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ann-cancel-btn:hover { border-color: #aaa; color: #555; }
+
+/* ── PDF 관리 섹션 ── */
+.ann-pdf-section {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+  padding: 16px;
+  background: #f8f9fc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.ann-pdf-current {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ann-pdf-remove-btn {
+  background: none;
+  border: 1px solid #faa;
+  color: #c33;
+  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.ann-pdf-remove-btn:hover { background: #fff0f0; }
+
+.ann-pdf-removed {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #c33;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.ann-pdf-undo-btn {
+  background: none;
+  border: 1px solid #c33;
+  color: #c33;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.ann-pdf-undo-btn:hover { background: #fff0f0; }
+
+.ann-pdf-upload-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: white;
+  border: 1px dashed #667eea;
+  border-radius: 6px;
+  color: #667eea;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.ann-pdf-upload-label:hover { background: #f0f2ff; }
