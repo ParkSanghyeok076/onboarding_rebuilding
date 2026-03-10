@@ -3,7 +3,7 @@
 .au-wrapper {
   max-width: 720px;
   margin: 0 auto;
-  padding: 0 28px 40px;
+  padding: 50px 28px 40px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -189,6 +189,7 @@
   font-size: 12px;
   padding: 4px 12px;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .au-cancel-btn:hover { border-color: #aaa; color: #555; }

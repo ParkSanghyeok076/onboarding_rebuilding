@@ -193,47 +193,9 @@ function AdminUsers({ onBack }) {
           </div>
         </div>
 
-        {/* 파일 업로드 존 */}
-        {!preview && !result && (
-          <div
-            className={`au-dropzone${dragging ? ' au-dropzone--drag' : ''}${fileName ? ' au-dropzone--filled' : ''}`}
-            onClick={() => fileInputRef.current?.click()}
-            onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
-            onDragLeave={() => setDragging(false)}
-            onDrop={handleDrop}
-          >
-            <input
-              type="file"
-              accept=".csv"
-              onChange={handleFile}
-              ref={fileInputRef}
-              style={{ display: 'none' }}
-            />
-            {fileName ? (
-              <>
-                <div className="au-drop-icon au-drop-icon--ready">✅</div>
-                <div className="au-drop-filename">{fileName}</div>
-                <div className="au-drop-sub">다른 파일을 선택하려면 클릭하세요</div>
-              </>
-            ) : (
-              <>
-                <div className="au-drop-icon">+</div>
-                <div className="au-drop-title">CSV 파일을 업로드하세요</div>
-                <div className="au-drop-sub">클릭하거나 파일을 드래그하여 놓으세요</div>
-              </>
-            )}
-          </div>
-        )}
-
-        {/* 구분선 + 직접 입력 — preview/result 없을 때만 표시 */}
+        {/* 수기입력 + 구분선 + CSV 업로드 — preview/result 없을 때만 표시 */}
         {!preview && !result && (
           <>
-            <div className="au-divider">
-              <div className="au-divider-line" />
-              <span className="au-divider-text">또는 직접 입력</span>
-              <div className="au-divider-line" />
-            </div>
-
             <div className="au-manual" onPaste={handleManualPaste}>
               <div className="au-manual-header">
                 <span className="au-manual-hint">💡 Ctrl+V 로 엑셀 데이터 붙여넣기 가능</span>
@@ -295,6 +257,41 @@ function AdminUsers({ onBack }) {
               <button className="au-add-row-btn" onClick={() => setManualRows(prev => [...prev, EMPTY_ROW()])}>
                 + 행 추가
               </button>
+            </div>
+
+            <div className="au-divider">
+              <div className="au-divider-line" />
+              <span className="au-divider-text">또는 CSV 업로드</span>
+              <div className="au-divider-line" />
+            </div>
+
+            <div
+              className={`au-dropzone${dragging ? ' au-dropzone--drag' : ''}${fileName ? ' au-dropzone--filled' : ''}`}
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+              onDragLeave={() => setDragging(false)}
+              onDrop={handleDrop}
+            >
+              <input
+                type="file"
+                accept=".csv"
+                onChange={handleFile}
+                ref={fileInputRef}
+                style={{ display: 'none' }}
+              />
+              {fileName ? (
+                <>
+                  <div className="au-drop-icon au-drop-icon--ready">✅</div>
+                  <div className="au-drop-filename">{fileName}</div>
+                  <div className="au-drop-sub">다른 파일을 선택하려면 클릭하세요</div>
+                </>
+              ) : (
+                <>
+                  <div className="au-drop-icon">+</div>
+                  <div className="au-drop-title">CSV 파일을 업로드하세요</div>
+                  <div className="au-drop-sub">클릭하거나 파일을 드래그하여 놓으세요</div>
+                </>
+              )}
             </div>
           </>
         )}
