@@ -40,6 +40,31 @@
 
 ---
 
+### 3. 공지사항 관리 UX 개선
+
+**변경 내용**:
+- 공지 클릭 시 바로 편집 모달 → **상세 보기 먼저 표시** (신입사원 화면과 동일 스타일)
+- 편집 모달 → **인라인 편집**으로 전환 (상세 화면에서 바로 입력 가능)
+  - 제목: 큰 인풋 필드, 본문: 키 큰 textarea
+  - 고정 공지 체크박스 토글
+- **PDF 추가/삭제/교체 기능** 추가 (기존 공지 편집 시)
+  - 현재 첨부파일 표시 + 삭제 버튼
+  - 새 파일 업로드 / 교체 버튼
+- `src/pages/AdminAnnouncements.css` 신규 생성
+
+**DB/Storage 수정**:
+- `announcements-files` 버킷 Storage RLS 정책 3개 추가 (INSERT/DELETE/SELECT)
+- `public.users` 스키마 수정: `mentor_id`, `team_leader_id` FK에 `ON DELETE SET NULL` 추가
+  → Authentication 대시보드에서 사용자 삭제 시 FK 오류 해결
+
+**기타**:
+- '목록으로 돌아가기' → '목록으로' 텍스트 변경
+
+**커밋**:
+- `c43e29a` feat: 공지사항 관리 UX 개선 - 인라인 편집 + PDF 관리
+
+---
+
 ## 2026-03-06
 
 ### 1. AdminLayout 사이드바 컴포넌트 생성
