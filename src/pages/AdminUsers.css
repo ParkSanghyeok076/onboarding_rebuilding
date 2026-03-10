@@ -308,6 +308,7 @@
 .au-manual-submit {
   padding: 8px 20px !important;
   font-size: 13px !important;
+  margin-top: 0 !important;
 }
 
 /* ── 테이블 ── */
