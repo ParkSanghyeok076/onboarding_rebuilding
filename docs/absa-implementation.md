@@ -31,35 +31,43 @@
 
 ## 2. 전체 파이프라인
 
-```
-[신규입사자]               [HR Admin]                [Claude API]
-    │                         │                           │
-    │ 설문 제출                │                           │
-    │──────────────────────► DB (survey_responses)        │
-    │                         │                           │
-    │                         │ "분석 실행" 버튼 클릭      │
-    │                         │──► Edge Function: analyze  │
-    │                         │         │                  │
-    │                         │         │ 주관식 7필드 조회 │
-    │                         │         │──────────────────►│
-    │                         │         │◄──────────────────│
-    │                         │         │ aspects JSON 반환 │
-    │                         │         │                   │
-    │                         │         │ analysis_results 저장
-    │                         │◄────────│                   │
-    │                         │                            │
-    │                         │ ABSA 결과 확인 (팝업)      │
-    │                         │                            │
-    │                         │ "멘토 이메일" 버튼 클릭    │
-    │                         │──► Edge Function: generate-email
-    │                         │         │──────────────────►│
-    │                         │         │◄──────────────────│
-    │                         │         │ 이메일 초안 반환  │
-    │                         │         │                   │
-    │                         │         │ email_drafts 저장 │
-    │                         │◄────────│                   │
-    │                         │ 이메일 초안 확인 후        │
-    │                         │ 멘토/팀장에게 직접 발송    │
+```mermaid
+sequenceDiagram
+    box rgb(235,245,255) 사용자
+        participant E as 신규입사자
+    end
+    box rgb(235,255,240) 관리
+        participant HR as HR Admin
+    end
+    box rgb(245,245,245) 인프라
+        participant DB as DB (Supabase)
+        participant EF as Edge Function
+    end
+    box rgb(255,245,235) AI
+        participant C as Claude API
+    end
+
+    E->>DB: 설문 제출 (survey_responses)
+
+    Note over HR: ① "분석 실행" 버튼 클릭
+    HR->>EF: analyze 호출 (response_id)
+    EF->>DB: 주관식 7필드 조회
+    DB-->>EF: 응답 데이터 반환
+    EF->>C: ABSA 프롬프트 전송
+    C-->>EF: aspects JSON 반환
+    EF->>DB: analysis_results 저장
+    EF-->>HR: 분석 완료
+
+    Note over HR: ② ABSA 결과 팝업 확인
+
+    Note over HR: ③ "멘토/팀장 이메일" 버튼 클릭
+    HR->>EF: generate-email 호출 (analysis_result_id)
+    EF->>C: 이메일 초안 생성 요청
+    C-->>EF: 이메일 초안 반환
+    EF->>DB: email_drafts 저장
+    EF-->>HR: 초안 완료
+
+    Note over HR: ④ 초안 확인 후 멘토/팀장에게 직접 발송
 ```
 
 ---
@@ -151,32 +159,42 @@
 
 ## 6. Edge Function 처리 흐름 (analyze/index.ts)
 
-```
-요청 수신
-  │
-  ▼
-① JWT 인증 → supabase.auth.getUser(token)
-  │
-  ▼
-② HR Admin 권한 확인 → users.role === 'hr_admin'
-  │
-  ▼
-③ 중복 분석 방지 → analysis_results에 response_id 존재 여부 확인 (409 반환)
-  │
-  ▼
-④ 주관식 7필드 조회 → survey_responses WHERE id = response_id
-  │
-  ▼
-⑤ Claude API 호출 (claude-sonnet-4-6, max_tokens: 2048)
-  │
-  ▼
-⑥ 응답에서 JSON 배열 파싱 → /\[[\s\S]*\]/ 정규식
-  │
-  ▼
-⑦ analysis_results INSERT (aspects JSONB, raw_result 원문)
-  │
-  ▼
-⑧ {analysis_result_id, aspects} 반환
+```mermaid
+flowchart TD
+    A([🔵 요청 수신]) --> B
+
+    B["① JWT 인증\nsupabase.auth.getUser(token)"]
+    B --> B1{인증 성공?}
+    B1 -- 실패 --> B2([🔴 401 Unauthorized])
+    B1 -- 성공 --> C
+
+    C["② HR Admin 권한 확인\nusers.role === 'hr_admin'"]
+    C --> C1{권한 있음?}
+    C1 -- 없음 --> C2([🔴 403 Forbidden])
+    C1 -- 있음 --> D
+
+    D["③ 중복 분석 방지\nanalysis_results WHERE response_id"]
+    D --> D1{이미 분석됨?}
+    D1 -- 예 --> D2([🔴 409 Conflict])
+    D1 -- 아니오 --> E
+
+    E["④ 주관식 7필드 조회\nsurvey_responses WHERE id = response_id\nq1_5 ~ q5_3"]
+    E --> F
+
+    F["⑤ Claude API 호출\nmodel: claude-sonnet-4-6\nmax_tokens: 2048"]
+    F --> G
+
+    G["⑥ JSON 파싱\n정규식: /\\[\\s\\S\\]*\\]/"]
+    G --> H
+
+    H["⑦ analysis_results INSERT\naspects JSONB + raw_result"]
+    H --> I([🟢 200 OK\nanalysis_result_id + aspects 반환])
+
+    style A fill:#dbeafe,stroke:#3b82f6
+    style I fill:#dcfce7,stroke:#22c55e
+    style B2 fill:#fee2e2,stroke:#ef4444
+    style C2 fill:#fee2e2,stroke:#ef4444
+    style D2 fill:#fee2e2,stroke:#ef4444
 ```
 
 > **API 키 보안:** `ANTHROPIC_API_KEY`는 Supabase Edge Function 환경변수에만 존재.
@@ -196,12 +214,23 @@
 | 원문 발췌 | `quote` |
 
 ### 상태 흐름
-```
-[분석 실행] → 로딩 중... → 완료 (확인) 클릭 → ABSA 결과 팝업
-                                ↓
-                         [멘토] / [팀장] 버튼 활성화
-                                ↓
-                         이메일 초안 생성 → 완료 (확인) 클릭 → 이메일 초안 팝업
+
+```mermaid
+flowchart LR
+    A["🔘 분석 실행\n버튼"] --> B["⏳ 분석 중..."]
+    B --> C["✅ 완료\n확인 클릭"]
+    C --> D["📊 ABSA 결과\n팝업"]
+    D --> E["🔘 멘토 / 팀장\n이메일 버튼 활성화"]
+    E --> F["⏳ 생성 중..."]
+    F --> G["✅ 완료\n확인 클릭"]
+    G --> H["📧 이메일 초안\n팝업"]
+
+    style A fill:#f1f5f9,stroke:#94a3b8
+    style C fill:#dcfce7,stroke:#22c55e
+    style D fill:#eff6ff,stroke:#3b82f6
+    style E fill:#f1f5f9,stroke:#94a3b8
+    style G fill:#dcfce7,stroke:#22c55e
+    style H fill:#eff6ff,stroke:#3b82f6
 ```
 
 ---
