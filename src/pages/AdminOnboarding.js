@@ -87,6 +87,56 @@ function UrgentPopup({ users, onClose }) {
   );
 }
 
+function SurveyDeadlinePopup({ items, onClose }) {
+  return (
+    <div className="confirm-overlay" onClick={onClose}>
+      <div className="program-popup" onClick={e => e.stopPropagation()} style={{maxWidth: 520}}>
+        <div className="program-popup-header">
+          <h3>이번주 설문 마감 대상자</h3>
+          <button className="program-popup-close" onClick={onClose}>✕</button>
+        </div>
+        {items.length === 0 ? (
+          <p style={{color:'#888', textAlign:'center', padding:'20px 0'}}>이번 주 마감 설문 없음</p>
+        ) : (
+          <table className="admin-table" style={{width:'100%'}}>
+            <thead>
+              <tr>
+                <th>이름</th>
+                <th>팀</th>
+                <th>차수</th>
+                <th>마감일</th>
+                <th>완료</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item, i) => {
+                const isDone = (item.row.submittedRounds || []).includes(item.round);
+                const endStr = item.row[`period_${item.round}_end`];
+                return (
+                  <tr key={i}>
+                    <td>{item.row.name}</td>
+                    <td>{item.row.department || item.row.team || '—'}</td>
+                    <td>{item.round}차</td>
+                    <td>{formatShortDate(endStr)}</td>
+                    <td>
+                      <span style={{
+                        color: isDone ? '#22c55e' : '#dc3545',
+                        fontWeight: 700,
+                      }}>
+                        {isDone ? '완료' : '미완료'}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function ProgramGridPopup({ user, onClose }) {
   const [imageUrls, setImageUrls] = useState({});
   const [loading, setLoading] = useState(true);
@@ -144,6 +194,7 @@ function AdminOnboarding({ onBack }) {
   const [sortAsc, setSortAsc] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null); // ProgramGridPopup용
   const [showUrgentPopup, setShowUrgentPopup] = useState(false);
+  const [showSurveyPopup, setShowSurveyPopup] = useState(false);
 
   const today = useMemo(() => {
     const d = new Date();
@@ -223,6 +274,7 @@ function AdminOnboarding({ onBack }) {
       total, newHireCount, careerCount,
       completedCount, completionRate,
       surveyTotal, surveyDone, surveyRate, earliestDeadline,
+      surveyDeadlineUsers,
       urgentCount: urgentUsers.length,
       urgentUsers,
     };
@@ -380,7 +432,12 @@ function AdminOnboarding({ onBack }) {
             </div>
 
             {/* ③ 이번주 설문 마감 */}
-            <div className="kpi-card amber">
+            <div
+              className="kpi-card amber"
+              onClick={() => kpi.surveyTotal > 0 && setShowSurveyPopup(true)}
+              style={{ cursor: kpi.surveyTotal > 0 ? 'pointer' : 'default' }}
+              title={kpi.surveyTotal > 0 ? '클릭하여 대상자 확인' : undefined}
+            >
               <div className="kpi-label">이번주 설문 마감</div>
               {kpi.surveyTotal > 0 ? (
                 <>
@@ -394,6 +451,7 @@ function AdminOnboarding({ onBack }) {
                   <div className="kpi-progress">
                     <div className="kpi-progress-fill" style={{width:`${kpi.surveyRate}%`, background:'#f59e0b'}} />
                   </div>
+                  <div className="kpi-sub" style={{marginTop:4}}>클릭하여 대상자 확인</div>
                 </>
               ) : (
                 <div className="kpi-sub" style={{marginTop:8}}>이번 주 마감 설문 없음</div>
@@ -542,6 +600,9 @@ function AdminOnboarding({ onBack }) {
       {selectedUser && <ProgramGridPopup user={selectedUser} onClose={() => setSelectedUser(null)} />}
       {showUrgentPopup && kpi && kpi.urgentCount > 0 && (
         <UrgentPopup users={kpi.urgentUsers} onClose={() => setShowUrgentPopup(false)} />
+      )}
+      {showSurveyPopup && kpi && (
+        <SurveyDeadlinePopup items={kpi.surveyDeadlineUsers} onClose={() => setShowSurveyPopup(false)} />
       )}
     </div>
   );
