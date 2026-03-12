@@ -4,6 +4,7 @@ import AdminOnboarding from '../pages/AdminOnboarding';
 import AdminAnnouncements from '../pages/AdminAnnouncements';
 import AdminSurvey from '../pages/AdminSurvey';
 import AdminUsers from '../pages/AdminUsers';
+import AdminMentorBuddy from '../pages/AdminMentorBuddy';
 import './AdminLayout.css';
 
 const MENU_ITEMS = [
@@ -11,6 +12,7 @@ const MENU_ITEMS = [
   { id: 'admin-announcements', icon: '📢', label: '공지사항 관리' },
   { id: 'admin-survey',        icon: '📝', label: '설문조사 관리' },
   { id: 'admin-users',         icon: '👥', label: '직원 관리' },
+  { id: 'admin-mentor-buddy',  icon: '🤝', label: '멘토/버디 관리' },
 ];
 
 
@@ -70,6 +72,9 @@ function AdminLayout({ user, onLogout }) {
           )}
           {activePage === 'admin-users' && (
             <AdminUsers onBack={() => setActivePage('admin-onboarding')} />
+          )}
+          {activePage === 'admin-mentor-buddy' && (
+            <AdminMentorBuddy onBack={() => setActivePage('admin-onboarding')} />
           )}
         </main>
       </div>
