@@ -86,7 +86,7 @@ export function buildNewHireEmail(employees, today) {
       </table>
     </div>
     <div>2) 시행기간 : <span style="color:#1155CC;font-weight:bold;">${periodStart} ~ ${periodEnd} (12주)</span></div>
-    <div>3) 시행방법 : 쳊부2 참조</div>
+    <div>3) 시행방법 : 첨부2 참조</div>
   </div>
   <div style="font-weight:bold;margin:16px 0 6px;">2. 요청사항 : <span style="color:#CC0000;font-weight:bold;">${deadlineStr}, 17:00</span></div>
   <div style="margin-left:16px;">
@@ -121,7 +121,7 @@ export function buildNewHireEmail(employees, today) {
     <div>3) OJT노트 수령 : 신규입사자 회사소개 교육 진행 후 배포</div>
   </div>
   <div style="font-weight:bold;margin:16px 0 6px;">5. 문의 : 인사기획팀 박상혁 선임(1456)</div>
-  <div style="font-weight:bold;margin:16px 0 6px;">6. 쳊부파일</div>
+  <div style="font-weight:bold;margin:16px 0 6px;">6. 첨부파일</div>
 </div>`;
 }
 
@@ -173,11 +173,11 @@ export function buildExpHireEmail(employees, today) {
       </table>
     </div>
     <div>2) 시행기간 : <span style="color:#1155CC;font-weight:bold;">${periodStart} ~ ${periodEnd} (4주)</span></div>
-    <div>3) 시행방법 : 쳊부4 참조</div>
+    <div>3) 시행방법 : 첨부4 참조</div>
   </div>
   <div style="font-weight:bold;margin:16px 0 6px;">2. 요청사항 : <span style="color:#CC0000;font-weight:bold;">${deadlineStr}, 17:00</span></div>
   <div style="margin-left:16px;">
-    <div><span style="color:#CC0000;font-weight:bold;">1) 경력직 OJT계획서 작성 및 상신 [쳊부3 참고]</span></div>
+    <div><span style="color:#CC0000;font-weight:bold;">1) 경력직 OJT계획서 작성 및 상신 [첨부3 참고]</span></div>
     <div style="margin-left:16px;font-weight:bold;">- 전자결재 → 결재양식함 → 교육 → OJT/멘토링 계획서(1개월만 작성)</div>
     <div style="margin-left:16px;font-weight:bold;">- 결재선 : 팀장 전결 / 상신인 : OJT 담당인원(기존 재직자)</div>
     <div style="margin-left:16px;font-weight:bold;">- 적요 : [유라코퍼레이션 00본부] OJT/멘토링 계획서 - (${nameList})</div>
@@ -201,7 +201,7 @@ export function buildExpHireEmail(employees, today) {
     <div style="color:#CC0000;font-weight:bold;">※ 기한 내 미사용 금액 이월 불가</div>
   </div>
   <div style="font-weight:bold;margin:16px 0 6px;">5. 문의 : 인사기획팀 박상혁 선임(1456)</div>
-  <div style="font-weight:bold;margin:16px 0 6px;">6. 쳊부파일</div>
+  <div style="font-weight:bold;margin:16px 0 6px;">6. 첨부파일</div>
 </div>`;
 }
 
