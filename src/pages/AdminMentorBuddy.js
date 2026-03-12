@@ -47,15 +47,21 @@ export function buildNewHireEmail(employees, today) {
   if (!employees || employees.length === 0) return '';
   const deadline = addDays(today, 5);
   const deadlineStr = fmtDeadline(deadline);
-  const deadlineMD = `${String(deadline.getMonth()+1).padStart(2,'0')}/${String(deadline.getDate()).padStart(2,'0')}`;
-  const subjectDeadline = `~${deadlineMD}`;
 
   const rows = employees.map((e, i) => `
     <tr>
-      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">${i+1}</td>
-      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">${escapeHtml(e.department)}</td>
-      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">${escapeHtml(e.name)}</td>
-      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">${fmtLong(e.period_3_end)}</td>
+      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">
+        <p style="line-height: 1.5; font-family: 굴림체; font-size: 12pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">${i+1}</span></p>
+      </td>
+      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">
+        <p style="line-height: 1.5; font-family: 굴림체; font-size: 12pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">${escapeHtml(e.department)}</span></p>
+      </td>
+      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">
+        <p style="line-height: 1.5; font-family: 굴림체; font-size: 12pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">${escapeHtml(e.name)}</span></p>
+      </td>
+      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">
+        <p style="line-height: 1.5; font-family: 굴림체; font-size: 12pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">${fmtLong(e.period_3_end)}</span></p>
+      </td>
     </tr>`).join('');
 
   const periodStart = fmtLong(employees[0].period_1_start);
@@ -63,79 +69,109 @@ export function buildNewHireEmail(employees, today) {
 
   const fundRows = employees[0] ? `
     <tr>
-      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">1차</td>
-      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">${fmtShort(employees[0].period_1_start)} ~ ${fmtShort(employees[0].period_1_end)}</td>
-      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">50천원</td>
+      <td style="border: 1px solid rgb(51, 51, 51); padding: 5px 14px; text-align: center;">
+        <p style="line-height: 1.5; font-family: 굴림체; font-size: 12pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">1차</span></p>
+      </td>
+      <td style="border: 1px solid rgb(51, 51, 51); padding: 5px 14px; text-align: center;">
+        <p style="line-height: 1.5; font-family: 굴림체; font-size: 12pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">${fmtShort(employees[0].period_1_start)} ~ ${fmtShort(employees[0].period_1_end)}</span></p>
+      </td>
+      <td style="border: 1px solid rgb(51, 51, 51); padding: 5px 14px; text-align: center;">
+        <p style="line-height: 1.5; font-family: 굴림체; font-size: 12pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">50천원</span></p>
+      </td>
     </tr>
     <tr>
-      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">2차</td>
-      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">${fmtShort(employees[0].period_2_start)} ~ ${fmtShort(employees[0].period_2_end)}</td>
-      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">50천원</td>
+      <td style="border: 1px solid rgb(51, 51, 51); padding: 5px 14px; text-align: center;">
+        <p style="line-height: 1.5; font-family: 굴림체; font-size: 12pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">2차</span></p>
+      </td>
+      <td style="border: 1px solid rgb(51, 51, 51); padding: 5px 14px; text-align: center;">
+        <p style="line-height: 1.5; font-family: 굴림체; font-size: 12pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">${fmtShort(employees[0].period_2_start)} ~ ${fmtShort(employees[0].period_2_end)}</span></p>
+      </td>
+      <td style="border: 1px solid rgb(51, 51, 51); padding: 5px 14px; text-align: center;">
+        <p style="line-height: 1.5; font-family: 굴림체; font-size: 12pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">50천원</span></p>
+      </td>
     </tr>
     <tr>
-      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">3차</td>
-      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">${fmtShort(employees[0].period_3_start)} ~ ${fmtShort(employees[0].period_3_end)}</td>
-      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">50천원</td>
+      <td style="border: 1px solid rgb(51, 51, 51); padding: 5px 14px; text-align: center;">
+        <p style="line-height: 1.5; font-family: 굴림체; font-size: 12pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">3차</span></p>
+      </td>
+      <td style="border: 1px solid rgb(51, 51, 51); padding: 5px 14px; text-align: center;">
+        <p style="line-height: 1.5; font-family: 굴림체; font-size: 12pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">${fmtShort(employees[0].period_3_start)} ~ ${fmtShort(employees[0].period_3_end)}</span></p>
+      </td>
+      <td style="border: 1px solid rgb(51, 51, 51); padding: 5px 14px; text-align: center;">
+        <p style="line-height: 1.5; font-family: 굴림체; font-size: 12pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">50천원</span></p>
+      </td>
     </tr>` : '';
 
-  return `<div style="font-family:'맑은 고딕','Malgun Gothic',sans-serif;font-size:14px;line-height:1.8;color:#000;max-width:720px;padding:32px;">
-  <div style="font-weight:bold;font-size:15px;border-bottom:2px solid #333;padding-bottom:10px;margin-bottom:24px;">
-    제목: [인사기획팀] 신입사원 OJT/멘토링 진행 및 계획서 상신 요청 (${subjectDeadline})
-  </div>
-  <p>안녕하십니까, 인사기획팀 박상혁 선임입니다.<br>
-  신입사원 OJT/멘토링 진행 및 계획서 상신을 아래와 같이 요청드리오니 확인 부탁드립니다.</p>
-  <div style="text-align:center;font-weight:bold;margin:20px 0;letter-spacing:4px;">-&nbsp;&nbsp;&nbsp;&nbsp;아&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;래&nbsp;&nbsp;&nbsp;&nbsp;-</div>
-  <div style="font-weight:bold;margin:16px 0 6px;">1. 교육개요</div>
-  <div style="margin-left:16px;">
-    <div>1) 대상자</div>
-    <div style="margin-left:16px;">
-      <table style="border-collapse:collapse;margin:6px 0 10px;">
-        <thead><tr>
-          <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">순번</th>
-          <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">소속</th>
-          <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">성명</th>
-          <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">종료일</th>
-        </tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-    </div>
-    <div>2) 시행기간 : <span style="color:#1155CC;font-weight:bold;">${periodStart} ~ ${periodEnd} (12주)</span></div>
-    <div>3) 시행방법 : 첨부2 참조</div>
-  </div>
-  <div style="font-weight:bold;margin:16px 0 6px;">2. 요청사항 : <span style="color:#CC0000;font-weight:bold;">${deadlineStr}, 17:00</span></div>
-  <div style="margin-left:16px;">
-    <div>1) 멘토선정 (주체 : 팀장)</div>
-    <div>2) OJT/멘토링 계획서 상신(작성자 : 멘토)</div>
-    <div style="margin-left:16px;font-weight:bold;">- 전자결재 → 결재양식함 → 교육 → OJT/멘토링 계획서(3개월 모두 작성)</div>
-    <div style="margin-left:16px;font-weight:bold;">- 결재선 : 팀장 전결</div>
-    <div style="margin-left:16px;font-weight:bold;">- 적요 : [유라코퍼레이션 00본부] OJT/멘토링 계획서 - (${employees.map(e => escapeHtml(e.name)).join(', ')})</div>
-    <div>3) OJT노트 작성(작성자 : 신입사원)</div>
-  </div>
-  <div style="font-weight:bold;margin:16px 0 6px;">3. OJT계획 수립 시 필수 포함내용</div>
-  <div style="margin-left:16px;">
-    <div>1) 직무 관련 기능/기술/지식</div>
-    <div>2) 직무 관련 프로세스 및 세부요령</div>
-  </div>
-  <div style="font-weight:bold;margin:16px 0 6px;">4. 기타사항</div>
-  <div style="margin-left:16px;">
-    <div>1) 멘토링 지원금</div>
-    <div style="margin-left:16px;">
-      <table style="border-collapse:collapse;margin:6px 0 10px;">
-        <thead><tr>
-          <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">차수</th>
-          <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">사용일자</th>
-          <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">금액</th>
-        </tr></thead>
-        <tbody>${fundRows}</tbody>
-      </table>
-      <div style="font-weight:bold;">※ 지원목적 : 멘토-신입사원 간 유대관계 형성을 통한 신입사원 조직적응 지원</div>
-      <div style="color:#CC0000;font-weight:bold;">※ 기한 내 미사용 금액 이월 불가</div>
-    </div>
-    <div>2) 휴일,연차사용일은 교육 및 OJT노트 작성 불필요</div>
-    <div>3) OJT노트 수령 : 신규입사자 회사소개 교육 진행 후 배포</div>
-  </div>
-  <div style="font-weight:bold;margin:16px 0 6px;">5. 문의 : 인사기획팀 박상혁 선임(1456)</div>
-  <div style="font-weight:bold;margin:16px 0 6px;">6. 첨부파일</div>
+  return `<div style="font-size: 10pt; color: rgb(0, 0, 0); max-width: 720px; padding: 32px; font-family: 굴림체; line-height: 1.5; margin-top: 0px; margin-bottom: 0px;">
+<p style="line-height: 1.5; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt;">안녕하십니까, 인사기획팀 박상혁 선임입니다.</span><br><span style="font-size: 10pt;">  신입사원 OJT/멘토링 진행 및 계획서 상신을 아래와 같이 요청드리오니 확인 부탁드립니다.</span></p>
+<p style="line-height: 1.5; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><br></p>
+<p style="line-height: 1.5; text-align: center; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">-&nbsp; &nbsp; 아&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 래&nbsp; &nbsp; -</span></p>
+<div style="margin: 16px 0px 6px; font-family: 굴림체; font-size: 10pt; line-height: 1.5;"><p style="line-height: 1.5; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">1. 교육개요</span></p></div>
+<div style="margin-left: 16px; font-family: 굴림체; font-size: 10pt; line-height: 1.5; margin-top: 0px; margin-bottom: 0px;">
+<div style="font-family: 굴림체; font-size: 10pt; line-height: 1.5; margin-top: 0px; margin-bottom: 0px;"><p style="line-height: 1.5; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">1) 대상자</span></p></div>
+<div style="margin-left: 16px; font-family: 굴림체; font-size: 10pt; line-height: 1.5; margin-top: 0px; margin-bottom: 0px;">
+<table style="border-collapse:collapse;margin:6px 0 10px;">
+  <thead><tr>
+    <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">
+      <p style="line-height: 1.5; font-family: 굴림체; font-size: 12pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">순번</span></p>
+    </th>
+    <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">
+      <p style="line-height: 1.5; font-family: 굴림체; font-size: 12pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">소속</span></p>
+    </th>
+    <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">
+      <p style="line-height: 1.5; font-family: 굴림체; font-size: 12pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">성명</span></p>
+    </th>
+    <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">
+      <p style="line-height: 1.5; font-family: 굴림체; font-size: 12pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">종료일</span></p>
+    </th>
+  </tr></thead>
+  <tbody>${rows}</tbody>
+</table>
+</div>
+<div style="font-family: 굴림체; font-size: 10pt; line-height: 1.5; margin-top: 0px; margin-bottom: 0px;"><p style="line-height: 1.5; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">2) 시행기간 : <span style="color: rgb(17, 85, 204); font-weight: bold; font-size: 10pt; font-family: 굴림체;">${periodStart} ~ ${periodEnd} (12주)</span></span></p></div>
+<div style="font-family: 굴림체; font-size: 10pt; line-height: 1.5; margin-top: 0px; margin-bottom: 0px;"><p style="line-height: 1.5; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">3) 시행방법 : 첨부2 참조</span></p></div>
+</div>
+<div style="font-weight: bold; margin: 16px 0px 6px; font-family: 굴림체; font-size: 10pt; line-height: 1.5;"><p style="line-height: 1.5; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">2. 요청사항 : <span style="color: rgb(204, 0, 0); font-weight: bold; font-size: 10pt; font-family: 굴림체;">${deadlineStr}, 17:00</span></span></p></div>
+<div style="margin-left: 16px; font-family: 굴림체; font-size: 10pt; line-height: 1.5; margin-top: 0px; margin-bottom: 0px;">
+<div style="font-family: 굴림체; font-size: 10pt; line-height: 1.5; margin-top: 0px; margin-bottom: 0px;"><p style="line-height: 1.5; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">1) 멘토선정 (주체 : 팀장)</span></p></div>
+<div style="font-family: 굴림체; font-size: 10pt; line-height: 1.5; margin-top: 0px; margin-bottom: 0px;"><p style="line-height: 1.5; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">2) OJT/멘토링 계획서 상신(작성자 : 멘토)</span></p></div>
+<div style="margin-left: 16px; font-weight: bold; font-family: 굴림체; font-size: 10pt; line-height: 1.5; margin-top: 0px; margin-bottom: 0px;"><p style="line-height: 1.5; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">- 전자결재 → 결재양식함 → 교육 → OJT/멘토링 계획서(3개월 모두 작성)</span></p></div>
+<div style="margin-left: 16px; font-weight: bold; font-family: 굴림체; font-size: 10pt; line-height: 1.5; margin-top: 0px; margin-bottom: 0px;"><p style="line-height: 1.5; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">- 결재선 : 팀장 전결</span></p></div>
+<div style="margin-left: 16px; font-weight: bold; font-family: 굴림체; font-size: 10pt; line-height: 1.5; margin-top: 0px; margin-bottom: 0px;"><p style="line-height: 1.5; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">- 적요 : [유라코퍼레이션 00본부] OJT/멘토링 계획서 - (${employees.map(e => escapeHtml(e.name)).join(', ')})</span></p></div>
+<div style="font-family: 굴림체; font-size: 10pt; line-height: 1.5; margin-top: 0px; margin-bottom: 0px;"><p style="line-height: 1.5; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">3) OJT노트 작성(작성자 : 신입사원)</span></p></div>
+</div>
+<div style="margin: 16px 0px 6px; font-family: 굴림체; font-size: 10pt; line-height: 1.5;"><p style="line-height: 1.5; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">3. OJT계획 수립 시 필수 포함내용</span></p></div>
+<div style="margin-left: 16px; font-family: 굴림체; font-size: 10pt; line-height: 1.5; margin-top: 0px; margin-bottom: 0px;">
+<div style="font-family: 굴림체; font-size: 10pt; line-height: 1.5; margin-top: 0px; margin-bottom: 0px;"><p style="line-height: 1.5; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">1) 직무 관련 기능/기술/지식</span></p></div>
+<div style="font-family: 굴림체; font-size: 10pt; line-height: 1.5; margin-top: 0px; margin-bottom: 0px;"><p style="line-height: 1.5; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">2) 직무 관련 프로세스 및 세부요령</span></p></div>
+</div>
+<div style="margin: 16px 0px 6px; font-family: 굴림체; font-size: 10pt; line-height: 1.5;"><p style="line-height: 1.5; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">4. 기타사항</span></p></div>
+<div style="margin-left: 16px; font-family: 굴림체; font-size: 10pt; line-height: 1.5; margin-top: 0px; margin-bottom: 0px;">
+<div style="font-family: 굴림체; font-size: 10pt; line-height: 1.5; margin-top: 0px; margin-bottom: 0px;"><p style="line-height: 1.5; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">1) 멘토링 지원금</span></p></div>
+<div style="margin-left: 16px; font-family: 굴림체; font-size: 10pt; line-height: 1.5; margin-top: 0px; margin-bottom: 0px;">
+<table style="border-collapse:collapse;margin:6px 0 10px;">
+  <thead><tr>
+    <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">
+      <p style="line-height: 1.5; font-family: 굴림체; font-size: 12pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">차수</span></p>
+    </th>
+    <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">
+      <p style="line-height: 1.5; font-family: 굴림체; font-size: 12pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">사용일자</span></p>
+    </th>
+    <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">
+      <p style="line-height: 1.5; font-family: 굴림체; font-size: 12pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">금액</span></p>
+    </th>
+  </tr></thead>
+  <tbody>${fundRows}</tbody>
+</table>
+<div style="font-weight: bold; font-family: 굴림체; font-size: 10pt; line-height: 1.5; margin-top: 0px; margin-bottom: 0px;"><p style="line-height: 1.5; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">※ 지원목적 : 멘토-신입사원 간 유대관계 형성을 통한 신입사원 조직적응 지원</span></p></div>
+<div style="color: rgb(204, 0, 0); font-weight: bold; font-family: 굴림체; font-size: 10pt; line-height: 1.5; margin-top: 0px; margin-bottom: 0px;"><p style="line-height: 1.5; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">※ 기한 내 미사용 금액 이월 불가</span></p></div>
+</div>
+<div style="font-family: 굴림체; font-size: 10pt; line-height: 1.5; margin-top: 0px; margin-bottom: 0px;"><p style="line-height: 1.5; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">2) 휴일,연차사용일은 교육 및 OJT노트 작성 불필요</span></p></div>
+<div style="font-family: 굴림체; font-size: 10pt; line-height: 1.5; margin-top: 0px; margin-bottom: 0px;"><p style="line-height: 1.5; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">3) OJT노트 수령 : 신규입사자 회사소개 교육 진행 후 배포</span></p></div>
+</div>
+<p style="line-height: 1.5; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;"> </span></p>
+<div style="margin: 16px 0px 6px; font-family: 굴림체; font-size: 10pt; line-height: 1.5;"><p style="line-height: 1.5; font-family: 굴림체; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt; font-family: 굴림체;">5. 문의 : 인사기획팀 박상혁 선임(1456)</span></p></div>
+<div style="margin: 16px 0px 6px; font-size: 10pt; line-height: 1.5;"><p style="line-height: 1.5; font-size: 10pt; margin-top: 0px; margin-bottom: 0px;"><span style="font-size: 10pt;">6. 첨부파일</span></p></div>
 </div>`;
 }
 
@@ -143,15 +179,21 @@ export function buildExpHireEmail(employees, today) {
   if (!employees || employees.length === 0) return '';
   const deadline = addDays(today, 5);
   const deadlineStr = fmtDeadline(deadline);
-  const deadlineMD = `${String(deadline.getMonth()+1).padStart(2,'0')}/${String(deadline.getDate()).padStart(2,'0')}`;
-  const subjectDeadline = `~${deadlineMD}`;
 
   const rows = employees.map((e, i) => `
     <tr>
-      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">${i+1}</td>
-      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">${escapeHtml(e.department)}</td>
-      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">${escapeHtml(e.name)}</td>
-      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">${fmtLong(e.period_1_end)}</td>
+      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">
+        <span style="font-size: 10pt;">${i+1}</span>
+      </td>
+      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">
+        <span style="font-size: 10pt;">${escapeHtml(e.department)}</span>
+      </td>
+      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">
+        <span style="font-size: 10pt;">${escapeHtml(e.name)}</span>
+      </td>
+      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">
+        <span style="font-size: 10pt;">${fmtLong(e.period_1_end)}</span>
+      </td>
     </tr>`).join('');
 
   const periodStart = fmtLong(employees[0].period_1_start);
@@ -160,63 +202,74 @@ export function buildExpHireEmail(employees, today) {
   const emp = employees[0];
   const fundRow = emp ? `
     <tr>
-      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">${fmtShort(emp.period_1_start)} ~ ${fmtShort(emp.period_1_end)}</td>
-      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">50천원</td>
+      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">
+        <span style="font-size: 10pt;">${fmtShort(emp.period_1_start)} ~ ${fmtShort(emp.period_1_end)}</span>
+      </td>
+      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">
+        <span style="font-size: 10pt;">50천원</span>
+      </td>
     </tr>` : '';
 
   const nameList = employees.map(e => escapeHtml(e.name)).join(', ');
 
-  return `<div style="font-family:'맑은 고딕','Malgun Gothic',sans-serif;font-size:14px;line-height:1.8;color:#000;max-width:720px;padding:32px;">
-  <div style="font-weight:bold;font-size:15px;border-bottom:2px solid #333;padding-bottom:10px;margin-bottom:24px;">
-    제목: [인사기획팀] 경력직 신규입사자 온보딩 프로그램 안내 및 OJT계획서 상신 요청 (${subjectDeadline})
-  </div>
-  <p>안녕하십니까, 인사기획팀 박상혁 선임입니다.<br>
-  경력직 신규입사자 온보딩 프로그램/OJT 진행을 아래와 같이 요청드리오니 확인 부탁드립니다.</p>
-  <div style="text-align:center;font-weight:bold;margin:20px 0;letter-spacing:4px;">-&nbsp;&nbsp;&nbsp;&nbsp;아&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;래&nbsp;&nbsp;&nbsp;&nbsp;-</div>
-  <div style="font-weight:bold;margin:16px 0 6px;">1. 교육개요</div>
-  <div style="margin-left:16px;">
-    <div>1) 대상자</div>
-    <div style="margin-left:16px;">
-      <table style="border-collapse:collapse;margin:6px 0 10px;">
-        <thead><tr>
-          <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">순번</th>
-          <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">소속</th>
-          <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">성명</th>
-          <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">종료일</th>
-        </tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-    </div>
-    <div>2) 시행기간 : <span style="color:#1155CC;font-weight:bold;">${periodStart} ~ ${periodEnd} (4주)</span></div>
-    <div>3) 시행방법 : 첨부4 참조</div>
-  </div>
-  <div style="font-weight:bold;margin:16px 0 6px;">2. 요청사항 : <span style="color:#CC0000;font-weight:bold;">${deadlineStr}, 17:00</span></div>
-  <div style="margin-left:16px;">
-    <div><span style="color:#CC0000;font-weight:bold;">1) 경력직 OJT계획서 작성 및 상신 [첨부3 참고]</span></div>
-    <div style="margin-left:16px;font-weight:bold;">- 전자결재 → 결재양식함 → 교육 → OJT/멘토링 계획서(1개월만 작성)</div>
-    <div style="margin-left:16px;font-weight:bold;">- 결재선 : 팀장 전결 / 상신인 : OJT 담당인원(기존 재직자)</div>
-    <div style="margin-left:16px;font-weight:bold;">- 적요 : [유라코퍼레이션 00본부] OJT/멘토링 계획서 - (${nameList})</div>
-    <div>2) 온보딩 프로그램 : 신규입사자에게 개별 안내 예정</div>
-  </div>
-  <div style="font-weight:bold;margin:16px 0 6px;">3. OJT계획 수립 시 필수 포함내용</div>
-  <div style="margin-left:16px;">
-    <div>1) 직무 관련 기능/기술/지식</div>
-    <div>2) 직무 관련 프로세스 및 세부요령</div>
-  </div>
-  <div style="font-weight:bold;margin:16px 0 6px;">4. 온보딩 프로그램 지원금</div>
-  <div style="margin-left:16px;">
-    <table style="border-collapse:collapse;margin:6px 0 10px;">
-      <thead><tr>
-        <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">사용일자</th>
-        <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">금액</th>
-      </tr></thead>
-      <tbody>${fundRow}</tbody>
-    </table>
-    <div style="font-weight:bold;">※ 지원목적 : 멘토-신입사원 간 유대관계 형성을 통한 신입사원 조직적응 지원</div>
-    <div style="color:#CC0000;font-weight:bold;">※ 기한 내 미사용 금액 이월 불가</div>
-  </div>
-  <div style="font-weight:bold;margin:16px 0 6px;">5. 문의 : 인사기획팀 박상혁 선임(1456)</div>
-  <div style="font-weight:bold;margin:16px 0 6px;">6. 첨부파일</div>
+  return `<div style="font-size: 10pt; color: rgb(0, 0, 0); max-width: 720px; padding: 32px;"><span style="font-family: 굴림체, Gulim, sans-serif;">
+  </span><p><span style="font-family: 굴림체; font-size: 10pt;">안녕하십니까, 인사기획팀 박상혁 선임입니다.</span></p><p><span style="font-size: 10pt;">  경력직 신규입사자 온보딩 프로그램/OJT 진행을 아래와 같이 요청드리오니 확인 부탁드립니다.</span></p><p><br></p><p style="text-align: center;"><span style="font-size: 10pt;">-&nbsp; &nbsp; 아&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 래&nbsp; &nbsp; -</span></p>
+<div style="margin: 16px 0px 6px;"><span style="font-size: 10pt;">1. 교육개요</span></div>
+<div style="margin-left:16px;">
+<div><span style="font-size: 10pt;">1) 대상자</span></div>
+<div style="margin-left:16px;">
+<table style="border-collapse:collapse;margin:6px 0 10px;">
+  <thead><tr>
+    <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">
+      <span style="font-size: 10pt;">순번</span>
+    </th>
+    <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">
+      <span style="font-size: 10pt;">소속</span>
+    </th>
+    <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">
+      <span style="font-size: 10pt;">성명</span>
+    </th>
+    <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">
+      <span style="font-size: 10pt;">종료일</span>
+    </th>
+  </tr></thead>
+  <tbody>${rows}</tbody>
+</table>
+</div>
+<div><span style="font-size: 10pt;">2) 시행기간 : <span style="color: rgb(17, 85, 204); font-weight: bold; font-size: 10pt;">${periodStart} ~ ${periodEnd} (4주)</span></span></div>
+<div><span style="font-size: 10pt;">3) 시행방법 : 첨부4 참조</span></div>
+</div>
+<div style="font-weight:bold;margin:16px 0 6px;"><span style="font-size: 10pt;">2. 요청사항 : <span style="color: rgb(204, 0, 0); font-weight: bold; font-size: 10pt;">${deadlineStr}, 17:00</span></span></div>
+<div style="margin-left:16px;">
+<div><span style="color: rgb(204, 0, 0); font-weight: bold; font-size: 10pt;">1) 경력직 OJT계획서 작성 및 상신 [첨부3 참고]</span></div>
+<div style="margin-left:16px;font-weight:bold;"><span style="font-size: 10pt;">- 전자결재 → 결재양식함 → 교육 → OJT/멘토링 계획서(1개월만 작성)</span></div>
+<div style="margin-left:16px;font-weight:bold;"><span style="font-size: 10pt;">- 결재선 : 팀장 전결 / 상신인 : OJT 담당인원(기존 재직자)</span></div>
+<div style="margin-left:16px;font-weight:bold;"><span style="font-size: 10pt;">- 적요 : [유라코퍼레이션 00본부] OJT/멘토링 계획서 - (${nameList})</span></div>
+<div><span style="font-size: 10pt;">2) 온보딩 프로그램 : 신규입사자에게 개별 안내 예정</span></div>
+</div>
+<div style="margin: 16px 0px 6px;"><span style="font-size: 10pt;">3. OJT계획 수립 시 필수 포함내용</span></div>
+<div style="margin-left:16px;">
+<div><span style="font-size: 10pt;">1) 직무 관련 기능/기술/지식</span></div>
+<div><span style="font-size: 10pt;">2) 직무 관련 프로세스 및 세부요령</span></div>
+</div>
+<div style="margin: 16px 0px 6px;"><span style="font-size: 10pt;">4. 온보딩 프로그램 지원금</span></div>
+<div style="margin-left:16px;">
+<table style="border-collapse:collapse;margin:6px 0 10px;">
+  <thead><tr>
+    <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">
+      <span style="font-size: 10pt;">사용일자</span>
+    </th>
+    <th style="border:1px solid #333;padding:5px 14px;background:#f5f5f5;">
+      <span style="font-size: 10pt;">금액</span>
+    </th>
+  </tr></thead>
+  <tbody>${fundRow}</tbody>
+</table>
+<div style="font-weight:bold;"><span style="font-size: 10pt;">※ 지원목적 : 버디-신규입사자 간 유대관계 형성을 통한 신입사원 조직적응 지원</span></div>
+<div style="color:#CC0000;font-weight:bold;"><span style="font-size: 10pt;">※ 기한 내 미사용 금액 이월 불가</span></div>
+</div>
+<div style="margin: 16px 0px 6px;"><span style="font-size: 10pt;">5. 문의 : 인사기획팀 박상혁 선임(1456)</span></div>
+<div style="margin: 16px 0px 6px;"><span style="font-size: 10pt;">6. 첨부파일</span></div>
 </div>`;
 }
 

@@ -1,5 +1,9 @@
 /* AdminMentorBuddy.css */
-.mentor-page { padding: 24px; }
+.mentor-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 50px 1rem 2rem;
+}
 
 .mentor-page-header {
   display: flex;

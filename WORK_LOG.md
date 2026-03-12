@@ -539,5 +539,67 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '
 
 ---
 
+## 📅 2026-03-11 — 이번주 설문 마감 KPI 팝업
+
+### ✅ SurveyDeadlinePopup
+
+- `AdminOnboarding.js`: amber KPI 카드("이번주 설문마감") 클릭 시 대상자 목록 팝업 표시
+- 팝업 컬럼: 이름 / 팀 / 차수 / 마감일 / 완료여부
+- 이번 주(월~일) 기간 내 마감되는 설문만 필터링
+
+### 커밋 이력
+
+| 커밋 | 내용 |
+|------|------|
+| `a7d97b6` | feat: 이번주 설문 마감 KPI 카드 클릭 시 대상자 팝업 추가 |
+
+---
+
+## 📅 2026-03-12 — 멘토/버디 관리 페이지 신규 구현
+
+### ✅ AdminMentorBuddy 페이지 구현
+
+**신규 파일**
+- `src/pages/AdminMentorBuddy.js` — 메인 페이지 + 팝업 + 이메일 빌더
+- `src/pages/AdminMentorBuddy.css` — 스타일
+- `src/pages/AdminMentorBuddy.test.js` — 단위 테스트 20개 (TDD)
+
+**기능 상세**
+- `users` 테이블에서 `role = 'employee'` 전체 조회
+- 테이블: 체크박스(전체선택) / 이름 / 팀 / 유형(신입·경력 배지) / 멘토·버디 / 안내메일
+- 멘토/버디 지정 팝업: 이름 입력 → Supabase `mentor_name` UPDATE → 즉시 반영
+- 안내메일 팝업: 렌더링된 HTML 미리보기 + "HTML 복사" 버튼
+- 일괄 메일생성: 체크된 인원이 신입/경력 혼재 시 토스트 경고로 차단
+- `AdminLayout.js`에 "🤝 멘토/버디 관리" 메뉴 연결
+
+**이메일 빌더 함수**
+- `buildNewHireEmail(employees, today)` — 신입사원용 (12주, OJT/멘토링)
+- `buildExpHireEmail(employees, today)` — 경력직용 (4주, 온보딩 프로그램)
+- 날짜 유틸: `addDays`, `fmtLong`, `fmtShort`, `fmtDeadline`, `getDayKo`
+- 마감일: today + 5일, 시행기간 / 지원금 날짜 형식 각각 다름
+
+### ✅ 이메일 템플릿 정교화 (같은 날 세션에서 반복 수정)
+
+- 글씨체: 맑은 고딕 → **굴림체** 통일, 폰트 크기 **10pt** 고정
+- 메일 제목(subject line div) 제거 — 제목은 별도 입력
+- Bold 해제: 신입 섹션 1/3/4, 경력 섹션 1/3/4/5/6 (섹션 2는 유지)
+- 줄간격: `line-height: 1.2` → **1.5로 전부 통일** (신입·경력 29개 항목)
+- 경력직 지원목적 텍스트: "멘토-신입사원" → "버디-신규입사자"
+- 페이지 폭: `.mentor-page` — `max-width: 900px; padding: 50px 1rem 2rem`으로 온보딩 현황과 동일하게 맞춤
+- 테스트: 20/20 통과 유지
+
+### 커밋 이력
+
+| 커밋 | 내용 |
+|------|------|
+| `19b826f` | feat: 멘토/버디 날짜 유틸 + 이메일 빌더 함수 (TDD) |
+| `abd7671` | fix: 첨부 오타 수정 (쳊부→첨부) |
+| `2cfffa3` | fix: 이메일 빌더 빈 배열 가드 + 날짜 포맷 유효성 추가 |
+| `9cf3523` | feat: AdminMentorBuddy 페이지 UI — 테이블, 팝업, 이메일 미리보기 |
+| `aeb75cb` | fix: XSS 방어, setTimeout 정리, DB 오류 핸들링, 클립보드 오류 핸들링 |
+| `0b63005` | feat: AdminLayout에 멘토/버디 관리 메뉴 연결 |
+
+---
+
 **작성자**: 인사기획팀 박상혁 선임
-**최종 업데이트**: 2026-03-10 (직원 수동 입력, 공지사항 인라인 편집, PDF 관리)
+**최종 업데이트**: 2026-03-12 (멘토/버디 관리 페이지, 이메일 템플릿 굴림체·줄간격 정교화)
