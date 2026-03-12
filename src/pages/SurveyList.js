@@ -23,17 +23,25 @@ function SurveyList({ user, onStart, onViewResult, onBack }) {
 
   const today = new Date().toISOString().slice(0, 10);
 
+  const addDays = (dateStr, days) => {
+    const date = new Date(dateStr);
+    date.setDate(date.getDate() + days);
+    return date.toISOString().slice(0, 10);
+  };
+
   const getRoundInfo = (roundNumber) => {
     const start = user[`period_${roundNumber}_start`];
     const end = user[`period_${roundNumber}_end`];
     if (!start || !end) return null;
+
+    const responseDeadline = addDays(end, 6); // 종료일 포함 7일
 
     let status;
     if (submittedRounds.includes(roundNumber)) {
       status = 'submitted';
     } else if (today < start) {
       status = 'upcoming';
-    } else if (today > end) {
+    } else if (today > responseDeadline) {
       status = 'closed';
     } else {
       status = 'open';
