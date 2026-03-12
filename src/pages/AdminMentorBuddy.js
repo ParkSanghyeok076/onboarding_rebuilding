@@ -1,9 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import './AdminMentorBuddy.css';
 import './Pages.css';
 
 const DAYS_KO = ['일', '월', '화', '수', '목', '금', '토'];
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
 export function addDays(date, n) {
   const d = new Date(date);
@@ -43,8 +53,8 @@ export function buildNewHireEmail(employees, today) {
   const rows = employees.map((e, i) => `
     <tr>
       <td style="border:1px solid #333;padding:5px 14px;text-align:center;">${i+1}</td>
-      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">${e.department}</td>
-      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">${e.name}</td>
+      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">${escapeHtml(e.department)}</td>
+      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">${escapeHtml(e.name)}</td>
       <td style="border:1px solid #333;padding:5px 14px;text-align:center;">${fmtLong(e.period_3_end)}</td>
     </tr>`).join('');
 
@@ -98,7 +108,7 @@ export function buildNewHireEmail(employees, today) {
     <div>2) OJT/멘토링 계획서 상신(작성자 : 멘토)</div>
     <div style="margin-left:16px;font-weight:bold;">- 전자결재 → 결재양식함 → 교육 → OJT/멘토링 계획서(3개월 모두 작성)</div>
     <div style="margin-left:16px;font-weight:bold;">- 결재선 : 팀장 전결</div>
-    <div style="margin-left:16px;font-weight:bold;">- 적요 : [유라코퍼레이션 00본부] OJT/멘토링 계획서 - (${employees.map(e=>e.name).join(', ')})</div>
+    <div style="margin-left:16px;font-weight:bold;">- 적요 : [유라코퍼레이션 00본부] OJT/멘토링 계획서 - (${employees.map(e => escapeHtml(e.name)).join(', ')})</div>
     <div>3) OJT노트 작성(작성자 : 신입사원)</div>
   </div>
   <div style="font-weight:bold;margin:16px 0 6px;">3. OJT계획 수립 시 필수 포함내용</div>
@@ -139,8 +149,8 @@ export function buildExpHireEmail(employees, today) {
   const rows = employees.map((e, i) => `
     <tr>
       <td style="border:1px solid #333;padding:5px 14px;text-align:center;">${i+1}</td>
-      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">${e.department}</td>
-      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">${e.name}</td>
+      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">${escapeHtml(e.department)}</td>
+      <td style="border:1px solid #333;padding:5px 14px;text-align:center;">${escapeHtml(e.name)}</td>
       <td style="border:1px solid #333;padding:5px 14px;text-align:center;">${fmtLong(e.period_1_end)}</td>
     </tr>`).join('');
 
@@ -154,7 +164,7 @@ export function buildExpHireEmail(employees, today) {
       <td style="border:1px solid #333;padding:5px 14px;text-align:center;">50천원</td>
     </tr>` : '';
 
-  const nameList = employees.map(e => e.name).join(', ');
+  const nameList = employees.map(e => escapeHtml(e.name)).join(', ');
 
   return `<div style="font-family:'맑은 고딕','Malgun Gothic',sans-serif;font-size:14px;line-height:1.8;color:#000;max-width:720px;padding:32px;">
   <div style="font-weight:bold;font-size:15px;border-bottom:2px solid #333;padding-bottom:10px;margin-bottom:24px;">
@@ -224,6 +234,8 @@ export default function AdminMentorBuddy() {
 
   const [toast, setToast] = useState('');
 
+  const toastTimerRef = useRef(null);
+
   useEffect(() => {
     (async () => {
       const { data, error } = await supabase
@@ -235,9 +247,14 @@ export default function AdminMentorBuddy() {
     })();
   }, []);
 
+  useEffect(() => {
+    return () => { if (toastTimerRef.current) clearTimeout(toastTimerRef.current); };
+  }, []);
+
   const showToast = (msg) => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     setToast(msg);
-    setTimeout(() => setToast(''), 2600);
+    toastTimerRef.current = setTimeout(() => setToast(''), 2600);
   };
 
   const allChecked = users.length > 0 && users.every(u => checked[u.id]);
@@ -284,15 +301,21 @@ export default function AdminMentorBuddy() {
       setUsers(prev => prev.map(u =>
         u.id === assignTarget.id ? { ...u, mentor_name: assignInput.trim() } : u
       ));
+      setAssignTarget(null);
+      setAssignInput('');
+    } else {
+      showToast('저장 실패. 다시 시도해 주세요.');
     }
     setAssignLoading(false);
-    setAssignTarget(null);
-    setAssignInput('');
   };
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(emailHtml);
-    setCopied(true);
+    try {
+      await navigator.clipboard.writeText(emailHtml);
+      setCopied(true);
+    } catch {
+      showToast('복사 실패. 직접 선택해 주세요.');
+    }
   };
 
   return (
