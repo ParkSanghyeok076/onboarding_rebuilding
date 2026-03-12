@@ -13,13 +13,13 @@ export function getDayKo(date) {
 }
 
 export function fmtLong(dateStr) {
-  if (!dateStr) return '—';
+  if (!dateStr || !dateStr.includes('-')) return '—';
   const [y, m, d] = dateStr.split('-');
   return `${y}.${m}/${d}`;
 }
 
 export function fmtShort(dateStr) {
-  if (!dateStr) return '—';
+  if (!dateStr || !dateStr.includes('-')) return '—';
   const [y, m, d] = dateStr.split('-');
   return `${y.slice(2)}.${m}/${d}`;
 }
@@ -31,6 +31,7 @@ export function fmtDeadline(date) {
 }
 
 export function buildNewHireEmail(employees, today) {
+  if (!employees || employees.length === 0) return '';
   const deadline = addDays(today, 5);
   const deadlineStr = fmtDeadline(deadline);
   const deadlineMD = `${String(deadline.getMonth()+1).padStart(2,'0')}/${String(deadline.getDate()).padStart(2,'0')}`;
@@ -126,6 +127,7 @@ export function buildNewHireEmail(employees, today) {
 }
 
 export function buildExpHireEmail(employees, today) {
+  if (!employees || employees.length === 0) return '';
   const deadline = addDays(today, 5);
   const deadlineStr = fmtDeadline(deadline);
   const deadlineMD = `${String(deadline.getMonth()+1).padStart(2,'0')}/${String(deadline.getDate()).padStart(2,'0')}`;
