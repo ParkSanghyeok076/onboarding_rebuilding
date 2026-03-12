@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../lib/supabase';
+import './AdminMentorBuddy.css';
+import './Pages.css';
 
 const DAYS_KO = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -208,5 +211,234 @@ export function buildExpHireEmail(employees, today) {
 }
 
 export default function AdminMentorBuddy() {
-  return <div>멘토/버디 관리 (구현 예정)</div>;
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [checked, setChecked] = useState({});
+
+  const [assignTarget, setAssignTarget] = useState(null);
+  const [assignInput, setAssignInput] = useState('');
+  const [assignLoading, setAssignLoading] = useState(false);
+
+  const [emailHtml, setEmailHtml] = useState(null);
+  const [copied, setCopied] = useState(false);
+
+  const [toast, setToast] = useState('');
+
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await supabase
+        .from('users')
+        .select('id,name,department,employee_type,mentor_name,period_1_start,period_1_end,period_2_start,period_2_end,period_3_start,period_3_end')
+        .eq('role', 'employee');
+      if (!error) setUsers(data || []);
+      setLoading(false);
+    })();
+  }, []);
+
+  const showToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(''), 2600);
+  };
+
+  const allChecked = users.length > 0 && users.every(u => checked[u.id]);
+  const toggleAll = () => {
+    if (allChecked) setChecked({});
+    else setChecked(Object.fromEntries(users.map(u => [u.id, true])));
+  };
+
+  const toggleOne = (id) =>
+    setChecked(prev => ({ ...prev, [id]: !prev[id] }));
+
+  const checkedUsers = users.filter(u => checked[u.id]);
+
+  const handleBulkEmail = () => {
+    if (checkedUsers.length === 0) return;
+    const types = [...new Set(checkedUsers.map(u => u.employee_type))];
+    if (types.length > 1) {
+      showToast('신입/경력이 혼재되어 있습니다. 같은 유형만 선택해 주세요.');
+      return;
+    }
+    const html = types[0] === '신입'
+      ? buildNewHireEmail(checkedUsers, new Date())
+      : buildExpHireEmail(checkedUsers, new Date());
+    setEmailHtml(html);
+    setCopied(false);
+  };
+
+  const handleRowEmail = (user) => {
+    const html = user.employee_type === '신입'
+      ? buildNewHireEmail([user], new Date())
+      : buildExpHireEmail([user], new Date());
+    setEmailHtml(html);
+    setCopied(false);
+  };
+
+  const handleAssignSave = async () => {
+    if (!assignInput.trim()) return;
+    setAssignLoading(true);
+    const { error } = await supabase
+      .from('users')
+      .update({ mentor_name: assignInput.trim() })
+      .eq('id', assignTarget.id);
+    if (!error) {
+      setUsers(prev => prev.map(u =>
+        u.id === assignTarget.id ? { ...u, mentor_name: assignInput.trim() } : u
+      ));
+    }
+    setAssignLoading(false);
+    setAssignTarget(null);
+    setAssignInput('');
+  };
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(emailHtml);
+    setCopied(true);
+  };
+
+  return (
+    <div className="mentor-page">
+      <div className="mentor-page-header">
+        <div className="mentor-page-title">🤝 멘토/버디 관리</div>
+        <button
+          className="mentor-bulk-btn"
+          disabled={checkedUsers.length === 0}
+          onClick={handleBulkEmail}
+        >
+          일괄 메일생성{checkedUsers.length > 0 ? ` (${checkedUsers.length}명)` : ''}
+        </button>
+      </div>
+
+      {loading ? (
+        <p style={{ color: '#888' }}>불러오는 중...</p>
+      ) : (
+        <div className="admin-table-wrap">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>
+                  <input type="checkbox" checked={allChecked} onChange={toggleAll} />
+                </th>
+                <th>이름</th>
+                <th>팀</th>
+                <th>유형</th>
+                <th>멘토/버디</th>
+                <th>안내메일</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map(u => (
+                <tr key={u.id}>
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={!!checked[u.id]}
+                      onChange={() => toggleOne(u.id)}
+                    />
+                  </td>
+                  <td>{u.name}</td>
+                  <td>{u.department || '—'}</td>
+                  <td>
+                    <span className={`type-badge ${u.employee_type === '신입' ? 'new' : 'exp'}`}>
+                      {u.employee_type}
+                    </span>
+                  </td>
+                  <td>
+                    {u.mentor_name ? (
+                      <span
+                        className="mentor-assigned"
+                        onClick={() => { setAssignTarget(u); setAssignInput(u.mentor_name); }}
+                      >
+                        {u.mentor_name}
+                      </span>
+                    ) : (
+                      <button
+                        className="mentor-assign-btn"
+                        onClick={() => { setAssignTarget(u); setAssignInput(''); }}
+                      >
+                        지정 필요
+                      </button>
+                    )}
+                  </td>
+                  <td>
+                    <button
+                      className="mentor-assign-btn"
+                      style={{ background: '#e8f0fe', color: '#1a56db', borderColor: '#93c5fd' }}
+                      onClick={() => handleRowEmail(u)}
+                    >
+                      메일 생성
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {users.length === 0 && (
+                <tr>
+                  <td colSpan={6} style={{ textAlign: 'center', color: '#888', padding: '24px' }}>
+                    등록된 직원이 없습니다.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {assignTarget && (
+        <div className="confirm-overlay" onClick={() => setAssignTarget(null)}>
+          <div className="program-popup" onClick={e => e.stopPropagation()} style={{ maxWidth: 380 }}>
+            <div className="program-popup-header">
+              <h3>{assignTarget.name} — 멘토/버디 지정</h3>
+              <button className="program-popup-close" onClick={() => setAssignTarget(null)}>✕</button>
+            </div>
+            <div style={{ padding: '20px' }}>
+              <input
+                type="text"
+                value={assignInput}
+                onChange={e => setAssignInput(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && !assignLoading && assignInput.trim() && handleAssignSave()}
+                placeholder="멘토/버디 이름 입력"
+                style={{ width: '100%', padding: '8px 12px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, boxSizing: 'border-box' }}
+                autoFocus
+              />
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 16 }}>
+                <button
+                  onClick={() => setAssignTarget(null)}
+                  style={{ padding: '7px 18px', border: '1px solid #ccc', borderRadius: 6, background: '#fff', cursor: 'pointer' }}
+                >
+                  취소
+                </button>
+                <button
+                  onClick={handleAssignSave}
+                  disabled={!assignInput.trim() || assignLoading}
+                  style={{ padding: '7px 18px', background: '#1a2332', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', opacity: (!assignInput.trim() || assignLoading) ? 0.5 : 1 }}
+                >
+                  {assignLoading ? '저장 중...' : '확인'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {emailHtml && (
+        <div className="email-popup-overlay" onClick={() => setEmailHtml(null)}>
+          <div className="email-popup" onClick={e => e.stopPropagation()}>
+            <div className="email-popup-header">
+              <h3>안내메일 미리보기</h3>
+              <div className="email-popup-actions">
+                {copied && <span className="email-copy-feedback">✓ 복사됨!</span>}
+                <button className="email-copy-btn" onClick={handleCopy}>HTML 복사</button>
+                <button className="email-popup-close" onClick={() => setEmailHtml(null)}>✕</button>
+              </div>
+            </div>
+            <div
+              className="email-popup-body"
+              dangerouslySetInnerHTML={{ __html: emailHtml }}
+            />
+          </div>
+        </div>
+      )}
+
+      {toast && <div className="mentor-toast">{toast}</div>}
+    </div>
+  );
 }

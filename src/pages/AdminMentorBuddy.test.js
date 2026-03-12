@@ -2,6 +2,8 @@ import {
   fmtLong, fmtShort, fmtDeadline, addDays, getDayKo,
   buildNewHireEmail, buildExpHireEmail,
 } from './AdminMentorBuddy';
+import { render, screen } from '@testing-library/react';
+import AdminMentorBuddy from './AdminMentorBuddy';
 
 describe('날짜 유틸', () => {
   test('fmtLong: 2026-02-11 → 2026.02/11', () => {
@@ -69,4 +71,24 @@ describe('buildExpHireEmail', () => {
   test('시행기간 4주 포함', () => expect(html).toContain('4주'));
   test('종료일 포함', () => expect(html).toContain('2026.05/01'));
   test('지원금 기간 포함', () => expect(html).toContain('26.04/01'));
+});
+
+// Supabase mock
+jest.mock('../lib/supabase', () => ({
+  supabase: {
+    from: () => ({
+      select: () => ({ eq: () => Promise.resolve({ data: [], error: null }) }),
+      update: () => ({ eq: () => Promise.resolve({ error: null }) }),
+    }),
+  },
+}));
+
+test('AdminMentorBuddy 렌더 — 페이지 제목 노출', async () => {
+  render(<AdminMentorBuddy />);
+  expect(await screen.findByText('🤝 멘토/버디 관리')).toBeInTheDocument();
+});
+
+test('AdminMentorBuddy 렌더 — 일괄 메일생성 버튼 노출', async () => {
+  render(<AdminMentorBuddy />);
+  expect(await screen.findByText(/일괄 메일생성/)).toBeInTheDocument();
 });
