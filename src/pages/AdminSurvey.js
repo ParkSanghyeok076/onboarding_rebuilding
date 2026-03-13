@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
 import { supabase } from '../lib/supabase';
 import { runAnalyze, runGenerateEmail, runAnalyzeObjective } from '../lib/edgeFunctions';
@@ -14,12 +14,6 @@ const PART_COLORS = {
   part4: '#ef4444',
 };
 
-const PART_NAMES = {
-  part1: 'Part 1. OJT 준비/멘토링 태도',
-  part2: 'Part 2. 업무 지식/기술 전수',
-  part3: 'Part 3. 실무 지도/피드백',
-  part4: 'Part 4. 조직 적응/소통',
-};
 
 function AdminSurvey({ onBack }) {
   const [responses, setResponses] = useState([]);
