@@ -56,9 +56,6 @@ function PasswordChange({ user, onBack, onPasswordChanged }) {
 
   return (
     <div className="page-container">
-      <button onClick={onBack} className="back-button">
-        ← 메뉴로 돌아가기
-      </button>
 
       <div className="password-change-container">
         <div className="password-change-box">

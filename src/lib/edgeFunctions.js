@@ -29,6 +29,19 @@ export async function runGenerateEmail(analysisResultId, recipientType) {
   return res.data;
 }
 
+export async function runAnalyzeObjective(userId) {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error('로그인이 필요합니다.');
+
+  const res = await supabase.functions.invoke('analyze-objective', {
+    body: { user_id: userId },
+    headers: { Authorization: `Bearer ${session.access_token}` },
+  });
+
+  if (res.error) throw new Error(res.error.message);
+  return res.data;
+}
+
 export async function registerUsers(users) {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) throw new Error('로그인이 필요합니다.');

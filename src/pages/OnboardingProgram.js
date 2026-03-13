@@ -49,7 +49,6 @@ function OnboardingProgram({ user, onBack }) {
   if (loading) {
     return (
       <div className="page-container">
-        <button onClick={onBack} className="back-button">← 메뉴로 돌아가기</button>
         <div className="App">
           <p>로딩 중...</p>
         </div>
@@ -59,9 +58,6 @@ function OnboardingProgram({ user, onBack }) {
 
   return (
     <div className="page-container">
-      <button onClick={onBack} className="back-button">
-        ← 메뉴로 돌아가기
-      </button>
 
       <div className="App">
         <Header

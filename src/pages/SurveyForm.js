@@ -59,7 +59,6 @@ function SurveyForm({ user, roundNumber, onSubmitted, onBack }) {
 
   return (
     <div className="page-container">
-      <button onClick={onBack} className="back-button">← 목록으로</button>
       <div className="survey-container">
         <div className="survey-progress-bar">
           {PARTS.map((p, i) => (

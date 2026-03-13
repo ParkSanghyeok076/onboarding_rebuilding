@@ -174,7 +174,6 @@ function AdminUsers({ onBack }) {
     <div className="page-container">
       <div className="au-wrapper">
         <div className="admin-header-left" style={{marginBottom: 8}}>
-          <button className="back-button" onClick={onBack}>← 돌아가기</button>
           <h1 className="page-title">👥 직원 관리</h1>
         </div>
         {/* CSV 형식 안내 카드 */}

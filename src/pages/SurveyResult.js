@@ -25,7 +25,6 @@ function SurveyResult({ user, roundNumber, onBack }) {
   if (loading) {
     return (
       <div className="page-container">
-        <button onClick={onBack} className="back-button">← 목록으로</button>
         <div className="survey-container"><p>로딩 중...</p></div>
       </div>
     );

@@ -164,7 +164,6 @@ function AdminAnnouncements({ onBack }) {
   if (loading) {
     return (
       <div className="page-container">
-        <button onClick={onBack} className="back-button">← 돌아가기</button>
         <p>로딩 중...</p>
       </div>
     );
@@ -181,7 +180,6 @@ function AdminAnnouncements({ onBack }) {
           {/* 헤더 */}
           <div className="admin-header">
             <div className="admin-header-left">
-              <button onClick={onBack} className="back-button">← 돌아가기</button>
               <h1 className="page-title">📢 공지사항 관리</h1>
             </div>
             <button className="admin-create-btn" onClick={() => setModalOpen(true)}>
@@ -346,7 +344,6 @@ function AdminAnnouncements({ onBack }) {
       <div className="admin-container">
         <div className="admin-header">
           <div className="admin-header-left">
-            <button onClick={onBack} className="back-button">← 돌아가기</button>
             <h1 className="page-title">📢 공지사항 관리</h1>
           </div>
           <button className="admin-create-btn" onClick={() => setModalOpen(true)}>

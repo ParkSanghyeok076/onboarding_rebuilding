@@ -36,7 +36,6 @@ function Announcements({ onBack }) {
   if (loading) {
     return (
       <div className="page-container">
-        <button onClick={onBack} className="back-button">← 메뉴로 돌아가기</button>
         <div className="announcements-container">
           <p>로딩 중...</p>
         </div>
@@ -48,10 +47,6 @@ function Announcements({ onBack }) {
   if (!selectedAnnouncement) {
     return (
       <div className="page-container">
-        <button onClick={onBack} className="back-button">
-          ← 메뉴로 돌아가기
-        </button>
-
         <div className="announcements-container">
           <h1 className="page-title">📢 공지사항</h1>
 
@@ -72,10 +67,6 @@ function Announcements({ onBack }) {
   // 상세 뷰
   return (
     <div className="page-container">
-      <button onClick={onBack} className="back-button">
-        ← 메뉴로 돌아가기
-      </button>
-
       <div className="announcements-container">
         <button
           onClick={() => setSelectedAnnouncement(null)}
