@@ -134,20 +134,36 @@ serve(async (req) => {
     const isNew = employee.employee_type === '신입'
     const employeeLabel = isNew ? '신입사원' : '경력사원'
 
+    // 고정 제목
+    const subject = recipient_type === 'mentor'
+      ? `${employee.name} - 1개월차 멘토링 가이드 메일`
+      : `[인사기획팀] ${employee.name} - 1개월차 정기 모니터링 공유`
+
+    // 고정 인사말
+    const greeting = recipient_type === 'mentor'
+      ? `${recipientName}님, 안녕하세요!\n인사기획팀 교육담당입니다.`
+      : `팀장님, 안녕하세요!\n인사기획팀 교육담당입니다.`
+
+    // 고정 연락처 문구
+    const contactFooter = recipient_type === 'mentor'
+      ? `멘토링 진행 중 궁금한 점이 생기시면 언제든 연락주세요! 문의 - 인사기획팀 교육담당(1456)`
+      : `온보딩 진행 중 궁금한 점이 생기시면 언제든 연락주세요! 문의 - 인사기획팀 교육담당(1456)`
+
     const toneGuide = recipient_type === 'mentor'
       ? isNew
-        ? `[멘토용 - 신입사원]\n- 톤: 사회 초년생을 따뜻하게 격려하는 동료 제안\n- 특이사항: 첫 사회생활일 수 있으므로 심리적 안정감을 주는 표현 사용\n- 포함: 긍정 항목 강점 언급 + 보완 제안 1가지 완곡 표현\n- 분량: 3~4문단`
-        : `[멘토용 - 경력사원]\n- 톤: 타사 경험을 가진 성인으로 존중하는 동료 제안\n- 특이사항: 이전 직장 경험이 있는 성인이므로 지나치게 가르치는 어조는 피할 것\n- 포함: 긍정 항목 강점 언급 + 보완 제안 1가지 완곡 표현\n- 분량: 3~4문단`
+        ? `[멘토용 - 신입사원]\n- 톤: 사회 초년생을 따뜻하게 격려하는 동료 제안\n- 특이사항: 첫 사회생활일 수 있으므로 심리적 안정감을 주는 표현 사용\n- 포함: 긍정 항목 강점 언급 + 보완 제안 1가지 완곡 표현\n- 마무리 멘트: 멘토로서의 헌신에 감사하며 멘토링을 응원하는 따뜻한 문장 1~2개 (연락처 문구는 제외)\n- 분량: 3~4문단`
+        : `[멘토용 - 경력사원]\n- 톤: 타사 경험을 가진 성인으로 존중하는 동료 제안\n- 특이사항: 이전 직장 경험이 있는 성인이므로 지나치게 가르치는 어조는 피할 것\n- 포함: 긍정 항목 강점 언급 + 보완 제안 1가지 완곡 표현\n- 마무리 멘트: 멘토로서의 헌신에 감사하며 멘토링을 응원하는 따뜻한 문장 1~2개 (연락처 문구는 제외)\n- 분량: 3~4문단`
       : isNew
-        ? `[팀장용 - 신입사원]\n- 톤: 업무 보고 형식의 간결한 요약\n- 포함: 전체 감성 분포 요약 + 조치 필요 항목\n- 분량: 2~3문단`
-        : `[팀장용 - 경력사원]\n- 톤: 업무 보고 형식의 간결한 요약 (경력직의 조직 적응 관점)\n- 특이사항: 이전 직장 문화와의 비교·차이에서 오는 어려움일 수 있음을 감안\n- 포함: 전체 감성 분포 요약 + 조치 필요 항목\n- 분량: 2~3문단`
+        ? `[팀장용 - 신입사원]\n- 본문 형식: 불렛 포인트로 구조화된 분석 리포트 형식, 단답식이 아닌 구어체로 작성\n- 포함: 전체 감성 분포 요약 + 조치 필요 항목\n- 마무리 멘트: 신규입사자 적응을 위해 팀장님의 지원이 꼭 필요하다는 공손하고 협조를 구하는 문장 1~2개 (연락처 문구는 제외)\n- 분량: 2~3문단`
+        : `[팀장용 - 경력사원]\n- 본문 형식: 불렛 포인트로 구조화된 분석 리포트 형식, 단답식이 아닌 구어체로 작성\n- 특이사항: 이전 직장 문화와의 비교·차이에서 오는 어려움일 수 있음을 감안\n- 포함: 전체 감성 분포 요약 + 조치 필요 항목\n- 마무리 멘트: 신규입사자 적응을 위해 팀장님의 지원이 꼭 필요하다는 공손하고 협조를 구하는 문장 1~2개 (연락처 문구는 제외)\n- 분량: 2~3문단`
 
     // 6. Claude API 호출
     const prompt = `[분석 결과 입력]
 ${JSON.stringify(analysisResult.aspects, null, 2)}
 
-위 분석 결과를 바탕으로 아래 기준에 맞게 이메일을 작성하세요.
-발신자: 인사기획팀 박상혁 선임
+위 분석 결과를 바탕으로 아래 기준에 맞게 이메일 본문을 작성하세요.
+(인사말과 연락처 문구는 별도로 삽입되므로 본문에 포함하지 마세요)
+발신자: 인사기획팀 교육담당
 ${employeeLabel}: ${employee.name} / 수신자: ${recipientName}
 
 [금지어 및 대체 표현]
@@ -159,7 +175,7 @@ ${employeeLabel}: ${employee.name} / 수신자: ${recipientName}
 ${toneGuide}
 
 반드시 아래 JSON 형식으로만 반환하세요:
-{"subject": "이메일 제목", "body": "이메일 본문"}`
+{"body": "이메일 본문 (인사말·연락처 제외)"}`
 
     const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -185,9 +201,12 @@ ${toneGuide}
     if (!jsonMatch) throw new Error('Claude 응답에서 JSON을 찾을 수 없습니다. (응답이 잘렸거나 형식이 올바르지 않을 수 있습니다)')
     const emailData = JSON.parse(jsonMatch[0])
 
-    if (!emailData.subject || !emailData.body) {
-      throw new Error('Claude 응답에 subject 또는 body가 없습니다.')
+    if (!emailData.body) {
+      throw new Error('Claude 응답에 body가 없습니다.')
     }
+
+    // 인사말 + 본문 + 연락처 조립
+    const finalBody = `${greeting}\n\n${emailData.body}\n\n${contactFooter}`
 
     // 7. email_drafts 저장
     const { data: saved, error: insertError } = await supabase
@@ -195,8 +214,8 @@ ${toneGuide}
       .insert({
         response_id: analysisResult.response_id,
         recipient_type,
-        subject: emailData.subject,
-        body: emailData.body,
+        subject,
+        body: finalBody,
       })
       .select('id')
       .single()
@@ -212,7 +231,7 @@ ${toneGuide}
     }
 
     return new Response(
-      JSON.stringify({ email_draft_id: saved.id, subject: emailData.subject, body: emailData.body }),
+      JSON.stringify({ email_draft_id: saved.id, subject, body: finalBody }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error: unknown) {
