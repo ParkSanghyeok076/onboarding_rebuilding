@@ -652,7 +652,10 @@ function SurveyDetail({ response, onBack }) {
   return (
     <div className="page-container">
       <div className="admin-container">
-        <h1 className="page-title">{response.userName} — {response.round_number}차 설문</h1>
+        <div className="admin-header">
+          <h1 className="page-title">{response.userName} — {response.round_number}차 설문</h1>
+          <button onClick={onBack} className="back-button">돌아가기</button>
+        </div>
         <p className="survey-detail-date">제출일: {response.submitted_at?.slice(0, 10)}</p>
         {PARTS.map(part => (
           <div key={part.number} className="result-part">
