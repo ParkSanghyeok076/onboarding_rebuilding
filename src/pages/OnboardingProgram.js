@@ -4,6 +4,7 @@ import ProgramCard from '../components/ProgramCard';
 import { programs } from '../data/programs';
 import { supabase } from '../lib/supabase';
 import '../App.css';
+import './Pages.css';
 
 function OnboardingProgram({ user, onBack }) {
   const [submissions, setSubmissions] = useState({}); // { programId: signedUrl }
@@ -58,6 +59,7 @@ function OnboardingProgram({ user, onBack }) {
 
   return (
     <div className="page-container">
+      <button onClick={onBack} className="back-button">← 메뉴로 돌아가기</button>
 
       <div className="App">
         <Header

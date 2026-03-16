@@ -48,6 +48,7 @@ function Announcements({ onBack }) {
     return (
       <div className="page-container">
         <div className="announcements-container">
+          <button onClick={onBack} className="back-button">← 메뉴로 돌아가기</button>
           <h1 className="page-title">📢 공지사항</h1>
 
           <div className="announcements-grid">
