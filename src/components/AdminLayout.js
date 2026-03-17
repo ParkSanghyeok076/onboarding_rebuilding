@@ -10,7 +10,7 @@ import './AdminLayout.css';
 const MENU_ITEMS = [
   { id: 'admin-onboarding',    icon: '📋', label: '온보딩 현황' },
   { id: 'admin-announcements', icon: '📢', label: '공지사항 관리' },
-  { id: 'admin-users',         icon: '👥', label: '대상자 관리' },
+  { id: 'admin-users',         icon: '👥', label: '신입사원 등록' },
   { id: 'admin-mentor-buddy',  icon: '🤝', label: '멘토 관리' },
   { id: 'admin-survey',        icon: '📝', label: '설문조사 관리' },
 ];

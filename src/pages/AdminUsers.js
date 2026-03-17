@@ -174,7 +174,7 @@ function AdminUsers({ onBack }) {
     <div className="page-container">
       <div className="au-wrapper">
         <div className="admin-header-left" style={{marginBottom: 8}}>
-          <h1 className="page-title">👥 대상자 관리</h1>
+          <h1 className="page-title">👥 신입사원 등록</h1>
         </div>
         {/* CSV 형식 안내 카드 */}
         <div className="au-guide-card">
