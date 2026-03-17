@@ -7,8 +7,16 @@ import '../App.css';
 import './Pages.css';
 
 function OnboardingProgram({ user, onBack }) {
-  const [submissions, setSubmissions] = useState({}); // { programId: signedUrl }
+  const [submissions, setSubmissions] = useState({});
   const [loading, setLoading] = useState(true);
+
+  // 멘토 state
+  const [mentorSaved, setMentorSaved] = useState(!!user.mentor_name);
+  const [mentorName, setMentorName] = useState(user.mentor_name || '');
+  const [mentorNameInput, setMentorNameInput] = useState('');
+  const [mentorEmpIdInput, setMentorEmpIdInput] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
 
   // 마운트 시 기존 제출 내역 로드
   useEffect(() => {
@@ -45,6 +53,38 @@ function OnboardingProgram({ user, onBack }) {
     setSubmissions(prev => ({ ...prev, [programId]: storagePath }));
   };
 
+  const handleMentorSubmit = async () => {
+    if (!mentorNameInput.trim() || !mentorEmpIdInput.trim()) return;
+    setSaving(true);
+    const { error } = await supabase
+      .from('users')
+      .update({
+        mentor_name: mentorNameInput.trim(),
+        mentor_id: mentorEmpIdInput.trim(),
+      })
+      .eq('id', user.id);
+    if (!error) {
+      setMentorName(mentorNameInput.trim());
+      setMentorSaved(true);
+    }
+    setSaving(false);
+  };
+
+  const handleMentorReset = async () => {
+    setResetLoading(true);
+    const { error } = await supabase
+      .from('users')
+      .update({ mentor_name: null, mentor_id: null })
+      .eq('id', user.id);
+    if (!error) {
+      setMentorName('');
+      setMentorNameInput('');
+      setMentorEmpIdInput('');
+      setMentorSaved(false);
+    }
+    setResetLoading(false);
+  };
+
   const progress = Object.keys(submissions).length;
 
   if (loading) {
@@ -66,6 +106,18 @@ function OnboardingProgram({ user, onBack }) {
           user={user}
           progress={progress}
           total={programs.length}
+          mentorProps={{
+            saved: mentorSaved,
+            name: mentorName,
+            nameInput: mentorNameInput,
+            empIdInput: mentorEmpIdInput,
+            setNameInput: setMentorNameInput,
+            setEmpIdInput: setMentorEmpIdInput,
+            onSubmit: handleMentorSubmit,
+            onReset: handleMentorReset,
+            saving,
+            resetLoading,
+          }}
         />
         <div className="programs-grid">
           {programs.map(program => (

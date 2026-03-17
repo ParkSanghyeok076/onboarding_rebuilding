@@ -293,7 +293,7 @@ export default function AdminMentorBuddy() {
     (async () => {
       const { data, error } = await supabase
         .from('users')
-        .select('id,name,department,employee_type,mentor_name,period_1_start,period_1_end,period_2_start,period_2_end,period_3_start,period_3_end')
+        .select('id,name,department,employee_type,mentor_name,mentor_id,period_1_start,period_1_end,period_2_start,period_2_end,period_3_start,period_3_end')
         .eq('role', 'employee');
       if (!error) setUsers(data || []);
       setLoading(false);
@@ -398,6 +398,7 @@ export default function AdminMentorBuddy() {
                 <th>팀</th>
                 <th>유형</th>
                 <th>멘토/버디</th>
+                <th>멘토id</th>
                 <th>안내메일</th>
               </tr>
             </thead>
@@ -435,6 +436,9 @@ export default function AdminMentorBuddy() {
                       </button>
                     )}
                   </td>
+                  <td style={{ color: u.mentor_id ? '#1a2332' : '#bbb', fontSize: 13 }}>
+                    {u.mentor_id || '—'}
+                  </td>
                   <td>
                     <button
                       className="mentor-assign-btn"
@@ -448,7 +452,7 @@ export default function AdminMentorBuddy() {
               ))}
               {users.length === 0 && (
                 <tr>
-                  <td colSpan={6} style={{ textAlign: 'center', color: '#888', padding: '24px' }}>
+                  <td colSpan={7} style={{ textAlign: 'center', color: '#888', padding: '24px' }}>
                     등록된 직원이 없습니다.
                   </td>
                 </tr>
