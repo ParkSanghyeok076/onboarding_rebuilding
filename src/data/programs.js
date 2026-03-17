@@ -1,8 +1,8 @@
 export const programs = [
   {
     id: 1,
-    title: '멘토와의 티타임',
-    description: '사원증이 보이는 커피 사진 등'
+    title: '사옥 탐방 및 PC 세팅',
+    description: '함께 일할 공간을 둘러보는 사진 등'
   },
   {
     id: 2,
@@ -16,8 +16,8 @@ export const programs = [
   },
   {
     id: 4,
-    title: '주변 맛집 탐방',
-    description: '사원증이 보이는 식사 사진 등'
+    title: 'OJT 현황 보고',
+    description: '팀원들에게 이번달 배운 업무내용을 공유하는 사진 등'
   },
   {
     id: 5,
