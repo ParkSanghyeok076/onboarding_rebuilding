@@ -646,5 +646,39 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '
 
 ---
 
+---
+
+## 📅 2026-03-17 — 멘토 정보 입력 기능 신규 구현
+
+### ✅ 신입사원 화면: 멘토 정보 입력 팝업
+
+- `OnboardingProgram.js`: 멘토 성명/사번 state + submit/reset 로직 추가
+- `Header.js`: 진행 상황 우측 끝 "멘토 정보 입력" 버튼 추가
+  - 클릭 시 팝업: 멘토 성명 + 사번 입력창 + 안내 문구 + 제출/취소 버튼
+  - 저장 후: 버튼이 "👤 멘토: {이름}"으로 변경, 클릭 시 확인/초기화 팝업
+  - 팝업 외부 클릭 시 자동 닫힘
+- 사번 유효성 검사: 숫자만 입력 가능, 6자리 고정, 미만 시 제출 버튼 비활성화
+- 안내 문구: "※ 사번은 0100을 제외한 고유사번 6자리로 입력해주세요."
+- Supabase `users` 테이블 `mentor_name`, `mentor_id` 컬럼에 저장
+
+### ✅ 관리자 화면: 멘토id 열 추가
+
+- `AdminMentorBuddy.js`: `mentor_id` SELECT 추가, 테이블에 `멘토id` 열 신규 추가
+- 직원이 입력한 멘토 사번을 관리자가 한눈에 확인 가능
+
+### ✅ DB Migration
+
+- `docs/sql/migration_mentor_employee_id.sql` 신규 생성
+- `mentor_id` 컬럼: `uuid FK` → `text` 타입으로 변경 (FK 제약 제거)
+- RLS 정책 추가: `users_self_update` — 직원이 자신의 row UPDATE 가능
+
+### 커밋 이력
+
+| 커밋 | 내용 |
+|------|------|
+| `3905c4d` | feat: 멘토 정보 입력 팝업 + 관리자 멘토id 열 추가 |
+
+---
+
 **작성자**: 인사기획팀 박상혁 선임
-**최종 업데이트**: 2026-03-16 (뒤로가기 버튼 추가, 이메일 프롬프트 개편)
+**최종 업데이트**: 2026-03-17 (멘토 정보 입력 팝업 신규 구현)
