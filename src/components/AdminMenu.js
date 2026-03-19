@@ -13,7 +13,7 @@ function AdminMenu({ onSelectMenu }) {
     {
       id: 'admin-onboarding',
       icon: '📋',
-      title: '온보딩 현황',
+      title: '멘토링 현황',
       description: '신입사원별 프로그램 제출 현황',
       color: '#4ECDC4'
     },

@@ -8,7 +8,7 @@ import AdminMentorBuddy from '../pages/AdminMentorBuddy';
 import './AdminLayout.css';
 
 const MENU_ITEMS = [
-  { id: 'admin-onboarding',    icon: '📋', label: '온보딩 현황' },
+  { id: 'admin-onboarding',    icon: '📋', label: '멘토링 현황' },
   { id: 'admin-announcements', icon: '📢', label: '공지사항 관리' },
   { id: 'admin-users',         icon: '👥', label: '신입사원 등록' },
   { id: 'admin-mentor-buddy',  icon: '🤝', label: '멘토 관리' },

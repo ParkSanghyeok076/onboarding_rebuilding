@@ -163,7 +163,7 @@ function ProgramGridPopup({ user, onClose }) {
     <div className="confirm-overlay" onClick={onClose}>
       <div className="program-popup" onClick={e => e.stopPropagation()}>
         <div className="program-popup-header">
-          <h3>{user.name} - 온보딩 프로그램</h3>
+          <h3>{user.name} - 멘토링 프로그램</h3>
           <button className="program-popup-close" onClick={onClose}>✕</button>
         </div>
         <div className="prog-grid-popup">
@@ -397,7 +397,7 @@ function AdminOnboarding({ onBack }) {
     <div className="page-container">
       <div className="admin-container">
         <div className="admin-header">
-          <h1 className="page-title">📋 온보딩 현황</h1>
+          <h1 className="page-title">📋 멘토링 현황</h1>
           <div className="admin-filter-group">
             {['전체', '완료', '미완료'].map(f => (
               <button

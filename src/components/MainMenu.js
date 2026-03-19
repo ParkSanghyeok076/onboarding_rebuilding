@@ -13,7 +13,7 @@ function MainMenu({ user, onSelectMenu }) {
     {
       id: 'onboarding',
       icon: '📋',
-      title: '온보딩 프로그램',
+      title: '멘토링 프로그램',
       description: '6가지 온보딩 활동 수행',
       color: '#4ECDC4'
     },
