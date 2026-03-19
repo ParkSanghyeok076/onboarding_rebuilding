@@ -273,6 +273,82 @@ export function buildExpHireEmail(employees, today) {
 </div>`;
 }
 
+export function buildResultRequestEmail(employees, _today) {
+  if (!employees || employees.length === 0) return '';
+  const isNew = employees[0].employee_type === '신입';
+
+  // 마감일 = 멘토링 종료일 + 7일
+  const endDateStr = isNew ? employees[0].period_3_end : employees[0].period_1_end;
+  const endDate = endDateStr ? new Date(endDateStr) : new Date();
+  const deadline = addDays(endDate, 7);
+  const dm = String(deadline.getMonth() + 1).padStart(2, '0');
+  const dd = String(deadline.getDate()).padStart(2, '0');
+  const deadlineStr = `${dm}/${dd}(${getDayKo(deadline)})`;
+
+  const rows = employees.map((e, i) => `
+    <tr>
+      <td style="padding:0;font-family:'맑은 고딕',monospace;vertical-align:middle;font-size:10pt;text-align:center;border:1px solid windowtext;height:22px;">
+        ${i + 1}
+      </td>
+      <td style="padding:0;font-family:'맑은 고딕',monospace;vertical-align:middle;font-size:10pt;text-align:center;border:1px solid windowtext;height:22px;">
+        ${escapeHtml(e.department)}
+      </td>
+      <td style="padding:0;font-family:'맑은 고딕',monospace;vertical-align:middle;font-size:10pt;text-align:center;border:1px solid windowtext;height:22px;">
+        ${escapeHtml(e.name)}
+      </td>
+    </tr>`).join('');
+
+  return `<div style="font-size:10pt;color:rgb(0,0,0);max-width:720px;padding:32px;font-family:굴림체;line-height:1.5;margin:0;">
+<p style="line-height:1.5;background-color:rgb(255,255,255);font-size:9pt;font-family:굴림체;margin:0;"><span style="font-size:10pt;font-family:굴림체;">안녕하십니까, 인사기획팀 박상혁입니다.</span></p>
+<p style="line-height:1.5;background-color:rgb(255,255,255);font-size:9pt;font-family:굴림체;margin:0;"><br></p>
+<p style="line-height:1.5;background-color:rgb(255,255,255);font-size:9pt;font-family:굴림체;margin:0;"><span style="font-size:10pt;font-family:굴림체;">신입사원 OJT/멘토링이 종료됨에 따라, 아래와 같이 OJT노트 및 OJT/멘토링 결과자료를 요청드립니다.</span></p>
+<p style="line-height:1.5;background-color:rgb(255,255,255);font-size:9pt;font-family:굴림체;margin:0;"><br></p>
+<p style="line-height:1.5;background-color:rgb(255,255,255);font-size:9pt;font-family:굴림체;margin:0;"><br></p>
+<p style="line-height:1.5;background-color:rgb(255,255,255);font-size:9pt;font-family:굴림체;margin:0;"><span style="font-size:10pt;font-family:굴림체;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- 아&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;래 -</span></p>
+<p style="line-height:1.5;background-color:rgb(255,255,255);font-size:9pt;font-family:굴림체;margin:0;"><br></p>
+<p style="line-height:1.5;background-color:rgb(255,255,255);font-size:9pt;font-family:굴림체;margin:0;"><span style="font-size:10pt;font-family:굴림체;">1. 교육개요</span></p>
+<table border="0" cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:209px;margin-left:20px;">
+  <colgroup><col width="38" style="width:39px;"><col width="120" style="width:120px;"><col width="51" style="width:51px;"></colgroup>
+  <tbody>
+    <tr>
+      <td style="padding:0;font-family:'맑은 고딕',monospace;vertical-align:middle;font-size:10pt;font-weight:700;text-align:center;border:1px solid windowtext;background:rgb(217,217,217);height:22px;">순번</td>
+      <td style="padding:0;font-family:'맑은 고딕',monospace;vertical-align:middle;font-size:10pt;font-weight:700;text-align:center;border:1px solid windowtext;background:rgb(217,217,217);height:22px;">소속</td>
+      <td style="padding:0;font-family:'맑은 고딕',monospace;vertical-align:middle;font-size:10pt;font-weight:700;text-align:center;border:1px solid windowtext;background:rgb(217,217,217);height:22px;">성명</td>
+    </tr>
+    ${rows}
+  </tbody>
+</table>
+<p style="font-family:굴림체;font-size:9pt;line-height:1.2;margin:0;"><br></p>
+<p style="font-family:굴림체;font-size:9pt;line-height:1.2;margin:0;"><br></p>
+<p style="font-family:굴림체;font-size:9pt;line-height:1.2;margin:0;"><span style="font-size:10pt;background-color:rgb(255,255,255);font-family:굴림체;">2. 요청사항 : </span><span style="font-size:10pt;background-color:rgb(255,255,255);"><span style="font-size:10pt;font-family:굴림체;"><span style="color:rgb(255,0,0);"><b><span style="font-size:10pt;font-family:굴림체;">${deadlineStr}</span></b></span>까지</span></span><span style="font-size:10pt;background-color:rgb(255,255,255);font-family:굴림체;"> 회신</span></p>
+<p style="line-height:1.5;background-color:rgb(255,255,255);font-size:9pt;font-family:굴림체;margin:0;"><br></p>
+<p style="line-height:1.5;background-color:rgb(255,255,255);font-size:9pt;font-family:굴림체;margin:0;"><span style="font-size:10pt;font-family:굴림체;">&nbsp; 1)&nbsp;<b>OJT 노트 제출</b> <b><span style="font-size:10pt;font-family:굴림체;">(멘토링 종료일까지의 교육내용 기재 必, 월별 평가 3회 결재 必)</span></b></span></p>
+<p style="line-height:1.5;background-color:rgb(255,255,255);font-size:9pt;font-family:굴림체;margin:0;"><span style="font-size:10pt;font-family:굴림체;">&nbsp;&nbsp;&nbsp; √접수처 : 유라R&amp;D센터 3층 인사기획팀 박상혁 선임</span></p>
+<p style="line-height:1.5;background-color:rgb(255,255,255);font-size:9pt;font-family:굴림체;margin:0;"><span style="font-size:10pt;font-family:굴림체;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color:rgb(255,0,0);"><b>(인사실 출입 통제 중이므로 방문 전 연락 必, 사업장은 행낭으로 제출)</b></span></span></p>
+<p style="line-height:1.5;background-color:rgb(255,255,255);font-size:9pt;font-family:굴림체;margin:0;"><span style="font-size:10pt;font-family:굴림체;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b><span style="font-size:10pt;font-family:굴림체;">※무성의하게 제출 시, OJT업무노트 반송, 재실시 요청</span></b></span></p>
+<p style="line-height:1.5;background-color:rgb(255,255,255);font-size:9pt;font-family:굴림체;margin:0;"><br></p>
+<p style="line-height:1.5;background-color:rgb(255,255,255);font-size:9pt;font-family:굴림체;margin:0;"><span style="font-size:10pt;font-family:굴림체;">&nbsp; 2)&nbsp;<strong style="font-size:10pt;">멘토링 프로그램 자료 등록</strong></span></p>
+<p style="line-height:1.5;background-color:rgb(255,255,255);font-size:9pt;font-family:굴림체;margin:0;"><br></p>
+<p style="line-height:1.5;background-color:rgb(255,255,255);font-size:9pt;font-family:굴림체;margin:0;"><span style="font-size:10pt;">감사합니다.</span></p>
+<p style="font-family:굴림체;font-size:9pt;line-height:1.2;margin:0;"><br></p>
+<p style="font-family:굴림체;font-size:9pt;line-height:1.2;margin:0;"><br></p>
+<table style="border-top:gray 2px solid;font-size:10pt;width:400px;border-bottom:gray 2px solid;" cellspacing="0" border="0">
+  <tbody>
+    <tr>
+      <td style="vertical-align:text-top;width:366px;height:20px;text-align:center;">
+        <p style="margin:0;line-height:120%;font-family:굴림체;font-size:10pt;" align="left"><b>&nbsp; 유라코퍼레이션</b></p>
+        <p style="margin:0;line-height:120%;font-family:굴림체;font-size:10pt;" align="left"><br></p>
+        <p style="margin:0;line-height:120%;font-family:굴림체;font-size:10pt;" align="left"><b>&nbsp; 박상혁</b></p>
+        <p style="margin:0;line-height:120%;font-family:굴림체;font-size:10pt;" align="left">&nbsp; 인사실 인사기획팀 / 선임매니저</p>
+        <p style="margin:0;line-height:120%;font-family:굴림체;font-size:10pt;" align="left"><br></p>
+        <p style="margin:0;line-height:120%;font-family:굴림체;font-size:10pt;" align="left">&nbsp; HP. 010-7294-1457&nbsp;&nbsp; TEL. 070-7878-1456</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>`;
+}
+
 export default function AdminMentorBuddy() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -284,6 +360,9 @@ export default function AdminMentorBuddy() {
 
   const [emailHtml, setEmailHtml] = useState(null);
   const [copied, setCopied] = useState(false);
+
+  const [resultEmailHtml, setResultEmailHtml] = useState(null);
+  const [resultCopied, setResultCopied] = useState(false);
 
   const [toast, setToast] = useState('');
 
@@ -343,6 +422,21 @@ export default function AdminMentorBuddy() {
     setCopied(false);
   };
 
+  const handleRowResultEmail = (user) => {
+    const html = buildResultRequestEmail([user], new Date());
+    setResultEmailHtml(html);
+    setResultCopied(false);
+  };
+
+  const handleResultCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(resultEmailHtml);
+      setResultCopied(true);
+    } catch {
+      showToast('복사 실패. 직접 선택해 주세요.');
+    }
+  };
+
   const handleAssignSave = async () => {
     if (!assignInput.trim()) return;
     setAssignLoading(true);
@@ -400,6 +494,7 @@ export default function AdminMentorBuddy() {
                 <th>멘토/버디</th>
                 <th>멘토id</th>
                 <th>안내메일</th>
+                <th>결과요청</th>
               </tr>
             </thead>
             <tbody>
@@ -448,11 +543,20 @@ export default function AdminMentorBuddy() {
                       메일 생성
                     </button>
                   </td>
+                  <td>
+                    <button
+                      className="mentor-assign-btn"
+                      style={{ background: '#fef3e2', color: '#d97706', borderColor: '#fcd34d' }}
+                      onClick={() => handleRowResultEmail(u)}
+                    >
+                      메일 생성
+                    </button>
+                  </td>
                 </tr>
               ))}
               {users.length === 0 && (
                 <tr>
-                  <td colSpan={7} style={{ textAlign: 'center', color: '#888', padding: '24px' }}>
+                  <td colSpan={8} style={{ textAlign: 'center', color: '#888', padding: '24px' }}>
                     등록된 직원이 없습니다.
                   </td>
                 </tr>
@@ -513,6 +617,25 @@ export default function AdminMentorBuddy() {
             <div
               className="email-popup-body"
               dangerouslySetInnerHTML={{ __html: emailHtml }}
+            />
+          </div>
+        </div>
+      )}
+
+      {resultEmailHtml && (
+        <div className="email-popup-overlay" onClick={() => setResultEmailHtml(null)}>
+          <div className="email-popup" onClick={e => e.stopPropagation()}>
+            <div className="email-popup-header">
+              <h3>결과요청 메일 미리보기</h3>
+              <div className="email-popup-actions">
+                {resultCopied && <span className="email-copy-feedback">✓ 복사됨!</span>}
+                <button className="email-copy-btn" onClick={handleResultCopy}>HTML 복사</button>
+                <button className="email-popup-close" onClick={() => setResultEmailHtml(null)}>✕</button>
+              </div>
+            </div>
+            <div
+              className="email-popup-body"
+              dangerouslySetInnerHTML={{ __html: resultEmailHtml }}
             />
           </div>
         </div>
