@@ -14,14 +14,14 @@ function MainMenu({ user, onSelectMenu }) {
       id: 'onboarding',
       icon: '📋',
       title: '멘토링 프로그램',
-      description: '6가지 온보딩 활동 수행',
+      description: '6가지 멘토링 활동 수행',
       color: '#4ECDC4'
     },
     {
       id: 'survey',
       icon: '📝',
       title: '설문조사',
-      description: '온보딩 과정 설문조사',
+      description: '멘토링 과정 설문조사',
       color: '#95E1D3'
     }
   ];
@@ -29,7 +29,7 @@ function MainMenu({ user, onSelectMenu }) {
   return (
     <div className="main-menu">
       <h1 className="menu-title">{user?.name}님 환영합니다! 👋</h1>
-      <p className="menu-subtitle">온보딩 과정을 시작하세요</p>
+      <p className="menu-subtitle">멘토링 과정을 시작하세요</p>
 
       <div className="menu-grid">
         {menuItems.map(item => (
