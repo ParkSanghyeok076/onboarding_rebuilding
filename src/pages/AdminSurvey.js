@@ -376,7 +376,6 @@ function AdminSurvey({ onBack }) {
                         <tr>
                           <th>항목</th>
                           <th>감성</th>
-                          <th>점수</th>
                           <th>신뢰도</th>
                           <th>원문 발췌</th>
                         </tr>
@@ -386,7 +385,6 @@ function AdminSurvey({ onBack }) {
                           <tr key={i}>
                             <td className="absa-aspect">{a.aspect}</td>
                             <td><span className={`sentiment-badge sentiment-${a.sentiment}`}>{a.sentiment}</span></td>
-                            <td className="absa-score">{typeof a.sentiment_score === 'number' ? a.sentiment_score.toFixed(2) : '—'}</td>
                             <td><span className="absa-confidence">{a.confidence}</span></td>
                             <td className="absa-quote">"{a.quote}"</td>
                           </tr>
