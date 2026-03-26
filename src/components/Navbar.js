@@ -16,7 +16,7 @@ function Navbar({ user, onLogout, onPasswordChange }) {
   return (
     <div className="navbar">
       <div className="navbar-left">
-        <h2>YURA 멘토링 관리 시스템</h2>
+        <h2>YURA 온보딩 시스템</h2>
       </div>
       <div className="navbar-right">
         <div className="user-info">

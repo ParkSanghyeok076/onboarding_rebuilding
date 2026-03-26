@@ -31,7 +31,7 @@ function Login() {
     <div className="login-container">
       <div className="login-box">
         <img src="/YURA_SYMBOL.png" alt="YURA 로고" className="login-logo" />
-        <h1>멘토링 관리 시스템</h1>
+        <h1>온보딩 시스템</h1>
         <p className="login-subtitle">로그인하여 시작하세요</p>
 
         <form onSubmit={handleSubmit}>

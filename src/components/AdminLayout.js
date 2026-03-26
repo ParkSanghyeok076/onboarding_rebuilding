@@ -29,7 +29,7 @@ function AdminLayout({ user, onLogout }) {
         {/* 로고 */}
         <div className="admin-sidebar-logo">
           <div className="admin-sidebar-logo-icon">🏢</div>
-          <div className="admin-sidebar-logo-title">YURA 멘토링 관리 시스템</div>
+          <div className="admin-sidebar-logo-title">YURA 온보딩 시스템</div>
           <div className="admin-sidebar-logo-sub">HR Admin</div>
         </div>
 
