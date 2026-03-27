@@ -1,7 +1,5 @@
 /* src/components/AdminLayout.css */
 
-/* 전체 레이아웃: 사이드바 + 콘텐츠 영역, 100vh 전체 */
-/* zoom: 1.1로 콘텐츠를 110% 크기로 렌더링. 높이는 100vh/1.1로 보정해 잘림 방지 */
 .admin-layout {
   display: flex;
   height: calc(100vh / 1.1);
@@ -9,53 +7,55 @@
   zoom: 1.1;
 }
 
-/* ── 사이드바 (240px, 전체 높이) ── */
+/* ── 사이드바 (240px) ── */
 .admin-sidebar {
   width: 240px;
-  background: #1a2332;
+  background: #ffffff;
+  border-right: 1px solid #e8eaf0;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  height: 100%;  /* 부모 기준 100% → zoom 후 화면 꽉 참 */
+  height: 100%;
 }
 
 /* 로고 영역 */
 .admin-sidebar-logo {
-  padding: 28px 24px 24px;
-  border-bottom: 1px solid rgba(255,255,255,.08);
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid #f0f1f5;
 }
 
 .admin-sidebar-logo-icon {
-  width: 40px;
-  height: 40px;
-  background: #667eea;
+  width: 38px;
+  height: 38px;
+  background: #3b4ce8;
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 18px;
   margin-bottom: 10px;
 }
 
 .admin-sidebar-logo-title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
-  color: white;
+  color: #1a1f36;
   line-height: 1.3;
 }
 
 .admin-sidebar-logo-sub {
   font-size: 11px;
-  color: rgba(255,255,255,.4);
-  margin-top: 2px;
+  color: #9095a7;
+  margin-top: 3px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+  font-weight: 500;
 }
 
 /* 네비게이션 메뉴 */
 .admin-sidebar-nav {
   flex: 1;
-  padding: 16px 12px;
+  padding: 14px 12px;
   overflow-y: auto;
 }
 
@@ -63,10 +63,10 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 11px 14px;
+  padding: 10px 12px;
   cursor: pointer;
-  color: rgba(255,255,255,.55);
-  font-size: 14px;
+  color: #6b7280;
+  font-size: 13.5px;
   font-weight: 500;
   transition: all .15s;
   border-radius: 8px;
@@ -75,13 +75,14 @@
 }
 
 .admin-sidebar-item:hover {
-  background: rgba(255,255,255,.06);
-  color: rgba(255,255,255,.85);
+  background: #f4f5fb;
+  color: #3b4ce8;
 }
 
 .admin-sidebar-item.active {
-  background: rgba(102,126,234,.22);
-  color: white;
+  background: #eef0fd;
+  color: #3b4ce8;
+  font-weight: 600;
 }
 
 .admin-sidebar-item.active .admin-sidebar-icon {
@@ -89,16 +90,16 @@
 }
 
 .admin-sidebar-icon {
-  font-size: 16px;
+  font-size: 15px;
   width: 20px;
   text-align: center;
-  opacity: 0.7;
+  opacity: 0.8;
 }
 
 /* 하단 사용자 정보 */
 .admin-sidebar-user {
-  padding: 16px;
-  border-top: 1px solid rgba(255,255,255,.08);
+  padding: 14px 16px;
+  border-top: 1px solid #f0f1f5;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -107,7 +108,7 @@
 .admin-sidebar-avatar {
   width: 34px;
   height: 34px;
-  background: #667eea;
+  background: #3b4ce8;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -126,7 +127,7 @@
 .admin-sidebar-user-name {
   font-size: 13px;
   font-weight: 600;
-  color: white;
+  color: #1a1f36;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -134,26 +135,28 @@
 
 .admin-sidebar-user-role {
   font-size: 11px;
-  color: rgba(255,255,255,.4);
+  color: #9095a7;
+  margin-top: 1px;
 }
 
 .admin-sidebar-logout {
-  background: rgba(255,255,255,.08);
-  border: 1px solid rgba(255,255,255,.15);
-  color: rgba(255,255,255,.6);
+  background: transparent;
+  border: 1px solid #e2e4ed;
+  color: #6b7280;
   cursor: pointer;
   font-size: 11px;
   font-weight: 600;
   padding: 5px 10px;
-  border-radius: 5px;
+  border-radius: 6px;
   transition: all .15s;
   flex-shrink: 0;
   white-space: nowrap;
 }
 
 .admin-sidebar-logout:hover {
-  background: rgba(255,255,255,.15);
-  color: white;
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #dc2626;
 }
 
 /* ── 콘텐츠 영역 ── */
@@ -165,10 +168,9 @@
   overflow: hidden;
 }
 
-
 /* 콘텐츠 메인 */
 .admin-main {
   flex: 1;
-  background: #f5f5f5;
+  background: #f8f9fb;
   overflow-y: auto;
 }
