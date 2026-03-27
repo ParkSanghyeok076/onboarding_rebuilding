@@ -20,6 +20,8 @@ function AdminSurvey({ onBack }) {
   const [loading, setLoading] = useState(true);
   const [roundFilter, setRoundFilter] = useState('전체');
   const [nameFilter, setNameFilter] = useState('');
+  const [sortKey, setSortKey] = useState('name');
+  const [sortAsc, setSortAsc] = useState(true);
   const [selectedResponse, setSelectedResponse] = useState(null);
   const [emailDraft, setEmailDraft] = useState(null);
   const [actionLoading, setActionLoading] = useState({});
@@ -164,9 +166,20 @@ function AdminSurvey({ onBack }) {
     }
   };
 
+  const toggleSort = (key) => {
+    if (sortKey === key) setSortAsc(a => !a);
+    else { setSortKey(key); setSortAsc(true); }
+  };
+
   const displayed = responses
     .filter(r => roundFilter === '전체' || r.round_number === Number(roundFilter.replace('차', '')))
-    .filter(r => !nameFilter.trim() || r.userName.includes(nameFilter.trim()));
+    .filter(r => !nameFilter.trim() || r.userName.includes(nameFilter.trim()))
+    .sort((a, b) => {
+      let cmp = 0;
+      if (sortKey === 'name') cmp = (a.userName || '').localeCompare(b.userName || '', 'ko');
+      if (sortKey === 'round') cmp = a.round_number - b.round_number;
+      return sortAsc ? cmp : -cmp;
+    });
 
   if (loading) {
     return (
@@ -210,8 +223,12 @@ function AdminSurvey({ onBack }) {
           <table className="admin-table">
             <thead>
               <tr>
-                <th>이름</th>
-                <th>차수</th>
+                <th style={{textAlign:'center', cursor:'pointer'}} onClick={() => toggleSort('name')}>
+                  이름 {sortKey === 'name' ? (sortAsc ? '↑' : '↓') : '↑↓'}
+                </th>
+                <th style={{cursor:'pointer'}} onClick={() => toggleSort('round')}>
+                  차수 {sortKey === 'round' ? (sortAsc ? '↑' : '↓') : '↑↓'}
+                </th>
                 <th>제출일</th>
                 <th>ABSA 분석</th>
                 <th>멘토 이메일</th>
