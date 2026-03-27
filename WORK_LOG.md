@@ -894,5 +894,96 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '
 
 ---
 
+---
+
+## 📅 2026-03-27 (세션 2) — OJT 일지 + 멘토 등록 요청 체계 구현
+
+### ✅ 사용자 대시보드 전면 재설계 (`MainMenu.js` / `MainMenu.css`)
+
+- 좌측 대시보드 패널 + 우측 2×2 메뉴카드 레이아웃으로 전환
+- 대시보드 5개 위젯: 온보딩 타임라인 / 담당 멘토 / 프로그램 진행률 / 설문조사 일정 / OJT 일지
+- 설문조사 위젯 문구: "가까운 설문조사" → "설문조사 일정"
+- 담당 멘토 표시: `이름 | 사번` 인라인, 수정 버튼 뱃지 스타일 적용
+- `OnboardingProgram.js`: 타임라인·멘토 기능 제거 (대시보드로 이전)
+
+### ✅ OJT 일지 기능 신규 구현
+
+**신규 파일**
+- `src/pages/OJTJournal.js` — 실물 양식 기반 table 레이아웃
+- `src/pages/OJTJournal.css`
+- `docs/sql/create_ojt_journals.sql` — ojt_journals 테이블 + RLS 5개 정책
+
+**기능 상세**
+- 주차별 카드 클릭 → 일지 작성 에디터
+- `education_content`: 단일 textarea (평일 날짜 기본값 자동 생성, 토·일 제외)
+- 날짜 포맷: `03월 27일(금)\n: (내용)`
+- 상태 6단계: upcoming / empty / draft / submitted / approved / expired (종료일+3일 초과 시 잠금)
+- `challenges` / `next_week_goals` / `mentor_comment` 분리 입력
+- 임시저장 / 제출하기 버튼 분리
+
+### ✅ 멘토 페이지 신규 구현 (`MentorPage.js` / `MentorPage.css`)
+
+- `role === 'mentor'` 계정 로그인 시 전용 레이아웃 렌더링 (App.js)
+- 3단 뷰: 멘티 목록 → OJT 주차 목록 → 일지 상세
+- 멘티 목록: `users.mentor_id = mentor.employee_id` 기반 자동 매칭
+- 지도의견 작성 (`mentor_comment`) + 승인 처리 (`approved` 상태)
+
+### ✅ 멘토 등록 요청 체계 구현
+
+**DB**
+- `mentor_requests` 테이블 신규 (`docs/sql/create_mentor_requests.sql`)
+- RLS 정책 6개: 멘티 본인 insert/select/update/delete + HR Admin select/update
+
+**신입사원 흐름**
+- MainMenu 담당 멘토 위젯: "멘토 등록 요청" 버튼 → 이름+사번 입력 → 등록 요청하기
+- 상태 뱃지: 승인 대기 / 승인 완료 / 거절
+- pending 상태에서 수정 / 취소 가능
+
+**HR Admin 흐름**
+- `AdminMentorRequests.js` 신규 페이지: 요청 목록(탭 필터) + 승인/거절 버튼
+- 승인 시: `registerUsers` Edge Function 호출 → 멘토 계정 자동 생성
+- 동일 사번 계정 이미 있으면 계정 생성 건너뛰고 success 처리 (중복 방지)
+- AdminLayout 사이드바에 "📩 멘토 등록 요청" 메뉴 추가
+
+**Edge Function 수정** (`register-users`)
+- `role` 파라미터 추가 (기본값 `employee`)
+- `role === 'mentor'`: hire_date/employee_type 불필요, period 계산 건너뜀
+- 중복 사번(이미 존재하는 계정) 자동 skip → success 반환
+
+### ✅ RLS 정책 추가 (Supabase SQL Editor 직접 실행)
+
+```sql
+-- 순환 참조 방지용 SECURITY DEFINER 함수
+CREATE OR REPLACE FUNCTION get_my_employee_id() RETURNS text LANGUAGE sql SECURITY DEFINER STABLE AS $$ SELECT employee_id FROM users WHERE id = auth.uid(); $$;
+
+-- 멘토가 자기 멘티 rows 조회
+CREATE POLICY "users_mentor_select_mentees" ON users FOR SELECT USING (mentor_id = get_my_employee_id());
+
+-- 멘토가 자기 멘티 OJT 조회/수정
+CREATE POLICY "ojt_mentor_select" ON ojt_journals FOR SELECT ...
+CREATE POLICY "ojt_mentor_update" ON ojt_journals FOR UPDATE ...
+```
+
+### ✅ 버그 수정
+
+| 파일 | 버그 | 수정 |
+|------|------|------|
+| `MentorPage.js` | `select('...team...')` → DB 컬럼 없어 쿼리 실패 | `department`로 수정 |
+| `MentorPage.js` | `m.team` 참조 | `m.department`로 수정 |
+| Auth | 멘토 계정 이메일 `@yura.com` → 로그인 안 됨 | `@company.internal`로 변경 |
+| users RLS | 멘토 로그인 후 500 오류 (자기 row 조회 불가) | `users_self_select` 정책 추가 |
+| users RLS | `users_mentor_select_mentees` 무한 순환 참조 | SECURITY DEFINER 함수로 해결 |
+
+### 커밋 이력
+
+| 커밋 | 내용 |
+|------|------|
+| `8aa06ad` | feat: MainMenu 대시보드 레이아웃 개편 + OJT 일지 기능 추가 |
+| `0d0df5e` | fix: MainMenu loadingData 미사용 변수 제거 + 멘토 페이지 추가 |
+| `f7f1c9a` | feat: 멘토 등록 요청 체계 구현 |
+| `bfe3e30` | fix: MentorPage team → department 컬럼명 수정 |
+
+---
+
 **작성자**: 인사기획팀 박상혁 선임
-**최종 업데이트**: 2026-03-27 (UI 전면 리디자인 — 로그인/대시보드/관리자 화면)
+**최종 업데이트**: 2026-03-27 (OJT 일지 + 멘토 등록 요청 체계 + 멘토 페이지)
