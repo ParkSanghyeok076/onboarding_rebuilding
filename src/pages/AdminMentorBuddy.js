@@ -468,8 +468,7 @@ export default function AdminMentorBuddy() {
   return (
     <div className="mentor-page">
       <div className="mentor-page-header">
-        <div className="mentor-page-title">🤝 멘토 관리</div>
-        <button
+<button
           className="mentor-bulk-btn"
           disabled={checkedUsers.length === 0}
           onClick={handleBulkEmail}

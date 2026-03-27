@@ -179,10 +179,7 @@ function AdminAnnouncements({ onBack }) {
         <div className="admin-container">
           {/* 헤더 */}
           <div className="admin-header">
-            <div className="admin-header-left">
-              <h1 className="page-title">📢 공지사항 관리</h1>
-            </div>
-            <button className="admin-create-btn" onClick={() => setModalOpen(true)}>
+<button className="admin-create-btn" onClick={() => setModalOpen(true)}>
               + 새 공지 작성
             </button>
           </div>

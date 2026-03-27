@@ -397,8 +397,7 @@ function AdminOnboarding({ onBack }) {
     <div className="page-container">
       <div className="admin-container">
         <div className="admin-header">
-          <h1 className="page-title">📋 멘토링 현황</h1>
-          <div className="admin-filter-group">
+<div className="admin-filter-group">
             {['전체', '완료', '미완료'].map(f => (
               <button
                 key={f}

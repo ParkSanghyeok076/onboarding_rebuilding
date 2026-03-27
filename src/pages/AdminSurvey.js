@@ -184,10 +184,7 @@ function AdminSurvey({ onBack }) {
     <div className="page-container">
       <div className="admin-container">
         <div className="admin-header">
-          <div className="admin-header-left">
-            <h1 className="page-title">📝 설문조사 관리</h1>
-          </div>
-          <div className="admin-header-right">
+<div className="admin-header-right">
             <input
               type="text"
               className="survey-name-search"
