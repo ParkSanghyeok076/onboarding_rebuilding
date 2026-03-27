@@ -974,6 +974,12 @@ CREATE POLICY "ojt_mentor_update" ON ojt_journals FOR UPDATE ...
 | users RLS | 멘토 로그인 후 500 오류 (자기 row 조회 불가) | `users_self_select` 정책 추가 |
 | users RLS | `users_mentor_select_mentees` 무한 순환 참조 | SECURITY DEFINER 함수로 해결 |
 
+### ✅ AdminMentorRequests 레이아웃 개선
+
+- 페이지 레이아웃을 온보딩 현황과 동일하게 맞춤
+  - `padding: 50px 1rem 2rem`, `max-width: 1100px`, `margin: 0 auto`
+  - 좌측 상단 치우침 해소, 상단 패딩 추가
+
 ### 커밋 이력
 
 | 커밋 | 내용 |
@@ -982,8 +988,10 @@ CREATE POLICY "ojt_mentor_update" ON ojt_journals FOR UPDATE ...
 | `0d0df5e` | fix: MainMenu loadingData 미사용 변수 제거 + 멘토 페이지 추가 |
 | `f7f1c9a` | feat: 멘토 등록 요청 체계 구현 |
 | `bfe3e30` | fix: MentorPage team → department 컬럼명 수정 |
+| `bde3a11` | style: AdminMentorRequests 상단 패딩 추가 |
+| `ac03158` | style: AdminMentorRequests 레이아웃 온보딩 현황과 동일하게 정렬 |
 
 ---
 
 **작성자**: 인사기획팀 박상혁 선임
-**최종 업데이트**: 2026-03-27 (OJT 일지 + 멘토 등록 요청 체계 + 멘토 페이지)
+**최종 업데이트**: 2026-03-27 (OJT 일지 + 멘토 등록 요청 체계 + 멘토 페이지 + AdminMentorRequests 레이아웃 개선)
