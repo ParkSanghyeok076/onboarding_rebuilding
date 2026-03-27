@@ -95,7 +95,7 @@ function App() {
 
   // 일반 사용자
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Navbar
         user={currentUser}
         onLogout={handleLogout}
@@ -122,7 +122,7 @@ function App() {
         />
       )}
 
-      <footer style={{ textAlign: 'center', padding: '16px', color: '#888', fontSize: '13px', borderTop: '1px solid #eee', marginTop: '32px' }}>
+      <footer style={{ textAlign: 'center', padding: '10px', color: '#888', fontSize: '13px', borderTop: '1px solid #eee', marginTop: '8px' }}>
         📞 문의 : 인사기획팀 박상혁 선임(1456)
       </footer>
     </div>
