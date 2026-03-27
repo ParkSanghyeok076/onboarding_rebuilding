@@ -491,7 +491,7 @@ export default function AdminMentorBuddy() {
                 <th>팀</th>
                 <th>유형</th>
                 <th>멘토</th>
-                <th>사번</th>
+                <th>멘토 사번</th>
                 <th>안내메일</th>
                 <th>결과요청</th>
               </tr>
