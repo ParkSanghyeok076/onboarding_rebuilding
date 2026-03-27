@@ -8,7 +8,6 @@ const TODAY = new Date().toISOString().slice(0, 10);
 function MainMenu({ user, onSelectMenu }) {
   const [programCount, setProgramCount] = useState(0);
   const [ojtJournals, setOjtJournals]   = useState({});
-  const [loadingData, setLoadingData]   = useState(true);
 
   // 멘토 입력 팝업
   const [showMentorModal, setShowMentorModal] = useState(false);
@@ -28,7 +27,6 @@ function MainMenu({ user, onSelectMenu }) {
       ojtRes.data.forEach(j => { map[j.week_number] = j.status; });
       setOjtJournals(map);
     }
-    setLoadingData(false);
   }, [user.id]);
 
   useEffect(() => { fetchData(); }, [fetchData]);

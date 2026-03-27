@@ -10,6 +10,7 @@ import Survey from './pages/Survey';
 import PasswordChange from './pages/PasswordChange';
 import AdminLayout from './components/AdminLayout';
 import OJTJournal from './pages/OJTJournal';
+import MentorPage from './pages/MentorPage';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -92,6 +93,17 @@ function App() {
   // hr_admin은 전용 레이아웃 (Navbar 없음)
   if (currentUser.role === 'hr_admin') {
     return <AdminLayout user={currentUser} onLogout={handleLogout} />;
+  }
+
+  // 멘토는 전용 페이지
+  if (currentUser.role === 'mentor') {
+    return (
+      <MentorPage
+        user={currentUser}
+        onLogout={handleLogout}
+        onPasswordChange={handlePasswordChange}
+      />
+    );
   }
 
   // 일반 사용자
