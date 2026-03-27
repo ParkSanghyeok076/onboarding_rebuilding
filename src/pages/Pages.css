@@ -226,6 +226,8 @@
   border-radius: 20px;
   font-size: 13px;
   font-weight: 600;
+  white-space: nowrap;
+  text-align: center;
 }
 
 .round-status-open      { background: #c6f6d5; color: #276749; }
@@ -241,6 +243,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .round-btn-primary {
