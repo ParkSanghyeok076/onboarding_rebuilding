@@ -24,7 +24,7 @@ function MentorPage({ user, onLogout, onPasswordChange }) {
     setLoading(true);
     const { data, error } = await supabase
       .from('users')
-      .select('id, name, team, employee_id, employee_type, period_1_start, period_1_end, period_3_end')
+      .select('id, name, department, employee_id, employee_type, period_1_start, period_1_end, period_3_end')
       .eq('mentor_id', user.employee_id);
     if (!error && data) setMentees(data);
     setLoading(false);
@@ -118,7 +118,7 @@ function MentorPage({ user, onLogout, onPasswordChange }) {
             <div key={m.id} className="mp-mentee-card" onClick={() => handleSelectMentee(m)}>
               <div className="mp-mentee-left">
                 <div className="mp-mentee-name">{m.name}</div>
-                <div className="mp-mentee-meta">{m.team} · {m.employee_id} · {m.employee_type}</div>
+                <div className="mp-mentee-meta">{m.department} · {m.employee_id} · {m.employee_type}</div>
               </div>
               <div className="mp-mentee-right">
                 <span className="mp-mentee-period">
