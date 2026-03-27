@@ -70,12 +70,6 @@ export default function OnboardingTimeline({ user }) {
           );
         })}
 
-        {/* Today marker */}
-        {showToday && (
-          <div className="tl-today" style={{ left: `${todayPct}%` }}>
-            <span className="tl-today-car">🚗</span>
-          </div>
-        )}
 
         {/* Nodes */}
         {nodes.map((n, i) => (

@@ -336,23 +336,6 @@
 .tl-seg--active  { background: #ffd700; box-shadow: 0 0 6px rgba(255, 215, 0, 0.5); }
 .tl-seg--pending { background: rgba(255, 255, 255, 0.18); }
 
-/* 오늘 마커 — 🚗 이모지가 선 위에 올라탄 형태 */
-.tl-today {
-  position: absolute;
-  top: 0;
-  transform: translateX(-50%);
-  z-index: 3;
-  pointer-events: none;
-}
-/* 🚗 bottom이 선 중심(31px)에 닿도록: margin-top -9px + 이모지 40px = 31px */
-.tl-today-car {
-  font-size: 40px;
-  line-height: 40px;
-  display: block;
-  margin-top: -9px;
-  transform: scaleX(-1);
-  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.4));
-}
 
 /* 노드 */
 .tl-node {
