@@ -37,11 +37,6 @@ export default function OnboardingTimeline({ user }) {
     return Math.min(100, Math.max(0, ((toDate(dateStr) - startDate) / totalMs) * 100));
   };
 
-  const todayPct = totalMs > 0
-    ? Math.min(100, Math.max(0, ((today - startDate) / totalMs) * 100))
-    : 0;
-  const showToday = today > startDate && today < endDate;
-
   const segClass = (s, e) => {
     const sd = toDate(s), ed = toDate(e);
     if (ed <= today) return 'tl-seg--done';
