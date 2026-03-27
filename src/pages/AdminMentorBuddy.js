@@ -490,8 +490,8 @@ export default function AdminMentorBuddy() {
                 <th>이름</th>
                 <th>팀</th>
                 <th>유형</th>
-                <th>멘토/버디</th>
-                <th>멘토id</th>
+                <th>멘토</th>
+                <th>사번</th>
                 <th>안내메일</th>
                 <th>결과요청</th>
               </tr>
@@ -569,7 +569,7 @@ export default function AdminMentorBuddy() {
         <div className="confirm-overlay" onClick={() => setAssignTarget(null)}>
           <div className="program-popup" onClick={e => e.stopPropagation()} style={{ maxWidth: 380 }}>
             <div className="program-popup-header">
-              <h3>{assignTarget.name} — 멘토/버디 지정</h3>
+              <h3>{assignTarget.name} — 멘토 지정</h3>
               <button className="program-popup-close" onClick={() => setAssignTarget(null)}>✕</button>
             </div>
             <div style={{ padding: '20px' }}>
@@ -578,7 +578,7 @@ export default function AdminMentorBuddy() {
                 value={assignInput}
                 onChange={e => setAssignInput(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && !assignLoading && assignInput.trim() && handleAssignSave()}
-                placeholder="멘토/버디 이름 입력"
+                placeholder="멘토 이름 입력"
                 style={{ width: '100%', padding: '8px 12px', fontSize: 14, border: '1px solid #ccc', borderRadius: 6, boxSizing: 'border-box' }}
                 autoFocus
               />
