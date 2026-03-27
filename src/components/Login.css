@@ -327,3 +327,45 @@
   color: #4caf50;
   font-variation-settings: 'FILL' 1, 'wght' 400;
 }
+
+/* ─── Mobile ──────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .login-form-section {
+    padding: 32px 24px;
+    justify-content: flex-start;
+    padding-top: 48px;
+  }
+
+  .login-form-logo {
+    height: 48px;
+    margin-bottom: 8px;
+  }
+
+  .login-form-subheading {
+    font-size: 17px;
+  }
+
+  .login-field-label {
+    font-size: 14px;
+  }
+
+  .login-input {
+    font-size: 16px;
+    padding: 14px 14px 14px 44px;
+  }
+
+  .login-submit {
+    font-size: 17px;
+    padding: 16px;
+  }
+
+  .login-hint,
+  .login-contact {
+    font-size: 14px;
+  }
+
+  .login-footer {
+    font-size: 11px;
+  }
+}
+
