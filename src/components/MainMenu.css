@@ -1,119 +1,223 @@
+/* ─── 전체 레이아웃 ─── */
 .main-menu {
-  max-width: 1200px;
   width: 100%;
-  margin: 0 auto;
-  padding: 20px;
-  flex: 1;
+  min-height: calc(100vh - 70px);
+  padding: 32px 40px;
+  box-sizing: border-box;
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: center;
 }
 
-.menu-title {
-  font-size: 54px;
-  color: #333;
-  text-align: center;
+.main-layout {
+  display: grid;
+  grid-template-columns: 440px 800px;
+  gap: 28px;
+  align-items: stretch;
+}
+
+/* ─── 좌측 대시보드 ─── */
+.dashboard-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  background: #f8fafc;
+  border-radius: 18px;
+  border: 2px solid #e2e8f0;
+  padding: 24px 20px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.dash-greeting {
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+.dash-name  { font-size: 22px; font-weight: 800; color: #1e293b; }
+.dash-hello { font-size: 18px; font-weight: 500; color: #475569; }
+
+/* 위젯 공통 */
+.dash-widget {
+  background: white;
+  border-radius: 14px;
+  padding: 20px 22px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  border: 1.5px solid #e8edf4;
+  flex: 1;
+}
+.dash-widget-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   margin-bottom: 10px;
 }
 
-.menu-subtitle {
-  font-size: 27px;
-  color: #666;
-  text-align: center;
-  margin-bottom: 50px;
+/* 멘토 */
+.dash-mentor-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.dash-mentor-name { font-size: 15px; font-weight: 700; color: #1e293b; flex: 1; }
+.dash-mentor-id   { font-size: 15px; color: #1e293b; font-weight: 700; }
+.dash-mentor-edit {
+  font-size: 11px; font-weight: 700; color: #64748b;
+  background: #f1f5f9; border: none; cursor: pointer;
+  padding: 3px 10px; border-radius: 99px; white-space: nowrap;
+}
+.dash-mentor-edit:hover { background: #e2e8f0; }
+.dash-mentor-empty {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 13px; color: #94a3b8;
 }
 
-.menu-grid {
+/* 프로그램 */
+.dash-prog-row {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;
+}
+.dash-prog-count { font-size: 14px; color: #334155; }
+.dash-prog-count strong { font-size: 18px; font-weight: 800; color: #344dbe; }
+.dash-prog-bar-bg {
+  background: #e2e8f0; border-radius: 99px; height: 8px; overflow: hidden;
+}
+.dash-prog-bar-fill {
+  height: 100%; background: #344dbe; border-radius: 99px;
+  transition: width 0.4s ease;
+}
+
+/* 설문조사 */
+.dash-survey-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.dash-survey-info { display: flex; flex-direction: column; gap: 2px; }
+.dash-survey-round  { font-size: 14px; font-weight: 700; color: #1e293b; }
+.dash-survey-period { font-size: 12px; color: #94a3b8; }
+
+/* OJT 일지 */
+.dash-ojt-row { display: flex; align-items: center; justify-content: space-between; }
+.dash-ojt-info { display: flex; align-items: center; gap: 8px; }
+.dash-ojt-week { font-size: 15px; font-weight: 700; color: #1e293b; }
+.dash-ojt-summary { font-size: 13px; color: #64748b; }
+.dash-ojt-summary strong { color: #344dbe; font-weight: 700; }
+
+/* 뱃지 */
+.dash-badge {
+  font-size: 11px; font-weight: 700;
+  padding: 3px 10px; border-radius: 99px; white-space: nowrap;
+}
+.dash-badge--approved  { background: #dcfce7; color: #166534; }
+.dash-badge--submitted { background: #dbeafe; color: #1e40af; }
+.dash-badge--draft     { background: #fef9c3; color: #854d0e; }
+.dash-badge--empty     { background: #f1f5f9; color: #64748b; }
+
+/* 공통 버튼 */
+.dash-btn-primary {
+  background: #344dbe; color: white;
+  border: none; border-radius: 8px; padding: 8px 16px;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: background 0.18s;
+}
+.dash-btn-primary:hover:not(:disabled) { background: #2a3ea8; }
+.dash-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.dash-btn-secondary {
+  background: white; color: #344dbe;
+  border: 1.5px solid #344dbe; border-radius: 8px; padding: 8px 16px;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.dash-btn-secondary:hover { background: #f0f4ff; }
+.dash-link-btn {
+  background: none; border: none; color: #344dbe;
+  font-size: 12px; font-weight: 600; cursor: pointer; padding: 0;
+}
+.dash-link-btn:hover { text-decoration: underline; }
+.dash-empty-text { font-size: 13px; color: #94a3b8; margin: 0; }
+
+/* ─── 우측 메뉴 카드 2×2 ─── */
+.menu-cards-panel {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 30px;
-}
-
-@media (max-width: 768px) {
-  .main-menu {
-    justify-content: flex-start;
-    padding: 24px 16px;
-  }
-
-  .menu-title {
-    font-size: 28px;
-    margin-bottom: 6px;
-  }
-
-  .menu-subtitle {
-    font-size: 16px;
-    margin-bottom: 24px;
-  }
-
-  .menu-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .menu-card {
-    padding: 24px;
-  }
-
-  .menu-icon {
-    font-size: 40px;
-    margin-bottom: 12px;
-  }
-
-  .menu-card-title {
-    font-size: 20px;
-  }
-
-  .menu-card-description {
-    font-size: 14px;
-  }
-
-  .menu-card-arrow {
-    font-size: 24px;
-    margin-top: 12px;
-  }
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 20px;
 }
 
 .menu-card {
   background: white;
-  padding: 40px;
+  padding: 44px 32px;
   border-radius: 16px;
-  border: 3px solid #e0e0e0;
+  border: 2.5px solid #e0e0e0;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   text-align: center;
-  position: relative;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
-
 .menu-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  transform: translateY(-6px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+}
+.menu-icon        { font-size: 52px; margin-bottom: 16px; }
+.menu-card-title  { font-size: 20px; font-weight: 700; color: #1e293b; margin-bottom: 8px; }
+.menu-card-description { font-size: 14px; color: #64748b; line-height: 1.5; }
+.menu-card-arrow  { font-size: 22px; font-weight: 700; margin-top: 16px; transition: transform 0.25s; }
+.menu-card:hover .menu-card-arrow { transform: translateX(6px); }
+
+/* ─── 멘토 모달 ─── */
+.dash-modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+}
+.dash-modal {
+  background: white; border-radius: 16px;
+  padding: 28px 32px; width: 360px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+}
+.dash-modal-title { font-size: 18px; font-weight: 700; color: #1e293b; margin: 0 0 20px; }
+.dash-modal-field { margin-bottom: 16px; }
+.dash-modal-field label {
+  display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 6px;
+}
+.dash-modal-field input {
+  width: 100%; padding: 10px 14px; border: 1.5px solid #cbd5e1;
+  border-radius: 8px; font-size: 14px; box-sizing: border-box; outline: none;
+}
+.dash-modal-field input:focus { border-color: #344dbe; }
+.dash-modal-actions {
+  display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px;
 }
 
-.menu-icon {
-  font-size: 64px;
-  margin-bottom: 20px;
+/* ─── 타임라인 라이트 테마 오버라이드 ─── */
+.dashboard-panel .tl-base-line {
+  background: #e2e8f0;
 }
+.dashboard-panel .tl-seg--done    { background: #344dbe; }
+.dashboard-panel .tl-seg--active  { background: #f59e0b; box-shadow: 0 0 6px rgba(245,158,11,0.4); }
+.dashboard-panel .tl-seg--pending { background: #e2e8f0; }
+.dashboard-panel .tl-dot {          border-color: #344dbe; }
+.dashboard-panel .tl-dot--done    { background: #344dbe; box-shadow: 0 0 0 3px rgba(52,77,190,0.15); }
+.dashboard-panel .tl-dot--pending { background: white;   border-color: #cbd5e1; }
+.dashboard-panel .tl-date,
+.dashboard-panel .tl-label        { color: #64748b; }
 
-.menu-card-title {
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 10px;
+/* ─── 모바일 ─── */
+@media (max-width: 1024px) {
+  .main-menu {
+    align-items: flex-start;
+    padding: 28px 24px;
+  }
+  .main-layout {
+    grid-template-columns: 1fr;
+  }
+  .menu-cards-panel {
+    grid-template-columns: 1fr 1fr;
+  }
 }
-
-.menu-card-description {
-  font-size: 16px;
-  color: #666;
-  line-height: 1.5;
-}
-
-.menu-card-arrow {
-  font-size: 32px;
-  font-weight: bold;
-  margin-top: 20px;
-  transition: transform 0.3s;
-}
-
-.menu-card:hover .menu-card-arrow {
-  transform: translateX(10px);
+@media (max-width: 540px) {
+  .menu-cards-panel {
+    grid-template-columns: 1fr;
+  }
+  .main-menu { padding: 16px; }
 }

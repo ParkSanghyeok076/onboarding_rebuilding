@@ -9,6 +9,7 @@ import Announcements from './pages/Announcements';
 import Survey from './pages/Survey';
 import PasswordChange from './pages/PasswordChange';
 import AdminLayout from './components/AdminLayout';
+import OJTJournal from './pages/OJTJournal';
 
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -113,6 +114,9 @@ function App() {
       )}
       {currentPage === 'survey' && (
         <Survey user={currentUser} onBack={handleBack} />
+      )}
+      {currentPage === 'ojt-journal' && (
+        <OJTJournal user={currentUser} onBack={handleBack} />
       )}
       {currentPage === 'password-change' && (
         <PasswordChange

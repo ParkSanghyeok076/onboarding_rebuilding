@@ -1,0 +1,364 @@
+/* ─── OJT 일지 공통 ─── */
+.ojt-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
+
+/* ─── 목록 화면 ─── */
+.ojt-list-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+.ojt-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 4px;
+}
+.ojt-subtitle {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+.ojt-progress-summary {
+  background: #f0f4ff;
+  border: 1px solid #c7d2fe;
+  border-radius: 10px;
+  padding: 10px 18px;
+  white-space: nowrap;
+}
+.ojt-progress-text { font-size: 14px; color: #3730a3; }
+.ojt-progress-text strong { font-size: 18px; font-weight: 700; }
+
+/* 주차 카드 */
+.ojt-week-list { display: flex; flex-direction: column; gap: 10px; }
+
+.ojt-week-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  border: 1.5px solid #e2e8f0;
+  gap: 12px;
+  transition: all 0.18s;
+}
+.ojt-week-card.clickable { cursor: pointer; }
+.ojt-week-card.clickable:hover {
+  border-color: #344dbe;
+  box-shadow: 0 3px 10px rgba(52,77,190,0.12);
+  transform: translateY(-1px);
+}
+.ojt-week-card.current {
+  border-color: #344dbe;
+  background: #f5f7ff;
+}
+.ojt-week-card.disabled { opacity: 0.5; cursor: default; }
+
+.ojt-week-info { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.ojt-week-num {
+  font-size: 15px; font-weight: 700; color: #1e293b;
+  display: flex; align-items: center; gap: 8px;
+}
+.ojt-current-badge {
+  font-size: 11px; font-weight: 600;
+  background: #344dbe; color: white;
+  border-radius: 20px; padding: 2px 8px;
+}
+.ojt-week-period { font-size: 12px; color: #94a3b8; }
+.ojt-week-right {
+  display: flex; align-items: center;
+  flex-shrink: 0;
+}
+.ojt-week-preview {
+  font-size: 13px; color: #64748b; margin: 0;
+  flex: 1; text-align: right;
+  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+  max-width: 300px;
+}
+
+/* 상태 뱃지 */
+.ojt-status {
+  font-size: 12px; font-weight: 600;
+  padding: 4px 12px; border-radius: 20px; white-space: nowrap;
+}
+.ojt-status-approved  { background: #dcfce7; color: #166534; }
+.ojt-status-submitted { background: #dbeafe; color: #1e40af; }
+.ojt-status-draft     { background: #fef9c3; color: #854d0e; }
+.ojt-status-empty     { background: #f1f5f9; color: #64748b; }
+.ojt-status-upcoming  { background: #f1f5f9; color: #94a3b8; }
+.ojt-status-expired   { background: #fee2e2; color: #991b1b; }
+
+/* 안내 배너 */
+.ojt-notice {
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border-bottom: 1px solid #e2e8f0;
+}
+.ojt-notice-upcoming  { background: #f8fafc; color: #64748b; }
+.ojt-notice-expired   { background: #fff7ed; color: #9a3412; }
+.ojt-notice-submitted { background: #f0fdf4; color: #166534; }
+
+/* ─── 작성 화면 ─── */
+.ojt-form-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  justify-content: center;
+}
+.ojt-back-btn {
+  margin: 0 !important;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.ojt-form-wrap {
+  width: 860px;
+  flex-shrink: 0;
+  padding: 0 0 48px;
+}
+
+.ojt-form-card {
+  background: white;
+  border: 2px solid #1e293b;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+/* 헤더 영역 */
+.ojt-form-top {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  align-items: center;
+  border-bottom: 2px solid #1e293b;
+  gap: 0;
+}
+.ojt-form-logo {
+  padding: 10px 16px;
+  border-right: 1.5px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 150px;
+}
+.ojt-logo-img { height: 40px; object-fit: contain; }
+
+.ojt-form-title-block {
+  padding: 12px 16px;
+  border-right: 1.5px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ojt-form-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  text-align: center;
+}
+
+.ojt-form-daterange {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  gap: 0;
+}
+.ojt-daterange-left {
+  padding: 10px 14px;
+  border-right: 1.5px solid #cbd5e1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  white-space: nowrap;
+}
+.ojt-daterange-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  line-height: 1.6;
+}
+.ojt-daterange-right {
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 테이블 */
+.ojt-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.ojt-th {
+  background: #f8fafc;
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+  padding: 8px 14px;
+  text-align: left;
+  border-bottom: 1.5px solid #cbd5e1;
+  border-right: 1.5px solid #cbd5e1;
+  letter-spacing: 0.03em;
+}
+.ojt-th:last-child { border-right: none; }
+
+/* 날짜 셀 */
+.ojt-td-date {
+  padding: 8px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  border-right: 1.5px solid #cbd5e1;
+  vertical-align: middle;
+  background: #fafafa;
+  white-space: nowrap;
+}
+.ojt-day-date {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+}
+.ojt-day-label {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+/* 섹션 셀 (어려웠던점/다음주목표/지도의견) */
+.ojt-td-section {
+  padding: 12px;
+  border-bottom: 1.5px solid #cbd5e1;
+  border-right: 1.5px solid #cbd5e1;
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+  vertical-align: top;
+  background: #f8fafc;
+  white-space: nowrap;
+}
+.ojt-mentor-cell { color: #1e40af; }
+.ojt-mentor-sub {
+  font-size: 11px;
+  font-weight: 400;
+  color: #64748b;
+}
+
+/* 내용 셀 */
+.ojt-td-content {
+  padding: 0;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: top;
+}
+.ojt-td-content.ojt-mentor-content {
+  padding: 14px 16px;
+  min-height: 80px;
+  border-bottom: none;
+}
+/* 어려웠던 점 / 다음 주 목표 */
+.ojt-td-content.ojt-section-content {
+  height: auto;
+}
+
+.ojt-cell-textarea {
+  width: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+  font-size: 13px;
+  font-family: inherit;
+  color: #1e293b;
+  line-height: 1.6;
+  padding: 10px 14px;
+  background: transparent;
+  box-sizing: border-box;
+  transition: background 0.15s;
+}
+.ojt-cell-textarea:focus { background: #f8faff; }
+.ojt-cell-textarea:disabled {
+  background: transparent;
+  color: #334155;
+  cursor: default;
+}
+.ojt-cell-textarea::placeholder { color: #cbd5e1; }
+
+/* 교육내용 전체 textarea — 넓고 크게 */
+.ojt-education-textarea {
+  min-height: 500px;
+  line-height: 2.2;
+  font-size: 14px;
+  padding: 14px 16px;
+}
+
+/* 지도의견 */
+.ojt-mentor-text {
+  font-size: 14px;
+  color: #1e293b;
+  line-height: 1.7;
+  margin: 0;
+}
+.ojt-mentor-empty {
+  font-size: 13px;
+  color: #94a3b8;
+  font-style: italic;
+  margin: 0;
+}
+
+/* 저장/제출 영역 */
+.ojt-form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 16px;
+  border-top: 1.5px solid #e2e8f0;
+  background: #f8fafc;
+}
+.ojt-save-msg { font-size: 13px; margin-right: auto; }
+.ojt-save-msg.success { color: #166534; }
+.ojt-save-msg.error   { color: #dc2626; }
+
+.ojt-btn {
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.18s;
+  white-space: nowrap;
+}
+.ojt-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.ojt-btn-secondary {
+  background: white; color: #344dbe;
+  border: 1.5px solid #344dbe;
+}
+.ojt-btn-secondary:hover:not(:disabled) { background: #f0f4ff; }
+.ojt-btn-primary { background: #344dbe; color: white; }
+.ojt-btn-primary:hover:not(:disabled) { background: #2a3ea8; }
+
+/* ─── 모바일 ─── */
+@media (max-width: 768px) {
+  .ojt-list-header { flex-direction: column; }
+  .ojt-week-preview { display: none; }
+  .ojt-form-top {
+    grid-template-columns: 60px 1fr;
+    grid-template-rows: auto auto;
+  }
+  .ojt-form-title-block { border-right: none; }
+  .ojt-form-daterange {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    border-top: 1px solid #e2e8f0;
+    padding: 8px 12px;
+    min-width: unset;
+  }
+  .ojt-form-title { font-size: 13px; }
+  .ojt-btn { flex: 1; }
+}
