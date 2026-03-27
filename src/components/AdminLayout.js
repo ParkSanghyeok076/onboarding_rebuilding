@@ -73,13 +73,6 @@ function AdminLayout({ user, onLogout }) {
             <button className="admin-topbar-icon-btn" title="설정">
               ⚙️
             </button>
-            <div className="admin-topbar-user">
-              <div className="admin-topbar-avatar">{avatarChar}</div>
-              <div className="admin-topbar-user-info">
-                <span className="admin-topbar-user-name">{userName}</span>
-                <span className="admin-topbar-user-role">HR 관리자</span>
-              </div>
-            </div>
           </div>
         </header>
 
