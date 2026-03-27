@@ -1,0 +1,96 @@
+.amr-wrap { padding: 0; }
+
+/* 탭 */
+.amr-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.amr-tab {
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: 1.5px solid #e2e8f0;
+  background: white;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.amr-tab:hover { background: #f8fafc; }
+.amr-tab.active {
+  background: #344dbe;
+  color: white;
+  border-color: #344dbe;
+}
+
+/* 테이블 */
+.amr-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  font-size: 14px;
+}
+.amr-table th {
+  background: #f8fafc;
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  border-bottom: 1.5px solid #e2e8f0;
+  white-space: nowrap;
+}
+.amr-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+  vertical-align: middle;
+}
+.amr-table tr:last-child td { border-bottom: none; }
+.amr-table tr:hover td { background: #fafbff; }
+
+.amr-mentor-name { font-weight: 600; color: #1e293b; }
+
+/* 뱃지 */
+.amr-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+.amr-badge--pending  { background: #fef9c3; color: #854d0e; }
+.amr-badge--approved { background: #dcfce7; color: #166534; }
+.amr-badge--rejected { background: #fee2e2; color: #991b1b; }
+
+/* 액션 버튼 */
+.amr-actions { display: flex; align-items: center; gap: 8px; }
+.amr-btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+.amr-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.amr-btn--approve { background: #344dbe; color: white; }
+.amr-btn--approve:hover:not(:disabled) { background: #2a3ea8; }
+.amr-btn--reject  { background: white; color: #dc2626; border: 1.5px solid #dc2626; }
+.amr-btn--reject:hover:not(:disabled)  { background: #fef2f2; }
+
+.amr-msg { font-size: 12px; }
+.amr-msg.success { color: #166534; }
+.amr-msg.error   { color: #dc2626; }
+.amr-done { font-size: 13px; color: #94a3b8; }
+
+.amr-loading { padding: 40px; text-align: center; color: #94a3b8; }
+.amr-empty   { padding: 40px; text-align: center; color: #94a3b8; font-size: 14px; }

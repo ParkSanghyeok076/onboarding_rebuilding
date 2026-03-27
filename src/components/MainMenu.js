@@ -9,17 +9,19 @@ function MainMenu({ user, onSelectMenu }) {
   const [programCount, setProgramCount] = useState(0);
   const [ojtJournals, setOjtJournals]   = useState({});
 
-  // 멘토 입력 팝업
+  // 멘토 등록 요청
   const [showMentorModal, setShowMentorModal] = useState(false);
-  const [mentorName, setMentorName] = useState(user.mentor_name || '');
-  const [mentorId,   setMentorId]   = useState(user.mentor_id   || '');
+  const [mentorName, setMentorName] = useState('');
+  const [mentorId,   setMentorId]   = useState('');
   const [mentorSaving, setMentorSaving] = useState(false);
+  const [mentorRequest, setMentorRequest] = useState(null); // {id, status, mentor_name, mentor_employee_id}
 
   /* ── 데이터 fetch ── */
   const fetchData = useCallback(async () => {
-    const [progRes, ojtRes] = await Promise.all([
+    const [progRes, ojtRes, reqRes] = await Promise.all([
       supabase.from('onboarding_submissions').select('program_id').eq('user_id', user.id),
       supabase.from('ojt_journals').select('week_number,status').eq('user_id', user.id),
+      supabase.from('mentor_requests').select('*').eq('mentee_id', user.id).order('created_at', { ascending: false }).limit(1),
     ]);
     if (!progRes.error) setProgramCount(progRes.data?.length ?? 0);
     if (!ojtRes.error && ojtRes.data) {
@@ -27,17 +29,75 @@ function MainMenu({ user, onSelectMenu }) {
       ojtRes.data.forEach(j => { map[j.week_number] = j.status; });
       setOjtJournals(map);
     }
-  }, [user.id]);
+    if (!reqRes.error && reqRes.data?.length > 0) {
+      const req = reqRes.data[0];
+      setMentorRequest(req);
+      setMentorName(req.mentor_name);
+      setMentorId(req.mentor_employee_id);
+    } else if (user.mentor_name) {
+      // 기존에 직접 저장한 멘토 정보가 있으면 표시
+      setMentorName(user.mentor_name);
+      setMentorId(user.mentor_id || '');
+    }
+  }, [user.id, user.mentor_name, user.mentor_id]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  /* ── 멘토 저장 ── */
-  const handleMentorSave = async () => {
+  /* ── 멘토 등록 요청하기 ── */
+  const handleMentorRequest = async () => {
     setMentorSaving(true);
     const cleanId = mentorId.replace(/\D/g, '').slice(0, 6);
+
+    // users 테이블에도 mentor_name, mentor_id 저장 (매칭용)
     await supabase.from('users').update({ mentor_name: mentorName, mentor_id: cleanId }).eq('id', user.id);
     user.mentor_name = mentorName;
     user.mentor_id   = cleanId;
+
+    // mentor_requests에 요청 삽입
+    const { data, error } = await supabase.from('mentor_requests').insert({
+      mentee_id: user.id,
+      mentee_name: user.name,
+      mentee_department: user.department,
+      mentor_name: mentorName,
+      mentor_employee_id: cleanId,
+    }).select().single();
+
+    if (!error && data) setMentorRequest(data);
+    setMentorSaving(false);
+    setShowMentorModal(false);
+  };
+
+  /* ── 멘토 요청 수정 ── */
+  const handleMentorUpdate = async () => {
+    if (!mentorRequest) return;
+    setMentorSaving(true);
+    const cleanId = mentorId.replace(/\D/g, '').slice(0, 6);
+
+    await supabase.from('users').update({ mentor_name: mentorName, mentor_id: cleanId }).eq('id', user.id);
+    user.mentor_name = mentorName;
+    user.mentor_id   = cleanId;
+
+    const { data, error } = await supabase.from('mentor_requests')
+      .update({ mentor_name: mentorName, mentor_employee_id: cleanId, updated_at: new Date().toISOString() })
+      .eq('id', mentorRequest.id)
+      .select().single();
+
+    if (!error && data) setMentorRequest(data);
+    setMentorSaving(false);
+    setShowMentorModal(false);
+  };
+
+  /* ── 멘토 요청 취소 ── */
+  const handleMentorCancel = async () => {
+    if (!mentorRequest) return;
+    setMentorSaving(true);
+    await supabase.from('mentor_requests').delete().eq('id', mentorRequest.id);
+    await supabase.from('users').update({ mentor_name: null, mentor_id: null }).eq('id', user.id);
+    user.mentor_name = null;
+    user.mentor_id   = null;
+    setMentorRequest(null);
+    setMentorName('');
+    setMentorId('');
     setMentorSaving(false);
     setShowMentorModal(false);
   };
@@ -87,7 +147,8 @@ function MainMenu({ user, onSelectMenu }) {
 
   const survey   = getNearestSurvey();
   const ojtSt    = getOjtStatus(currentWeekNum);
-  const mentorSet = !!(user.mentor_name || mentorName);
+  const mentorSet = !!(mentorName);
+  const reqStatus = mentorRequest?.status; // 'pending' | 'approved' | 'rejected' | undefined
 
   const menuItems = [
     { id: 'announcements', icon: '📢', title: '공지사항',      description: '중요 공지사항 및 자료 확인',   color: '#344dbe' },
@@ -119,17 +180,25 @@ function MainMenu({ user, onSelectMenu }) {
             {mentorSet ? (
               <div className="dash-mentor-info">
                 <div className="dash-mentor-name">
-                  {user.mentor_name || mentorName}
-                  {(user.mentor_id || mentorId) && (
-                    <span className="dash-mentor-id"> | {user.mentor_id || mentorId}</span>
+                  {mentorName}
+                  {mentorId && <span className="dash-mentor-id"> | {mentorId}</span>}
+                </div>
+                <div className="dash-mentor-status">
+                  {reqStatus === 'pending' && <span className="dash-badge dash-badge--draft">승인 대기</span>}
+                  {reqStatus === 'approved' && <span className="dash-badge dash-badge--approved">승인 완료</span>}
+                  {reqStatus === 'rejected' && <span className="dash-badge dash-badge--empty">거절</span>}
+                  {reqStatus === 'pending' && (
+                    <button className="dash-mentor-edit" onClick={() => setShowMentorModal(true)}>수정</button>
+                  )}
+                  {(reqStatus === 'rejected' || !reqStatus) && mentorSet && (
+                    <button className="dash-mentor-edit" onClick={() => setShowMentorModal(true)}>수정</button>
                   )}
                 </div>
-                <button className="dash-mentor-edit" onClick={() => setShowMentorModal(true)}>수정</button>
               </div>
             ) : (
               <div className="dash-mentor-empty">
                 <span>멘토 정보가 없습니다.</span>
-                <button className="dash-btn-primary" onClick={() => setShowMentorModal(true)}>멘토 정보 입력</button>
+                <button className="dash-btn-primary" onClick={() => setShowMentorModal(true)}>멘토 등록 요청</button>
               </div>
             )}
           </div>
@@ -202,11 +271,13 @@ function MainMenu({ user, onSelectMenu }) {
         </div>
       </div>
 
-      {/* ── 멘토 입력 모달 ── */}
+      {/* ── 멘토 등록 요청 모달 ── */}
       {showMentorModal && (
         <div className="dash-modal-overlay" onClick={() => setShowMentorModal(false)}>
           <div className="dash-modal" onClick={e => e.stopPropagation()}>
-            <h3 className="dash-modal-title">멘토 정보 입력</h3>
+            <h3 className="dash-modal-title">
+              {mentorRequest?.status === 'pending' ? '멘토 등록 요청 수정' : '멘토 등록 요청'}
+            </h3>
             <div className="dash-modal-field">
               <label>멘토 이름</label>
               <input
@@ -227,13 +298,18 @@ function MainMenu({ user, onSelectMenu }) {
               />
             </div>
             <div className="dash-modal-actions">
-              <button className="dash-btn-secondary" onClick={() => setShowMentorModal(false)}>취소</button>
+              {mentorRequest?.status === 'pending' && (
+                <button className="dash-btn-danger" onClick={handleMentorCancel} disabled={mentorSaving}>
+                  요청 취소
+                </button>
+              )}
+              <button className="dash-btn-secondary" onClick={() => setShowMentorModal(false)}>닫기</button>
               <button
                 className="dash-btn-primary"
-                onClick={handleMentorSave}
-                disabled={mentorSaving || !mentorName.trim()}
+                onClick={mentorRequest?.status === 'pending' ? handleMentorUpdate : handleMentorRequest}
+                disabled={mentorSaving || !mentorName.trim() || mentorId.length < 6}
               >
-                {mentorSaving ? '저장 중...' : '저장'}
+                {mentorSaving ? '처리 중...' : mentorRequest?.status === 'pending' ? '수정하기' : '등록 요청하기'}
               </button>
             </div>
           </div>

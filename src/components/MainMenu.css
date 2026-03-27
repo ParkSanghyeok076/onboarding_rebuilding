@@ -69,6 +69,7 @@
   padding: 3px 10px; border-radius: 99px; white-space: nowrap;
 }
 .dash-mentor-edit:hover { background: #e2e8f0; }
+.dash-mentor-status { display: flex; align-items: center; gap: 8px; }
 .dash-mentor-empty {
   display: flex; align-items: center; justify-content: space-between;
   font-size: 13px; color: #94a3b8;
@@ -126,6 +127,13 @@
   font-size: 13px; font-weight: 600; cursor: pointer;
 }
 .dash-btn-secondary:hover { background: #f0f4ff; }
+.dash-btn-danger {
+  background: white; color: #dc2626;
+  border: 1.5px solid #dc2626; border-radius: 8px; padding: 8px 16px;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.dash-btn-danger:hover { background: #fef2f2; }
+.dash-btn-danger:disabled { opacity: 0.5; cursor: not-allowed; }
 .dash-link-btn {
   background: none; border: none; color: #344dbe;
   font-size: 12px; font-weight: 600; cursor: pointer; padding: 0;
