@@ -15,12 +15,12 @@ const MENU_ITEMS = [
   { id: 'admin-survey',        icon: '📝', label: '설문조사 관리' },
 ];
 
-
 function AdminLayout({ user, onLogout }) {
   const [activePage, setActivePage] = useState('admin-onboarding');
 
   const userName = user?.name || user?.employee_id || 'Admin';
   const avatarChar = userName.charAt(0);
+  const activeLabel = MENU_ITEMS.find(m => m.id === activePage)?.label || '';
 
   return (
     <div className="admin-layout">
@@ -60,6 +60,29 @@ function AdminLayout({ user, onLogout }) {
 
       {/* 콘텐츠 영역 */}
       <div className="admin-content">
+
+        {/* ── 상단바 ── */}
+        <header className="admin-topbar">
+          <div className="admin-topbar-left">
+            <span className="admin-topbar-title">{activeLabel}</span>
+          </div>
+          <div className="admin-topbar-right">
+            <button className="admin-topbar-icon-btn" title="알림">
+              🔔
+            </button>
+            <button className="admin-topbar-icon-btn" title="설정">
+              ⚙️
+            </button>
+            <div className="admin-topbar-user">
+              <div className="admin-topbar-avatar">{avatarChar}</div>
+              <div className="admin-topbar-user-info">
+                <span className="admin-topbar-user-name">{userName}</span>
+                <span className="admin-topbar-user-role">HR 관리자</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
         <main className="admin-main">
           {activePage === 'admin-onboarding' && (
             <AdminOnboarding onBack={() => setActivePage('admin-onboarding')} />

@@ -10,7 +10,7 @@
 /* ── 사이드바 (240px) ── */
 .admin-sidebar {
   width: 240px;
-  background: linear-gradient(180deg, #344dbe 0%, #2f45ad 100%);
+  background: #1a2332;
   border-right: none;
   flex-shrink: 0;
   display: flex;
@@ -165,6 +165,94 @@
   flex-direction: column;
   min-width: 0;
   overflow: hidden;
+}
+
+/* ── 상단바 ── */
+.admin-topbar {
+  height: 58px;
+  background: #ffffff;
+  border-bottom: 1px solid #e8eaf0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  flex-shrink: 0;
+}
+
+.admin-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.admin-topbar-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1a1f36;
+}
+
+.admin-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-topbar-icon-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  font-size: 17px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s;
+}
+.admin-topbar-icon-btn:hover {
+  background: #f4f5fb;
+}
+
+.admin-topbar-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 8px;
+  padding: 4px 10px 4px 4px;
+  border-radius: 10px;
+  cursor: default;
+}
+
+.admin-topbar-avatar {
+  width: 32px;
+  height: 32px;
+  background: #344dbe;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: white;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.admin-topbar-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-topbar-user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1f36;
+  line-height: 1.3;
+}
+
+.admin-topbar-user-role {
+  font-size: 11px;
+  color: #9095a7;
 }
 
 /* 콘텐츠 메인 */
