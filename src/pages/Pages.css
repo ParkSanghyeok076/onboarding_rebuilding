@@ -595,7 +595,7 @@
 
 /* ===== Admin 공통 ===== */
 .admin-container {
-  max-width: 900px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 50px 1rem 2rem;
 }
@@ -624,7 +624,7 @@
 }
 
 .admin-create-btn {
-  background: #4ECDC4;
+  background: #344dbe;
   color: white;
   border: none;
   padding: 0.6rem 1.2rem;
@@ -634,7 +634,7 @@
   font-weight: 600;
 }
 
-.admin-create-btn:hover { background: #3db8b0; }
+.admin-create-btn:hover { background: #2a3ea8; }
 
 .admin-list { display: flex; flex-direction: column; gap: 0.75rem; }
 
@@ -705,27 +705,48 @@
 .admin-form-check { margin-bottom: 1.5rem; font-size: 0.95rem; }
 
 /* ===== Admin 테이블 ===== */
-.admin-filter-group { display: flex; gap: 0.5rem; }
+.admin-filter-group { display: flex; gap: 8px; flex-wrap: wrap; }
 .admin-filter-btn {
-  border: 1px solid #ddd;
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: 1.5px solid #e2e8f0;
   background: white;
-  padding: 0.4rem 0.9rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.15s;
 }
-.admin-filter-btn.active { background: #4ECDC4; color: white; border-color: #4ECDC4; }
+.admin-filter-btn:hover { background: #f8fafc; }
+.admin-filter-btn.active { background: #344dbe; color: white; border-color: #344dbe; }
 
-.admin-table-wrap { overflow-x: auto; }
-.admin-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-.admin-table th, .admin-table td {
-  border: 1px solid #e0e0e0;
-  padding: 0.6rem 0.8rem;
-  text-align: center;
+.admin-table-wrap {
+  overflow-x: auto;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
 }
-.admin-table th { background: #f8f8f8; font-weight: 600; }
+.admin-table { width: 100%; border-collapse: collapse; background: white; font-size: 14px; }
+.admin-table th {
+  background: #f8fafc;
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  border-bottom: 1.5px solid #e2e8f0;
+  white-space: nowrap;
+}
+.admin-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+  vertical-align: middle;
+}
+.admin-table tr:last-child td { border-bottom: none; }
+.admin-table tr:hover td { background: #fafbff; }
 .admin-table th.sortable { cursor: pointer; user-select: none; }
-.admin-table th.sortable:hover { background: #eee; }
+.admin-table th.sortable:hover { background: #eef0f7; }
 
 .program-cell { font-size: 1.1rem; }
 .program-done { cursor: pointer; }
@@ -733,13 +754,15 @@
 
 .status-badge {
   display: inline-block;
-  padding: 2px 10px;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
 }
-.status-badge.done { background: #d4edda; color: #155724; }
-.status-badge.undone { background: #f8d7da; color: #721c24; }
+.status-badge.done { background: #dcfce7; color: #166534; }
+.status-badge.undone { background: #fee2e2; color: #991b1b; }
+.status-badge.inprogress { background: #f1f5f9; color: #64748b; }
 
 /* ===== 이미지 팝업 ===== */
 .image-popup {
@@ -764,20 +787,22 @@
 
 /* ===== Admin Survey ===== */
 .admin-action-btn {
-  background: #4ECDC4;
-  color: white;
-  border: none;
-  padding: 0.3rem 0.7rem;
+  background: #e8f0fe;
+  color: #1a56db;
+  border: 1.5px solid #93c5fd;
+  padding: 6px 14px;
   border-radius: 6px;
-  font-size: 0.8rem;
+  font-size: 12px;
+  font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
+  transition: all 0.15s;
 }
-.admin-action-btn:disabled { background: #aaa; cursor: not-allowed; }
-.admin-action-btn:hover:not(:disabled) { background: #3db8b0; }
+.admin-action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.admin-action-btn:hover:not(:disabled) { background: #dbeafe; border-color: #60a5fa; }
 
 .survey-row { cursor: pointer; }
-.survey-row:hover td { background: #f5fffe; }
+.survey-row:hover td { background: #fafbff; }
 
 .status-badge.clickable { cursor: pointer; text-decoration: underline; }
 
@@ -887,7 +912,7 @@
   margin-top: 0.8rem; height: 4px;
   background: #e2e8f0; border-radius: 99px; overflow: hidden;
 }
-.srv-kpi-bar-fill { height: 100%; background: #4ECDC4; border-radius: 99px; transition: width 0.4s ease; }
+.srv-kpi-bar-fill { height: 100%; background: #344dbe; border-radius: 99px; transition: width 0.4s ease; }
 .srv-kpi-sub { font-size: 0.72rem; color: #94a3b8; margin-top: 0.4rem; }
 
 /* 툴바 */
@@ -914,7 +939,7 @@
   width: 100%; outline: none;
   transition: border-color 0.15s;
 }
-.srv-search-input:focus { border-color: #4ECDC4; box-shadow: 0 0 0 3px rgba(78,205,196,0.12); }
+.srv-search-input:focus { border-color: #344dbe; box-shadow: 0 0 0 3px rgba(52,77,190,0.12); }
 .srv-filter-group { display: flex; gap: 0.375rem; }
 .srv-filter-btn {
   padding: 0.4rem 1rem;
@@ -980,12 +1005,12 @@
 }
 .srv-action-btn {
   padding: 5px 14px; border-radius: 8px;
-  border: 1.5px solid #4ECDC4;
-  background: transparent; color: #0d9488;
+  border: 1.5px solid #344dbe;
+  background: transparent; color: #344dbe;
   font-size: 0.78rem; font-weight: 700;
   cursor: pointer; transition: all 0.15s;
 }
-.srv-action-btn:hover:not(:disabled) { background: #e6faf8; }
+.srv-action-btn:hover:not(:disabled) { background: #eef0fb; }
 .srv-action-btn:disabled { opacity: 0.5; cursor: not-allowed; border-color: #cbd5e1; color: #94a3b8; }
 .srv-empty {
   text-align: center; padding: 3rem; color: #94a3b8; font-size: 0.875rem;
@@ -1010,8 +1035,8 @@
 }
 
 .survey-name-search:focus {
-  border-color: #4ECDC4;
-  box-shadow: 0 0 0 2px rgba(78,205,196,0.15);
+  border-color: #344dbe;
+  box-shadow: 0 0 0 2px rgba(52,77,190,0.15);
 }
 
 /* ===== 객관식 분석 리포트 모달 ===== */
@@ -1060,10 +1085,10 @@
 .obj-header-title { font-size: 1.15rem; font-weight: 700; color: #fff; }
 .obj-header-badge {
   font-size: 0.75rem; font-weight: 600;
-  color: #4ECDC4;
-  border: 1px solid rgba(78,205,196,0.4);
+  color: #93b4ff;
+  border: 1px solid rgba(147,180,255,0.4);
   padding: 4px 12px; border-radius: 20px;
-  background: rgba(78,205,196,0.1);
+  background: rgba(52,77,190,0.2);
 }
 
 /* 바디 */
@@ -1089,7 +1114,7 @@
   margin-top: 0.75rem;
   height: 5px; background: #e2e8f0; border-radius: 99px; overflow: hidden;
 }
-.obj-kpi-bar-fill { height: 100%; background: #4ECDC4; border-radius: 99px; }
+.obj-kpi-bar-fill { height: 100%; background: #344dbe; border-radius: 99px; }
 .obj-kpi-sub { font-size: 0.72rem; color: #94a3b8; margin-top: 0.35rem; }
 
 /* 차트 카드 */
@@ -1178,7 +1203,7 @@
 }
 .obj-insight-observation {
   background: #f8fafc;
-  border-left: 3px solid #4ECDC4;
+  border-left: 3px solid #344dbe;
   border-radius: 0 8px 8px 0;
   padding: 0.75rem 1rem;
 }
@@ -1294,7 +1319,7 @@
 .absa-stat-card {
   background: #fff;
   border: 1px solid #e2e8f0;
-  border-top: 3px solid #4ECDC4;
+  border-top: 3px solid #344dbe;
   border-radius: 10px;
   padding: 0.875rem 1rem;
   display: flex;
@@ -1369,7 +1394,7 @@
 .admin-list-item-clickable:hover { background: #f7fafc; }
 
 .admin-pdf-link {
-  color: #4ECDC4;
+  color: #344dbe;
   text-decoration: none;
   font-weight: 500;
 }
@@ -1472,8 +1497,8 @@
 }
 
 .prog-count.undone {
-  color: #721c24;
-  background: #f8d7da;
+  color: #64748b;
+  background: #f1f5f9;
 }
 
 .prog-count:hover {
@@ -1687,55 +1712,55 @@
 
 .kpi-card {
   background: white;
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 20px 22px;
-  border: 1px solid #e0e0e0;
-  border-top: 3px solid #e0e0e0;
+  border: 1px solid #e2e8f0;
+  border-top: 3px solid transparent;
   box-shadow: 0 1px 4px rgba(0,0,0,.05);
 }
-.kpi-card.blue   { border-top-color: #667eea; }
-.kpi-card.green  { border-top-color: #28a745; }
+.kpi-card.blue   { border-top-color: #344dbe; }
+.kpi-card.green  { border-top-color: #22c55e; }
 .kpi-card.amber  { border-top-color: #f59e0b; }
-.kpi-card.red    { border-top-color: #dc3545; }
+.kpi-card.red    { border-top-color: #ef4444; }
 
 .kpi-label {
   font-size: 11px;
   font-weight: 700;
   letter-spacing: .8px;
   text-transform: uppercase;
-  color: #888;
+  color: #94a3b8;
   margin-bottom: 8px;
 }
 .kpi-value {
   font-size: 30px;
   font-weight: 800;
-  color: #1a2b3c;
+  color: #1e293b;
   line-height: 1;
   margin-bottom: 6px;
 }
 .kpi-sub {
   font-size: 12px;
-  color: #666;
+  color: #64748b;
   margin-bottom: 10px;
   line-height: 1.5;
 }
 .kpi-progress {
-  height: 5px;
-  background: #e8e8e8;
-  border-radius: 3px;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 99px;
   overflow: hidden;
   margin-top: 8px;
 }
 .kpi-progress-fill {
   height: 100%;
-  border-radius: 3px;
-  background: #28a745;
+  border-radius: 99px;
+  background: #344dbe;
   transition: width .4s;
 }
 .kpi-urgent-num {
   font-size: 30px;
   font-weight: 800;
-  color: #dc3545;
+  color: #ef4444;
   line-height: 1;
   margin-bottom: 6px;
 }
@@ -1759,8 +1784,8 @@
   border-radius: 3px;
   transition: width .3s;
 }
-.table-progress-fill.high   { background: #28a745; }
-.table-progress-fill.mid    { background: #667eea; }
+.table-progress-fill.high   { background: #22c55e; }
+.table-progress-fill.mid    { background: #344dbe; }
 .table-progress-fill.low    { background: #f59e0b; }
 .table-progress-pct {
   font-size: 12px;

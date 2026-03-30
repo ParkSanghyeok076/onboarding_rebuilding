@@ -150,11 +150,13 @@ function MainMenu({ user, onSelectMenu }) {
   const mentorSet = !!(mentorName);
   const reqStatus = mentorRequest?.status; // 'pending' | 'approved' | 'rejected' | undefined
 
+  const isCareer = user.employee_type === '경력';
+
   const menuItems = [
     { id: 'announcements', icon: '📢', title: '공지사항',      description: '중요 공지사항 및 자료 확인',   color: '#344dbe' },
     { id: 'onboarding',    icon: '📋', title: '온보딩 프로그램', description: '6가지 온보딩 활동 수행',     color: '#4f67d8' },
     { id: 'survey',        icon: '📝', title: '설문조사',       description: '온보딩 과정 설문조사',        color: '#7b8fe8' },
-    { id: 'ojt-journal',   icon: '📓', title: 'OJT 일지',      description: '주간 학습 내용 기록 및 제출',  color: '#344dbe' },
+    ...(!isCareer ? [{ id: 'ojt-journal', icon: '📓', title: 'OJT 일지', description: '주간 학습 내용 기록 및 제출', color: '#344dbe' }] : []),
   ];
 
   return (
@@ -236,21 +238,23 @@ function MainMenu({ user, onSelectMenu }) {
             )}
           </div>
 
-          {/* 5. OJT 일지 */}
-          <div className="dash-widget">
-            <div className="dash-widget-title">OJT 일지</div>
-            <div className="dash-ojt-row">
-              <div className="dash-ojt-info">
-                <span className="dash-ojt-week">{currentWeekNum}주차</span>
-                <span className={`dash-badge ${ojtSt.cls}`}>{ojtSt.label}</span>
-              </div>
-              <div className="dash-ojt-summary">
-                제출 완료&nbsp;
-                <strong>{Object.values(ojtJournals).filter(s => s === 'submitted' || s === 'approved').length}</strong>
-                &nbsp;/ {totalWeeks}주
+          {/* 5. OJT 일지 (신입만) */}
+          {!isCareer && (
+            <div className="dash-widget">
+              <div className="dash-widget-title">OJT 일지</div>
+              <div className="dash-ojt-row">
+                <div className="dash-ojt-info">
+                  <span className="dash-ojt-week">{currentWeekNum}주차</span>
+                  <span className={`dash-badge ${ojtSt.cls}`}>{ojtSt.label}</span>
+                </div>
+                <div className="dash-ojt-summary">
+                  제출 완료&nbsp;
+                  <strong>{Object.values(ojtJournals).filter(s => s === 'submitted' || s === 'approved').length}</strong>
+                  &nbsp;/ {totalWeeks}주
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* ── 우측 메뉴 카드 2×2 ── */}

@@ -1,5 +1,42 @@
 /* AdminAnnouncements.css */
 
+/* ── 고정 공지 순서 버튼 ── */
+.pin-order-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+.pin-order-btn {
+  background: none;
+  border: 1px solid #e2e8f0;
+  border-radius: 3px;
+  color: #94a3b8;
+  font-size: 9px;
+  width: 18px;
+  height: 14px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s;
+}
+
+.pin-order-btn:hover:not(:disabled) {
+  background: #f1f5f9;
+  color: #344dbe;
+  border-color: #344dbe;
+}
+
+.pin-order-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
 /* ── 인라인 편집: 제목 입력 ── */
 .ann-edit-title-input {
   display: block;

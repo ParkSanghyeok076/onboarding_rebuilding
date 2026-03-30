@@ -30,17 +30,14 @@ function formatPeriod(startStr, endStr) {
   return `${start} ~ ${end}`;
 }
 
-// 진행률 계산 (0~100 정수)
-function calcProgress(row) {
+// 행 상태 계산
+function getRowStatus(row, today) {
+  if (row.completed) return 'graduated';
   const isNewHire = row.employee_type === '신입';
-  const maxItems = isNewHire ? 10 : 8;
-  const requiredRounds = isNewHire ? [1, 2, 3] : [1];
-
-  const programsDone = Object.keys(row.programs || {}).length;
-  const ojtDone = row.ojt_plan_received ? 1 : 0;
-  const surveysDone = (row.submittedRounds || []).filter(r => requiredRounds.includes(r)).length;
-
-  return Math.round((programsDone + ojtDone + surveysDone) / maxItems * 100);
+  const endStr = isNewHire ? row.period_3_end : row.period_1_end;
+  const ended = endStr ? today > toDate(endStr) : false;
+  if (!ended) return 'inprogress';
+  return 'incomplete';
 }
 
 function UrgentPopup({ users, onClose }) {
@@ -189,7 +186,7 @@ function ProgramGridPopup({ user, onClose }) {
 function AdminOnboarding({ onBack }) {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('전체'); // '전체' | '완료' | '미완료'
+  const [filter, setFilter] = useState('전체'); // '전체' | '진행 중' | '수료' | '미수료'
   const [sortKey, setSortKey] = useState(null); // 'name' | 'status'
   const [sortAsc, setSortAsc] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null); // ProgramGridPopup용
@@ -314,7 +311,12 @@ function AdminOnboarding({ onBack }) {
         console.error('설문조사 조회 실패:', surveyError.message);
       }
 
-      // 4. 데이터 맵 구성
+      // 4. OJT 일지 조회
+      const { data: ojtJournals } = await supabase
+        .from('ojt_journals')
+        .select('user_id, week_number, status');
+
+      // 5. 데이터 맵 구성
       const subMap = {};
       for (const s of subs || []) {
         if (!subMap[s.user_id]) subMap[s.user_id] = {};
@@ -325,6 +327,14 @@ function AdminOnboarding({ onBack }) {
       for (const s of surveys || []) {
         if (!surveyMap[s.user_id]) surveyMap[s.user_id] = [];
         surveyMap[s.user_id].push(Number(s.round_number));
+      }
+
+      const ojtMap = {};
+      for (const j of ojtJournals || []) {
+        if (j.status === 'submitted' || j.status === 'approved') {
+          if (!ojtMap[j.user_id]) ojtMap[j.user_id] = [];
+          ojtMap[j.user_id].push(j.week_number);
+        }
       }
 
       // 5. 완료 여부 판별
@@ -345,6 +355,7 @@ function AdminOnboarding({ onBack }) {
         ...u,
         programs: subMap[u.id] || {},
         submittedRounds: surveyMap[u.id] || [],
+        ojtCount: (ojtMap[u.id] || []).length,
         completed: isComplete(u),
       })));
       setLoading(false);
@@ -376,8 +387,9 @@ function AdminOnboarding({ onBack }) {
   };
 
   let displayed = [...rows];
-  if (filter === '완료') displayed = displayed.filter(r => r.completed);
-  if (filter === '미완료') displayed = displayed.filter(r => !r.completed);
+  if (filter === '수료')   displayed = displayed.filter(r => getRowStatus(r, today) === 'graduated');
+  if (filter === '미수료') displayed = displayed.filter(r => getRowStatus(r, today) === 'incomplete');
+  if (filter === '진행 중') displayed = displayed.filter(r => getRowStatus(r, today) === 'inprogress');
   if (sortKey === 'name') displayed.sort((a, b) => sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
   if (sortKey === 'period') displayed.sort((a, b) => {
     const dateA = toDate(a.period_1_start);
@@ -398,7 +410,7 @@ function AdminOnboarding({ onBack }) {
       <div className="admin-container">
         <div className="admin-header">
 <div className="admin-filter-group">
-            {['전체', '완료', '미완료'].map(f => (
+            {['전체', '진행 중', '수료', '미수료'].map(f => (
               <button
                 key={f}
                 className={`admin-filter-btn ${filter === f ? 'active' : ''}`}
@@ -422,9 +434,9 @@ function AdminOnboarding({ onBack }) {
 
             {/* ② 온보딩 완료 */}
             <div className="kpi-card green">
-              <div className="kpi-label">온보딩 완료</div>
+              <div className="kpi-label">수료</div>
               <div className="kpi-value">{kpi.completedCount}<span style={{fontSize:14, fontWeight:500, color:'#888', marginLeft:4}}>명</span></div>
-              <div className="kpi-sub">전체 {kpi.total}명 중 완료율 {kpi.completionRate}%</div>
+              <div className="kpi-sub">전체 {kpi.total}명 중 수료율 {kpi.completionRate}%</div>
               <div className="kpi-progress">
                 <div className="kpi-progress-fill" style={{width:`${kpi.completionRate}%`}} />
               </div>
@@ -488,9 +500,9 @@ function AdminOnboarding({ onBack }) {
                 <th className="sortable" onClick={() => handleSort('period')}>
                   기간<SortIcon sortKey={sortKey} col="period" sortAsc={sortAsc} />
                 </th>
-                <th>진행률</th>
                 <th>계획서</th>
                 <th>프로그램</th>
+                <th>일지</th>
                 <th>설문조사</th>
                 <th>상태</th>
               </tr>
@@ -516,22 +528,6 @@ function AdminOnboarding({ onBack }) {
                     {/* 기간 */}
                     <td>{periodStr}</td>
 
-                    {/* 진행률 */}
-                    <td>
-                      {(() => {
-                        const pct = calcProgress(row);
-                        const colorClass = pct === 100 ? 'high' : pct >= 60 ? 'mid' : 'low';
-                        return (
-                          <div className="table-progress-wrap">
-                            <div className="table-progress-bar">
-                              <div className={`table-progress-fill ${colorClass}`} style={{width:`${pct}%`}} />
-                            </div>
-                            <span className="table-progress-pct">{pct}%</span>
-                          </div>
-                        );
-                      })()}
-                    </td>
-
                     {/* 계획서 */}
                     <td className="ojt-cell">
                       <input
@@ -550,6 +546,19 @@ function AdminOnboarding({ onBack }) {
                       >
                         {programCount}/6
                       </span>
+                    </td>
+
+                    {/* 일지 */}
+                    <td>
+                      {(() => {
+                        const totalWeeks = isNewHire ? 12 : 4;
+                        const count = row.ojtCount || 0;
+                        return (
+                          <span className={`prog-count ${count === totalWeeks ? 'done' : 'undone'}`}>
+                            {count}/{totalWeeks}
+                          </span>
+                        );
+                      })()}
                     </td>
 
                     {/* 설문조사 */}
@@ -581,9 +590,12 @@ function AdminOnboarding({ onBack }) {
 
                     {/* 상태 */}
                     <td>
-                      <span className={`status-badge ${row.completed ? 'done' : 'undone'}`}>
-                        {row.completed ? '완료' : '미완료'}
-                      </span>
+                      {(() => {
+                        const s = getRowStatus(row, today);
+                        if (s === 'graduated')  return <span className="status-badge done">수료</span>;
+                        if (s === 'incomplete') return <span className="status-badge undone">미수료</span>;
+                        return <span className="status-badge inprogress">진행 중</span>;
+                      })()}
                     </td>
                   </tr>
                 );

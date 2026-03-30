@@ -993,5 +993,82 @@ CREATE POLICY "ojt_mentor_update" ON ojt_journals FOR UPDATE ...
 
 ---
 
+---
+
+## 📅 2026-03-30 — 관리자 UI 디자인 통일 + 온보딩 현황 개편
+
+### ✅ 전체 관리자 페이지 디자인 토큰 통일
+
+기존 teal(`#4ECDC4`) 계열 색상을 파란색(`#344dbe`) 계열로 전면 교체
+
+**Pages.css 변경 내역:**
+- `admin-container` max-width: 900px → 1100px
+- `admin-filter-btn` 스타일 개선 (active: `#344dbe`, border-radius: 8px)
+- `admin-table` 전면 리디자인 (헤더 left-align, row hover, shadow, border `#e2e8f0`)
+- `status-badge` 현대화 (border-radius: 99px, 폰트 축소)
+- `admin-action-btn`: 솔리드 파란색 → ghost 스타일 (`#e8f0fe` bg, `#1a56db` text, `#93c5fd` border)
+- `admin-create-btn`: `#4ECDC4` → `#344dbe`
+- `srv-*`, `obj-*`, `absa-*`, `admin-pdf-link` 등 잔여 teal 색상 전부 교체
+- `status-badge.inprogress` 추가 (회색: `#f1f5f9` / `#64748b`)
+- `prog-count.undone`: 빨간색 → 회색 (`#f1f5f9` / `#64748b`)
+
+**AdminMentorBuddy.css:**
+- `max-width`: 900px → 1100px
+
+**AdminLayout.js:**
+- 메뉴 레이블: `신입사원 등록` → `신규입사자 등록`, `멘토 관리` → `멘토/버디 관리`
+
+**KPI 카드 (Pages.css):**
+- `border-radius`: 10px → 12px, border `#e0e0e0` → `#e2e8f0`
+- top border 색상: `#667eea`/`#28a745` → `#344dbe`/`#22c55e`/`#f59e0b`/`#ef4444`
+- progress bar: 4px, `border-radius: 99px`, fill `#344dbe`
+- 테이블 progress bar: high `#22c55e`, mid `#344dbe`, low `#f59e0b`
+
+---
+
+### ✅ 온보딩 현황 테이블 개편 (AdminOnboarding.js)
+
+- **진행률 열 제거**, **일지 열 추가** (OJT 일지 주차 제출 현황, `n/12` 또는 `n/4`)
+- 열 순서: 계획서 / 프로그램 / 일지 / 설문조사 / 상태
+- **상태 로직 변경**:
+  - `진행 중` (회색): 온보딩 기간 아직 진행 중
+  - `수료` (초록): 기간 종료 + 모든 항목 완료
+  - `미수료` (빨강): 기간 종료 + 미완료
+- **필터 버튼**: 전체 / 진행 중 / 수료 / 미수료
+- **KPI 카드**: "온보딩 완료" → "수료", "완료율" → "수료율"
+- `ojt_journals` 테이블에서 일지 데이터 fetch (status: submitted/approved 카운트)
+
+**DB 변경:** 없음 (ojt_journals 기존 테이블 활용)
+
+---
+
+### ✅ 경력직 OJT 일지 비활성화 (MainMenu.js)
+
+- `employee_type === '경력'`이면 OJT 일지 메뉴 카드 숨김
+- 대시보드 좌측 OJT 일지 위젯 숨김
+
+---
+
+### ✅ 공지사항 고정 순서 기능 (AdminAnnouncements.js)
+
+- 고정 공지 옆 ▲▼ 버튼으로 순서 변경 가능
+- `pin_order` 컬럼 추가 (DB 마이그레이션: `docs/sql/migration_pin_order.sql`)
+- 새 고정 공지 등록 시 자동으로 마지막 순서 할당
+- 편집 시 고정 해제 → `pin_order` null 초기화
+- 낙관적 UI 업데이트 (버튼 클릭 즉시 반영)
+
+**DB 변경:** `announcements` 테이블에 `pin_order INT DEFAULT NULL` 컬럼 추가
+
+### 커밋 이력
+
+| 커밋 | 내용 |
+|------|------|
+| (이번 세션) | style: 관리자 UI 디자인 토큰 통일 (teal → blue) |
+| (이번 세션) | feat: 온보딩 현황 일지 열 추가 + 수료/미수료 상태 |
+| (이번 세션) | feat: 경력직 OJT 일지 비활성화 |
+| (이번 세션) | feat: 공지사항 고정 순서 변경 기능 |
+
+---
+
 **작성자**: 인사기획팀 박상혁 선임
-**최종 업데이트**: 2026-03-27 (OJT 일지 + 멘토 등록 요청 체계 + 멘토 페이지 + AdminMentorRequests 레이아웃 개선)
+**최종 업데이트**: 2026-03-30 (관리자 UI 디자인 통일 + 온보딩 현황 개편 + 경력직 OJT 비활성화 + 공지 고정 순서)

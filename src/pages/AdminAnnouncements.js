@@ -23,9 +23,51 @@ function AdminAnnouncements({ onBack }) {
       .from('announcements')
       .select('*')
       .order('is_pinned', { ascending: false })
+      .order('pin_order', { ascending: true, nullsFirst: false })
       .order('published_at', { ascending: false });
     if (!error) setAnnouncements(data || []);
     setLoading(false);
+  };
+
+  const handlePinMove = async (ann, direction) => {
+    const pinned = announcements
+      .filter(a => a.is_pinned)
+      .sort((a, b) => {
+        if (a.pin_order == null && b.pin_order == null) return 0;
+        if (a.pin_order == null) return 1;
+        if (b.pin_order == null) return -1;
+        return a.pin_order - b.pin_order;
+      });
+
+    const idx = pinned.findIndex(a => a.id === ann.id);
+    const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
+    if (targetIdx < 0 || targetIdx >= pinned.length) return;
+
+    const current = pinned[idx];
+    const target  = pinned[targetIdx];
+    const newOrderCurrent = targetIdx + 1;
+    const newOrderTarget  = idx + 1;
+
+    await Promise.all([
+      supabase.from('announcements').update({ pin_order: newOrderCurrent }).eq('id', current.id),
+      supabase.from('announcements').update({ pin_order: newOrderTarget  }).eq('id', target.id),
+    ]);
+
+    setAnnouncements(prev => prev
+      .map(a => {
+        if (a.id === current.id) return { ...a, pin_order: newOrderCurrent };
+        if (a.id === target.id)  return { ...a, pin_order: newOrderTarget };
+        return a;
+      })
+      .sort((a, b) => {
+        if (!a.is_pinned && !b.is_pinned) return 0;
+        if (a.is_pinned && !b.is_pinned) return -1;
+        if (!a.is_pinned && b.is_pinned) return 1;
+        if (a.pin_order == null) return 1;
+        if (b.pin_order == null) return -1;
+        return a.pin_order - b.pin_order;
+      })
+    );
   };
 
   useEffect(() => { fetchAnnouncements(); }, []);
@@ -68,10 +110,12 @@ function AdminAnnouncements({ onBack }) {
       pdf_url = urlData.publicUrl;
     }
 
+    const pinnedCount = announcements.filter(a => a.is_pinned).length;
     const { error } = await supabase.from('announcements').insert({
       title: form.title,
       content: form.content,
       is_pinned: form.is_pinned,
+      pin_order: form.is_pinned ? pinnedCount + 1 : null,
       author: '인사기획팀 박상혁',
       pdf_url,
     });
@@ -125,9 +169,20 @@ function AdminAnnouncements({ onBack }) {
       pdf_url = urlData.publicUrl;
     }
 
+    // 고정 상태 변경 시 pin_order 관리
+    let pin_order = selected.pin_order;
+    if (editForm.is_pinned && !selected.is_pinned) {
+      // 새로 고정: 맨 마지막 순서로 추가
+      const pinnedCount = announcements.filter(a => a.is_pinned).length;
+      pin_order = pinnedCount + 1;
+    } else if (!editForm.is_pinned) {
+      // 고정 해제: pin_order 초기화
+      pin_order = null;
+    }
+
     const { error } = await supabase
       .from('announcements')
-      .update({ title: editForm.title, content: editForm.content, is_pinned: editForm.is_pinned, pdf_url })
+      .update({ title: editForm.title, content: editForm.content, is_pinned: editForm.is_pinned, pin_order, pdf_url })
       .eq('id', selected.id);
 
     if (error) {
@@ -347,21 +402,43 @@ function AdminAnnouncements({ onBack }) {
 
         <div className="admin-list">
           {announcements.length === 0 && <p className="admin-empty">등록된 공지사항이 없습니다.</p>}
-          {announcements.map(a => (
-            <div
-              key={a.id}
-              className="admin-list-item admin-list-item-clickable"
-              onClick={() => setSelected(a)}
-            >
-              <div className="admin-item-info">
-                {a.is_pinned && <span className="pin-badge">📌</span>}
-                <span className="admin-item-title">{a.title}</span>
-                <span className="admin-item-date">{a.published_at?.slice(0, 10)}</span>
-                {a.pdf_url && <span className="admin-item-pdf">PDF 첨부</span>}
-              </div>
-              <button className="admin-delete-btn" onClick={(e) => { e.stopPropagation(); handleDelete(a); }}>삭제</button>
-            </div>
-          ))}
+          {(() => {
+            const pinnedItems = announcements.filter(a => a.is_pinned);
+            return announcements.map(a => {
+              const pinnedIdx = a.is_pinned ? pinnedItems.findIndex(x => x.id === a.id) : -1;
+              return (
+                <div
+                  key={a.id}
+                  className="admin-list-item admin-list-item-clickable"
+                  onClick={() => setSelected(a)}
+                >
+                  <div className="admin-item-info">
+                    {a.is_pinned && (
+                      <div className="pin-order-btns" onClick={e => e.stopPropagation()}>
+                        <button
+                          className="pin-order-btn"
+                          disabled={pinnedIdx === 0}
+                          onClick={() => handlePinMove(a, 'up')}
+                          title="위로"
+                        >▲</button>
+                        <button
+                          className="pin-order-btn"
+                          disabled={pinnedIdx === pinnedItems.length - 1}
+                          onClick={() => handlePinMove(a, 'down')}
+                          title="아래로"
+                        >▼</button>
+                      </div>
+                    )}
+                    {a.is_pinned && <span className="pin-badge">📌</span>}
+                    <span className="admin-item-title">{a.title}</span>
+                    <span className="admin-item-date">{a.published_at?.slice(0, 10)}</span>
+                    {a.pdf_url && <span className="admin-item-pdf">PDF 첨부</span>}
+                  </div>
+                  <button className="admin-delete-btn" onClick={(e) => { e.stopPropagation(); handleDelete(a); }}>삭제</button>
+                </div>
+              );
+            });
+          })()}
         </div>
       </div>
 
