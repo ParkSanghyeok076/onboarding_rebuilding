@@ -763,6 +763,7 @@
 .status-badge.done { background: #dcfce7; color: #166534; }
 .status-badge.undone { background: #fee2e2; color: #991b1b; }
 .status-badge.inprogress { background: #f1f5f9; color: #64748b; }
+.status-badge.neutral { background: #f1f5f9; color: #64748b; }
 
 /* ===== 이미지 팝업 ===== */
 .image-popup {
@@ -787,9 +788,9 @@
 
 /* ===== Admin Survey ===== */
 .admin-action-btn {
-  background: #e8f0fe;
-  color: #1a56db;
-  border: 1.5px solid #93c5fd;
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1.5px solid #e2e8f0;
   padding: 6px 14px;
   border-radius: 6px;
   font-size: 12px;
@@ -799,7 +800,7 @@
   transition: all 0.15s;
 }
 .admin-action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.admin-action-btn:hover:not(:disabled) { background: #dbeafe; border-color: #60a5fa; }
+.admin-action-btn:hover:not(:disabled) { background: #e2e8f0; border-color: #cbd5e1; color: #475569; }
 
 .survey-row { cursor: pointer; }
 .survey-row:hover td { background: #fafbff; }

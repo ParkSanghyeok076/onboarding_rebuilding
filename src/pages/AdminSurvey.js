@@ -263,7 +263,7 @@ function AdminSurvey({ onBack }) {
                       )}
                     </td>
                     <td onClick={e => e.stopPropagation()}>
-                      {!r.analysisId ? <span className="status-badge undone">미분석</span>
+                      {!r.analysisId ? <span className="status-badge neutral">미분석</span>
                         : r.drafts.mentor
                           ? <span className="status-badge done clickable" onClick={() => setEmailDraft(r.drafts.mentor)}>완료 (확인)</span>
                           : <button className="admin-action-btn" disabled={actionLoading[mentorKey]} onClick={() => handleGenerateEmail(r, 'mentor')}>
@@ -272,7 +272,7 @@ function AdminSurvey({ onBack }) {
                       }
                     </td>
                     <td onClick={e => e.stopPropagation()}>
-                      {!r.analysisId ? <span className="status-badge undone">미분석</span>
+                      {!r.analysisId ? <span className="status-badge neutral">미분석</span>
                         : r.drafts.team_leader
                           ? <span className="status-badge done clickable" onClick={() => setEmailDraft(r.drafts.team_leader)}>완료 (확인)</span>
                           : <button className="admin-action-btn" disabled={actionLoading[teamKey]} onClick={() => handleGenerateEmail(r, 'team_leader')}>
