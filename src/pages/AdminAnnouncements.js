@@ -6,6 +6,7 @@ import { TableRow } from '@tiptap/extension-table-row';
 import { TableHeader } from '@tiptap/extension-table-header';
 import { TableCell } from '@tiptap/extension-table-cell';
 import { Underline } from '@tiptap/extension-underline';
+import { Image } from '@tiptap/extension-image';
 import DOMPurify from 'dompurify';
 import { supabase } from '../lib/supabase';
 import './Pages.css';
@@ -13,12 +14,43 @@ import './AdminAnnouncements.css';
 
 const tiptapExtensions = [
   StarterKit,
+  Image,
   Table.configure({ resizable: false }),
   TableRow,
   TableHeader,
   TableCell,
   Underline,
 ];
+
+function makeImagePasteProps(supabaseClient) {
+  return {
+    handlePaste(view, event) {
+      const items = Array.from(event.clipboardData?.items || []);
+      const imageItem = items.find(item => item.type.startsWith('image/'));
+      if (!imageItem) return false;
+
+      event.preventDefault();
+      const file = imageItem.getAsFile();
+      if (!file) return true;
+
+      const ext = file.type.split('/')[1] || 'png';
+      const filePath = `img_${Date.now()}.${ext}`;
+
+      supabaseClient.storage
+        .from('announcements-files')
+        .upload(filePath, file)
+        .then(({ error }) => {
+          if (error) { alert('이미지 업로드 실패: ' + error.message); return; }
+          const { data } = supabaseClient.storage.from('announcements-files').getPublicUrl(filePath);
+          const { schema } = view.state;
+          const node = schema.nodes.image.create({ src: data.publicUrl });
+          view.dispatch(view.state.tr.replaceSelectionWith(node));
+        });
+
+      return true;
+    }
+  };
+}
 
 function EditorToolbar({ editor }) {
   if (!editor) return null;
@@ -60,8 +92,9 @@ function AdminAnnouncements({ onBack }) {
   const [newPdfFile, setNewPdfFile] = useState(null);
   const newPdfRef = useRef(null);
 
-  const createEditor = useEditor({ extensions: tiptapExtensions, content: '' });
-  const editEditor = useEditor({ extensions: tiptapExtensions, content: '' });
+  const imagePasteProps = makeImagePasteProps(supabase);
+  const createEditor = useEditor({ extensions: tiptapExtensions, content: '', editorProps: imagePasteProps });
+  const editEditor = useEditor({ extensions: tiptapExtensions, content: '', editorProps: imagePasteProps });
 
   // 모달 열릴 때 에디터 초기화
   useEffect(() => {

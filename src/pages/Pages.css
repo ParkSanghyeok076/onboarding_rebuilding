@@ -1859,3 +1859,8 @@
 .tiptap-editor .ProseMirror th { background: #f3f4f6; font-weight: 600; }
 .tiptap-editor .ProseMirror .selectedCell { background: #dbeafe; }
 .admin-modal--wide { width: min(760px, 92vw) !important; max-width: none !important; }
+
+/* ── TipTap image ── */
+.tiptap-display img { max-width: 100%; height: auto; border-radius: 4px; margin: 0.5rem 0; }
+.tiptap-editor .ProseMirror img { max-width: 100%; height: auto; border-radius: 4px; margin: 0.5rem 0; cursor: default; }
+.tiptap-editor .ProseMirror img.ProseMirror-selectednode { outline: 2px solid #3b82f6; }
