@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { supabase } from '../lib/supabase';
+import { resetPassword } from '../lib/edgeFunctions';
 import './Pages.css';
 
 function SortIcon({ sortKey, col, sortAsc }) {
@@ -282,7 +283,7 @@ function AdminOnboarding({ onBack }) {
       // 1. 사용자 정보 조회 (hire_date, periods, ojt_plan_received 포함)
       const { data: users, error: userError } = await supabase
         .from('users')
-        .select(`id, name, department, employee_type, hire_date,
+        .select(`id, auth_id, employee_id, name, department, employee_type, hire_date,
                  period_1_start, period_1_end, period_2_start, period_2_end,
                  period_3_start, period_3_end, ojt_plan_received`)
         .eq('role', 'employee');
@@ -383,6 +384,16 @@ function AdminOnboarding({ onBack }) {
       console.error('계획서 상태 업데이트 실패:', error.message);
       // 롤백
       setRows(rows.map(r => r.id === userId ? { ...r, ojt_plan_received: !checked } : r));
+    }
+  };
+
+  const handleReset = async (row) => {
+    if (!window.confirm(`${row.name}(${row.employee_id})의 비밀번호를 초기화하시겠습니까?\n초기 비밀번호: y${row.employee_id}`)) return;
+    try {
+      await resetPassword(row.auth_id, row.employee_id);
+      alert(`비밀번호가 초기화되었습니다.\n초기 비밀번호: y${row.employee_id}`);
+    } catch (e) {
+      alert('초기화 실패: ' + e.message);
     }
   };
 
@@ -505,6 +516,7 @@ function AdminOnboarding({ onBack }) {
                 <th>일지</th>
                 <th>설문조사</th>
                 <th>상태</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -598,6 +610,13 @@ function AdminOnboarding({ onBack }) {
                         if (s === 'incomplete') return <span className="status-badge undone">미수료</span>;
                         return <span className="status-badge inprogress">진행 중</span>;
                       })()}
+                    </td>
+                    <td>
+                      <button
+                        className="pw-reset-btn"
+                        onClick={e => { e.stopPropagation(); handleReset(row); }}
+                        title="비밀번호 초기화"
+                      >초기화</button>
                     </td>
                   </tr>
                 );

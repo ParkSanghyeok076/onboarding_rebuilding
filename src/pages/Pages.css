@@ -1867,3 +1867,7 @@
 .tiptap-display img { max-width: 100%; height: auto; border-radius: 4px; margin: 0.5rem 0; }
 .tiptap-editor .ProseMirror img { max-width: 100%; height: auto; border-radius: 4px; margin: 0.5rem 0; cursor: default; }
 .tiptap-editor .ProseMirror img.ProseMirror-selectednode { outline: 2px solid #3b82f6; }
+
+/* ── 비밀번호 초기화 버튼 ── */
+.pw-reset-btn { background: none; border: 1px solid #d1d5db; border-radius: 4px; padding: 3px 8px; font-size: 0.78rem; color: #6b7280; cursor: pointer; white-space: nowrap; }
+.pw-reset-btn:hover { background: #fef2f2; border-color: #fca5a5; color: #dc2626; }
