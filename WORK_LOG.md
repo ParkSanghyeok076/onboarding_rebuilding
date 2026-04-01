@@ -1072,3 +1072,64 @@ CREATE POLICY "ojt_mentor_update" ON ojt_journals FOR UPDATE ...
 
 **작성자**: 인사기획팀 박상혁 선임
 **최종 업데이트**: 2026-03-30 (관리자 UI 디자인 통일 + 온보딩 현황 개편 + 경력직 OJT 비활성화 + 공지 고정 순서)
+
+---
+
+## 📅 2026-04-01 — 공지사항 에디터 개편 + 버그 수정 + 비밀번호 초기화
+
+### ✅ 공지사항 마크다운 → TipTap WYSIWYG 에디터 전환
+
+- **배경**: 마크다운 방식의 표 셀 내 줄바꿈 한계로 WYSIWYG 방식으로 전환
+- `react-markdown` / `remark-gfm` 제거 → `@tiptap/react` + 확장 설치
+- **관리자 편집기** (`AdminAnnouncements.js`):
+  - 툴바 버튼: 굵게(B) / 기울임(I) / 밑줄(U) / H1·H2·H3 / 불릿·번호 목록 / 표 삽입·열+·열-·행+·행-·표 삭제
+  - Ctrl+V 이미지 붙여넣기 → Supabase Storage `announcements-files` 자동 업로드
+- **직원 조회 화면** (`Announcements.js`): DOMPurify sanitize 후 HTML 렌더링
+- **신규 Edge Function 없음** — 프론트엔드 전용 변경
+
+**설치 패키지**: `@tiptap/react`, `@tiptap/pm`, `@tiptap/starter-kit`, `@tiptap/extension-table`, `@tiptap/extension-table-row`, `@tiptap/extension-table-header`, `@tiptap/extension-table-cell`, `@tiptap/extension-underline`, `@tiptap/extension-image`, `dompurify`
+
+---
+
+### ✅ 버그 수정
+
+| 항목 | 원인 | 수정 |
+|------|------|------|
+| 공지사항 줄 간격 과다 | `white-space: pre-line` + ReactMarkdown `<p>` 마진 중복 | `white-space: pre-line` 제거 |
+| 표 셀 내 단락 간격 | `<p>` 태그 마진 | `.tiptap-display td p { margin: 0 }` 추가 |
+| 온보딩 현황 상태 열 어긋남 | `survey-cell` td에 `display: flex` 적용 | `<div class="survey-cell-inner">`로 내부 감싸기 |
+| 설문조사 기간 오류 | 기간 중에도 설문 오픈 | `today < start` → `today < end` 로 수정 (종료일 이후 7일만 오픈) |
+
+---
+
+### ✅ 비밀번호 초기화 기능
+
+- **Edge Function** `reset-password` 신규 생성 (Supabase 대시보드에서 배포)
+  - hr_admin 권한 확인 후 `auth.admin.updateUserById`로 비밀번호 `y{사번}` 초기화
+- **`AdminOnboarding.js`**: 각 행 우측 **초기화** 버튼 추가
+- **`edgeFunctions.js`**: `resetPassword(id, employee_id)` 함수 추가
+
+**DB 변경:** 없음
+
+---
+
+### 커밋 이력
+
+| 커밋 | 내용 |
+|------|------|
+| 0b07f98 | feat: 공지사항 마크다운 지원 추가 |
+| def2d5c | fix: TipTap table 확장 named export 수정 |
+| 586bdb4 | fix: 공지사항 마크다운 줄 간격 수정 |
+| 69078c0 | fix: 마크다운 표 셀 내 p 태그 마진 제거 |
+| f45ee1f | feat: 공지사항 에디터 TipTap WYSIWYG으로 교체 |
+| 149ab18 | fix: TipTap table named export 수정 |
+| 8504bfd | feat: 공지사항 에디터 이미지 붙여넣기 지원 |
+| 3c5fdc7 | fix: 설문조사 td display:flex 제거로 상태 열 정렬 수정 |
+| 270fad8 | fix: 설문조사 기간 종료일 이후 7일만 참여 가능 |
+| 0bca237 | feat: 관리자 비밀번호 초기화 기능 추가 |
+| 2387981 | fix: auth_id 컬럼 없음 → id 사용으로 수정 |
+
+---
+
+**작성자**: 인사기획팀 박상혁 선임
+**최종 업데이트**: 2026-04-01
