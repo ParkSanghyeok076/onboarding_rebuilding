@@ -45,7 +45,7 @@ serve(async (req) => {
     const { data: profile } = await adminClient
       .from('users')
       .select('role')
-      .eq('auth_id', user.id)
+      .eq('id', user.id)
       .single()
 
     if (profile?.role !== 'hr_admin') {

@@ -283,7 +283,7 @@ function AdminOnboarding({ onBack }) {
       // 1. 사용자 정보 조회 (hire_date, periods, ojt_plan_received 포함)
       const { data: users, error: userError } = await supabase
         .from('users')
-        .select(`id, auth_id, employee_id, name, department, employee_type, hire_date,
+        .select(`id, employee_id, name, department, employee_type, hire_date,
                  period_1_start, period_1_end, period_2_start, period_2_end,
                  period_3_start, period_3_end, ojt_plan_received`)
         .eq('role', 'employee');
@@ -390,7 +390,7 @@ function AdminOnboarding({ onBack }) {
   const handleReset = async (row) => {
     if (!window.confirm(`${row.name}(${row.employee_id})의 비밀번호를 초기화하시겠습니까?\n초기 비밀번호: y${row.employee_id}`)) return;
     try {
-      await resetPassword(row.auth_id, row.employee_id);
+      await resetPassword(row.id, row.employee_id);
       alert(`비밀번호가 초기화되었습니다.\n초기 비밀번호: y${row.employee_id}`);
     } catch (e) {
       alert('초기화 실패: ' + e.message);
