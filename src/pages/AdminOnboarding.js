@@ -563,6 +563,7 @@ function AdminOnboarding({ onBack }) {
 
                     {/* 설문조사 */}
                     <td className="survey-cell">
+                      <div className="survey-cell-inner">
                       {requiredRounds.map(round => {
                         const p_start = toDate(row[`period_${round}_start`]);
                         const isSubmitted = row.submittedRounds.includes(round);
@@ -586,6 +587,7 @@ function AdminOnboarding({ onBack }) {
                           </span>
                         );
                       })}
+                      </div>
                     </td>
 
                     {/* 상태 */}
