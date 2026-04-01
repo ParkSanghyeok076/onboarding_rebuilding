@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import DOMPurify from 'dompurify';
 import './Pages.css';
 import AnnouncementCard from '../components/AnnouncementCard';
 import { supabase } from '../lib/supabase';
@@ -92,11 +91,10 @@ function Announcements({ onBack }) {
             </div>
           </div>
 
-          <div className="announcement-detail-content markdown-body">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {selectedAnnouncement.content}
-            </ReactMarkdown>
-          </div>
+          <div
+            className="announcement-detail-content tiptap-display"
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedAnnouncement.content) }}
+          />
 
           {selectedAnnouncement.pdfUrl && (
             <a

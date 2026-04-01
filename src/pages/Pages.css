@@ -1822,3 +1822,40 @@
 .md-tab:hover { color: #374151; }
 .md-tab.active { color: #2563eb; border-bottom-color: #2563eb; font-weight: 600; }
 .md-preview { min-height: 120px; padding: 0.75rem; background: #fafafa; border: 1px solid #e5e7eb; border-radius: 0 0 6px 6px; overflow-y: auto; }
+
+/* ── TipTap display (조회 화면) ── */
+.tiptap-display { line-height: 1.7; color: #333; }
+.tiptap-display h1 { font-size: 1.5rem; font-weight: 700; margin: 1.2rem 0 0.6rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.3rem; }
+.tiptap-display h2 { font-size: 1.25rem; font-weight: 700; margin: 1rem 0 0.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.2rem; }
+.tiptap-display h3 { font-size: 1.05rem; font-weight: 600; margin: 0.9rem 0 0.4rem; }
+.tiptap-display p { margin: 0.4rem 0; }
+.tiptap-display ul, .tiptap-display ol { padding-left: 1.6rem; margin: 0.5rem 0; }
+.tiptap-display li { margin: 0.2rem 0; }
+.tiptap-display strong { font-weight: 700; }
+.tiptap-display em { font-style: italic; }
+.tiptap-display u { text-decoration: underline; }
+.tiptap-display table { border-collapse: collapse; width: 100%; margin: 0.8rem 0; }
+.tiptap-display th, .tiptap-display td { border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; text-align: left; vertical-align: top; }
+.tiptap-display th { background: #f9fafb; font-weight: 600; }
+.tiptap-display td p, .tiptap-display th p { margin: 0; }
+.tiptap-display blockquote { border-left: 4px solid #d1d5db; padding-left: 1rem; color: #6b7280; margin: 0.8rem 0; }
+
+/* ── TipTap editor (관리자 편집) ── */
+.tiptap-editor-wrap { border: 1px solid #d1d5db; border-radius: 6px; overflow: hidden; }
+.tiptap-toolbar { display: flex; flex-wrap: wrap; gap: 2px; padding: 6px 8px; background: #f9fafb; border-bottom: 1px solid #d1d5db; }
+.tiptap-toolbar button { background: none; border: 1px solid transparent; border-radius: 4px; padding: 3px 8px; font-size: 0.85rem; cursor: pointer; color: #374151; transition: background 0.1s; }
+.tiptap-toolbar button:hover { background: #e5e7eb; }
+.tiptap-toolbar button.is-active { background: #dbeafe; border-color: #93c5fd; color: #1d4ed8; }
+.tiptap-sep { width: 1px; background: #d1d5db; margin: 2px 4px; align-self: stretch; }
+.tiptap-editor { padding: 0.75rem 1rem; min-height: 180px; background: #fff; cursor: text; }
+.tiptap-editor .ProseMirror { outline: none; min-height: 160px; }
+.tiptap-editor .ProseMirror p { margin: 0.4rem 0; }
+.tiptap-editor .ProseMirror h1 { font-size: 1.5rem; font-weight: 700; margin: 1rem 0 0.5rem; }
+.tiptap-editor .ProseMirror h2 { font-size: 1.25rem; font-weight: 700; margin: 0.8rem 0 0.4rem; }
+.tiptap-editor .ProseMirror h3 { font-size: 1.05rem; font-weight: 600; margin: 0.7rem 0 0.3rem; }
+.tiptap-editor .ProseMirror ul, .tiptap-editor .ProseMirror ol { padding-left: 1.6rem; margin: 0.5rem 0; }
+.tiptap-editor .ProseMirror table { border-collapse: collapse; width: 100%; margin: 0.8rem 0; }
+.tiptap-editor .ProseMirror th, .tiptap-editor .ProseMirror td { border: 1px solid #d1d5db; padding: 0.4rem 0.6rem; min-width: 60px; }
+.tiptap-editor .ProseMirror th { background: #f3f4f6; font-weight: 600; }
+.tiptap-editor .ProseMirror .selectedCell { background: #dbeafe; }
+.admin-modal--wide { width: min(760px, 92vw) !important; max-width: none !important; }
