@@ -1809,8 +1809,9 @@
 .markdown-body pre code { background: none; padding: 0; }
 .markdown-body blockquote { border-left: 4px solid #d1d5db; padding-left: 1rem; color: #6b7280; margin: 0.8rem 0; }
 .markdown-body table { border-collapse: collapse; width: 100%; margin: 0.8rem 0; }
-.markdown-body th, .markdown-body td { border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; text-align: left; }
+.markdown-body th, .markdown-body td { border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; text-align: left; vertical-align: top; }
 .markdown-body th { background: #f9fafb; font-weight: 600; }
+.markdown-body td p, .markdown-body th p { margin: 0; line-height: 1.5; }
 .markdown-body hr { border: none; border-top: 1px solid #e5e7eb; margin: 1rem 0; }
 .markdown-body strong { font-weight: 700; }
 .markdown-body a { color: #2563eb; text-decoration: underline; }
