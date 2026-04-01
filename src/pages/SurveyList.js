@@ -39,7 +39,7 @@ function SurveyList({ user, onStart, onViewResult, onBack }) {
     let status;
     if (submittedRounds.includes(roundNumber)) {
       status = 'submitted';
-    } else if (today < start) {
+    } else if (today < end) {
       status = 'upcoming';
     } else if (today > responseDeadline) {
       status = 'closed';

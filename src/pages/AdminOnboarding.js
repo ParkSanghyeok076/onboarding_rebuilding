@@ -565,9 +565,9 @@ function AdminOnboarding({ onBack }) {
                     <td className="survey-cell">
                       <div className="survey-cell-inner">
                       {requiredRounds.map(round => {
-                        const p_start = toDate(row[`period_${round}_start`]);
+                        const p_end = toDate(row[`period_${round}_end`]);
                         const isSubmitted = row.submittedRounds.includes(round);
-                        const isUpcoming = p_start && today < p_start;
+                        const isUpcoming = p_end && today < p_end;
                         let icon, className;
 
                         if (isSubmitted) {
