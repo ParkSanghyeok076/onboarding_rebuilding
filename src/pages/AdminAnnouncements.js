@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { supabase } from '../lib/supabase';
 import './Pages.css';
 import './AdminAnnouncements.css';
@@ -17,6 +19,8 @@ function AdminAnnouncements({ onBack }) {
   const [removePdf, setRemovePdf] = useState(false);
   const [newPdfFile, setNewPdfFile] = useState(null);
   const newPdfRef = useRef(null);
+  const [createTab, setCreateTab] = useState('write');
+  const [editTab, setEditTab] = useState('write');
 
   const fetchAnnouncements = async () => {
     const { data, error } = await supabase
@@ -258,10 +262,9 @@ function AdminAnnouncements({ onBack }) {
                   </div>
                 </div>
 
-                <div
-                  className="announcement-detail-content"
-                  dangerouslySetInnerHTML={{ __html: selected.content }}
-                />
+                <div className="announcement-detail-content markdown-body">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{selected.content}</ReactMarkdown>
+                </div>
 
                 {selected.pdf_url && (
                   <a href={selected.pdf_url} target="_blank" rel="noopener noreferrer" className="pdf-link">
@@ -302,12 +305,22 @@ function AdminAnnouncements({ onBack }) {
                   </div>
                 </div>
 
-                <textarea
-                  className="ann-edit-content-input"
-                  value={editForm.content}
-                  onChange={e => setEditForm(p => ({ ...p, content: e.target.value }))}
-                  placeholder="본문을 입력하세요"
-                />
+                <div className="md-tab-bar">
+                  <button type="button" className={`md-tab ${editTab === 'write' ? 'active' : ''}`} onClick={() => setEditTab('write')}>작성</button>
+                  <button type="button" className={`md-tab ${editTab === 'preview' ? 'active' : ''}`} onClick={() => setEditTab('preview')}>미리보기</button>
+                </div>
+                {editTab === 'write' ? (
+                  <textarea
+                    className="ann-edit-content-input"
+                    value={editForm.content}
+                    onChange={e => setEditForm(p => ({ ...p, content: e.target.value }))}
+                    placeholder="본문을 입력하세요 (마크다운 지원)"
+                  />
+                ) : (
+                  <div className="ann-edit-content-input md-preview markdown-body">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{editForm.content || '_내용 없음_'}</ReactMarkdown>
+                  </div>
+                )}
 
                 {/* PDF 관리 */}
                 <div className="ann-pdf-section">
@@ -367,7 +380,17 @@ function AdminAnnouncements({ onBack }) {
               </div>
               <div className="admin-form-group">
                 <label>본문 *</label>
-                <textarea rows={6} value={form.content} onChange={e => setForm(p => ({ ...p, content: e.target.value }))} placeholder="공지 내용" />
+                <div className="md-tab-bar">
+                  <button type="button" className={`md-tab ${createTab === 'write' ? 'active' : ''}`} onClick={() => setCreateTab('write')}>작성</button>
+                  <button type="button" className={`md-tab ${createTab === 'preview' ? 'active' : ''}`} onClick={() => setCreateTab('preview')}>미리보기</button>
+                </div>
+                {createTab === 'write' ? (
+                  <textarea rows={6} value={form.content} onChange={e => setForm(p => ({ ...p, content: e.target.value }))} placeholder="공지 내용 (마크다운 지원)" />
+                ) : (
+                  <div className="md-preview markdown-body">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{form.content || '_내용 없음_'}</ReactMarkdown>
+                  </div>
+                )}
               </div>
               <div className="admin-form-group">
                 <label>PDF 첨부 (선택)</label>

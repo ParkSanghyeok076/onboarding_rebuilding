@@ -1796,3 +1796,29 @@
   min-width: 32px;
   text-align: right;
 }
+
+/* ── Markdown body ── */
+.markdown-body { line-height: 1.7; color: #333; }
+.markdown-body h1 { font-size: 1.5rem; font-weight: 700; margin: 1.2rem 0 0.6rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.3rem; }
+.markdown-body h2 { font-size: 1.25rem; font-weight: 700; margin: 1rem 0 0.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.2rem; }
+.markdown-body h3 { font-size: 1.05rem; font-weight: 600; margin: 0.9rem 0 0.4rem; }
+.markdown-body p { margin: 0.5rem 0; }
+.markdown-body ul, .markdown-body ol { padding-left: 1.6rem; margin: 0.5rem 0; }
+.markdown-body li { margin: 0.25rem 0; }
+.markdown-body code { background: #f3f4f6; padding: 0.15em 0.4em; border-radius: 4px; font-size: 0.88em; font-family: monospace; }
+.markdown-body pre { background: #f3f4f6; padding: 1rem; border-radius: 6px; overflow-x: auto; margin: 0.8rem 0; }
+.markdown-body pre code { background: none; padding: 0; }
+.markdown-body blockquote { border-left: 4px solid #d1d5db; padding-left: 1rem; color: #6b7280; margin: 0.8rem 0; }
+.markdown-body table { border-collapse: collapse; width: 100%; margin: 0.8rem 0; }
+.markdown-body th, .markdown-body td { border: 1px solid #d1d5db; padding: 0.5rem 0.75rem; text-align: left; }
+.markdown-body th { background: #f9fafb; font-weight: 600; }
+.markdown-body hr { border: none; border-top: 1px solid #e5e7eb; margin: 1rem 0; }
+.markdown-body strong { font-weight: 700; }
+.markdown-body a { color: #2563eb; text-decoration: underline; }
+
+/* ── Markdown tab bar (admin editor) ── */
+.md-tab-bar { display: flex; gap: 0; margin-bottom: 0; border-bottom: 2px solid #e5e7eb; }
+.md-tab { background: none; border: none; padding: 6px 16px; font-size: 0.875rem; color: #6b7280; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color 0.15s; }
+.md-tab:hover { color: #374151; }
+.md-tab.active { color: #2563eb; border-bottom-color: #2563eb; font-weight: 600; }
+.md-preview { min-height: 120px; padding: 0.75rem; background: #fafafa; border: 1px solid #e5e7eb; border-radius: 0 0 6px 6px; overflow-y: auto; }
